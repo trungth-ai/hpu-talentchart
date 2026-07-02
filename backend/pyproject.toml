@@ -29,9 +29,35 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "pytest>=8.3.0",
-    "pytest-asyncio>=0.24.0",
+    "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.0.0",
     "ruff>=0.7.0",
     "mypy>=1.13.0",
     "httpx>=0.28.0",
+    "aiosqlite>=0.20.0",
 ]
+
+[tool.pytest.ini_options]
+# asyncio auto mode + event loop scope session (SQLite in-memory dùng chung 1 connection)
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B"]
+# E402: conftest.py bắt buộc set env trước khi import app
+# N818: tên exception theo .claude/rules (ResourceNotFound, DuplicateResource...)
+per-file-ignores = { "tests/conftest.py" = ["E402"], "app/exceptions.py" = ["N818"] }
+
+[tool.ruff.lint.flake8-bugbear]
+# Depends/Query trong default argument là pattern chuẩn của FastAPI
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
