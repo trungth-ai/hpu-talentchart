@@ -10,14 +10,14 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 
 ## Deliverables
 
-- [ ] `backend/app/models/base.py` — `TenantScopedBase` (organization_id NOT NULL, id UUID, created_at/updated_at, status) — DRI: Mid Dev
-- [ ] `backend/app/models/organization.py`, `backend/app/models/user.py` — DRI: Mid Dev
-- [ ] `backend/app/middleware/tenant.py` — resolve org theo thứ tự JWT → subdomain → header dev — DRI: Mid Dev
-- [ ] `backend/app/core/security.py` — JWT (access 15p/refresh 7 ngày) + bcrypt cost 12 — DRI: Mid Dev
-- [ ] `backend/app/routers/auth.py` — `POST /auth/login`, `POST /auth/refresh`, `GET /auth/me` — DRI: Mid Dev
-- [ ] PostgreSQL RLS policy cho `users` và mọi bảng tenant-scoped tương lai — DRI: Trung review
-- [ ] `backend/tests/test_tenant_isolation.py` — test 2 organization không thấy dữ liệu của nhau — DRI: Intern 2
-- [ ] Docker Compose local chạy được (`db`, `redis`, `backend`) — DRI: Intern 1
+- [x] `backend/app/models/base.py` — `TenantScopedBase` (organization_id NOT NULL, id UUID, created_at/updated_at, status) — DRI: Mid Dev
+- [x] `backend/app/models/organization.py`, `backend/app/models/user.py` — DRI: Mid Dev
+- [x] `backend/app/middleware/tenant.py` — resolve org theo thứ tự JWT → subdomain → header dev — DRI: Mid Dev
+- [x] `backend/app/core/security.py` — JWT (access 15p/refresh 7 ngày) + bcrypt cost 12 — DRI: Mid Dev
+- [x] `backend/app/routers/auth.py` — `POST /auth/login`, `POST /auth/refresh`, `GET /auth/me` — DRI: Mid Dev
+- [x] PostgreSQL RLS policy cho `users` — đã viết trong migration `0001` (ENABLE + FORCE + policy theo `app.current_org_id`) — **chờ Trung review trước khi chạy trên staging**
+- [x] `backend/tests/test_tenant_isolation.py` — 26 test pass (isolation + auth), coverage 90%
+- [ ] Docker Compose local chạy được (`db`, `redis`, `backend`) — `docker-compose.dev.yml` đã viết, **chưa verify** (máy scaffold không có Docker) — DRI: Intern 1
 
 ## User stories
 
@@ -102,3 +102,15 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 - Done: —
 - Today: Setup project skeleton (backend + frontend + docker)
 - Blocker: —
+
+### 2026-07-02 (Claude Code — backend foundation)
+- Done: toàn bộ backend Sprint 1 — config fail-fast, TenantScopedBase, Organization/User,
+  database.py (event listener auto-filter + flush guard + RLS GUC), middleware auth/tenant,
+  JWT + bcrypt 12, routers auth (login/refresh/me) + users (list/get), migration Alembic 0001
+  kèm RLS policy, 26 test pass (isolation + auth), coverage 90%, ruff sạch.
+  Sửa backend/Dockerfile (template cũ sai), thêm docker-compose.dev.yml + scripts/create_tenant.py.
+- Next: Trung review RLS policy (migration 0001); Intern 1 verify docker-compose.dev.yml
+  trên máy có Docker + chạy `alembic upgrade head`; scaffold frontend Next.js 15 (login page,
+  api-client); GitHub Actions CI.
+- Blocker: máy scaffold không có Docker/uv → chưa verify compose + migration trên PostgreSQL thật
+  (test chạy trên SQLite in-memory, RLS chỉ verify được trên PG).
