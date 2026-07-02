@@ -1,0 +1,62 @@
+# Docker Compose DEV — chỉ db + redis + backend (PLAN.md Sprint 1)
+# Chạy: docker compose -f docker-compose.dev.yml up -d
+# Backend hot-reload qua volume mount; frontend chạy riêng bằng `pnpm dev`
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: talentchart-db-dev
+    environment:
+      POSTGRES_DB: talentchart
+      POSTGRES_USER: talentchart
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-talentchart}
+    ports:
+      # 5434 để không đụng PostgreSQL local (dev machine có sẵn PG17)
+      - "5434:5432"
+    volumes:
+      - talentchart-pgdata-dev:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talentchart"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: talentchart-redis-dev
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-talentchart}
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $${REDIS_PASSWORD:-talentchart} ping | grep PONG"]
+      interval: 5s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: talentchart-backend-dev
+    command:
+      ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD:-talentchart}@db:5432/talentchart
+      - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD:-talentchart}@db:5432/talentchart
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-talentchart}@redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET bat buoc phai co trong .env}
+      - LOG_LEVEL=DEBUG
+    ports:
+      - "8003:8003"
+    volumes:
+      # Hot reload code
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      - ./backend/tests:/app/tests
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+volumes:
+  talentchart-pgdata-dev:
+    name: talentchart-pgdata-dev
