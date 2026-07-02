@@ -1,0 +1,202 @@
+# Docker Compose Template — HPU SaaS Multi-tenant
+# File: ~/hpu-dev/_shared/docker-templates/docker-compose.saas.yml
+# Copy vào project SaaS mới (TalentChart), thay talentchart, 8003, talentchart.hpu.edu.vn
+
+services:
+  # ─── Backend FastAPI ───
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: talentchart-backend
+    restart: unless-stopped
+
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD}@db:5432/talentchart
+      - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD}@db:5432/talentchart
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - JWT_SECRET=${JWT_SECRET}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - ENV=production
+      - LOG_LEVEL=INFO
+      - SENTRY_DSN=${SENTRY_DSN}
+
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio: { condition: service_healthy }
+
+    networks:
+      - talentchart-internal
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Frontend Next.js ───
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: talentchart-frontend
+    restart: unless-stopped
+
+    environment:
+      - NEXT_PUBLIC_API_URL=https://app.talentchart.hpu.edu.vn
+      - NODE_ENV=production
+
+    depends_on:
+      backend: { condition: service_healthy }
+
+    networks:
+      - talentchart-internal
+      - caddy-proxy
+
+    # ★ Caddy labels — auto routing với wildcard SSL
+    labels:
+      # Main admin app
+      caddy_0: "app.talentchart.hpu.edu.vn"
+      caddy_0.reverse_proxy: "{{upstreams 3000}}"
+      caddy_0.handle_path_/api/*.0_reverse_proxy: "talentchart-backend:8003"
+
+      # Wildcard cho subdomain career pages
+      caddy_1: "*.talentchart.hpu.edu.vn"
+      caddy_1.tls: "{env.CLOUDFLARE_API_TOKEN} dns cloudflare"
+      caddy_1.reverse_proxy: "{{upstreams 3000}}"
+      caddy_1.handle_path_/api/*.0_reverse_proxy: "talentchart-backend:8003"
+
+  # ─── Celery worker ───
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: talentchart-worker
+    restart: unless-stopped
+    command: ["celery", "-A", "app.celery_app", "worker", "--loglevel=info", "-Q", "default"]
+
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD}@db:5432/talentchart
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+
+    depends_on:
+      redis: { condition: service_healthy }
+      db: { condition: service_healthy }
+
+    networks:
+      - talentchart-internal
+
+  # ─── Celery beat (scheduled tasks) ───
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: talentchart-beat
+    restart: unless-stopped
+    command: ["celery", "-A", "app.celery_app", "beat", "--loglevel=info"]
+    environment:
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+    depends_on:
+      redis: { condition: service_healthy }
+    networks:
+      - talentchart-internal
+
+  # ─── PostgreSQL ───
+  db:
+    image: postgres:16-alpine
+    container_name: talentchart-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: talentchart
+      POSTGRES_USER: talentchart
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - talentchart-pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U talentchart"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - talentchart-internal
+
+  # ─── Redis ───
+  redis:
+    image: redis:7-alpine
+    container_name: talentchart-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - talentchart-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+    networks:
+      - talentchart-internal
+
+  # ─── MinIO (S3-compatible file storage) ───
+  minio:
+    image: minio/minio:latest
+    container_name: talentchart-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - talentchart-miniodata:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+    networks:
+      - talentchart-internal
+      - caddy-proxy
+    labels:
+      caddy: "storage.talentchart.hpu.edu.vn"
+      caddy.reverse_proxy: "{{upstreams 9001}}"
+
+  # ─── Backup automation ───
+  backup:
+    image: postgres:16-alpine
+    container_name: talentchart-backup
+    restart: unless-stopped
+    environment:
+      - PGPASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup-postgres.sh:/backup.sh:ro
+    entrypoint: ["/bin/sh", "-c", "while true; do /backup.sh; sleep 86400; done"]
+    depends_on:
+      db: { condition: service_healthy }
+    networks:
+      - talentchart-internal
+
+
+volumes:
+  talentchart-pgdata:
+    name: talentchart-pgdata
+  talentchart-redisdata:
+    name: talentchart-redisdata
+  talentchart-miniodata:
+    name: talentchart-miniodata
+
+
+networks:
+  talentchart-internal:
+    driver: bridge
+  caddy-proxy:
+    external: true
