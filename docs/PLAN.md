@@ -54,23 +54,23 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 ## Tasks technical
 
 ### Backend
-- [ ] Setup `pyproject.toml` (uv), cấu hình `ruff`/`mypy`/`pytest` — Mid Dev — ngày 1-2
-- [ ] `config.py` — Settings fail-fast (JWT_SECRET không có default) — Mid Dev — ngày 2
-- [ ] `models/base.py` (TenantScopedBase) + `database.py` (async engine + event listener filter) — Mid Dev — ngày 3-4
-- [ ] `models/organization.py`, `models/user.py` + Alembic migration đầu tiên — Mid Dev — ngày 4-5
-- [ ] `middleware/tenant.py`, `middleware/auth.py` — Mid Dev — ngày 6-7
-- [ ] `core/security.py`, `routers/auth.py` — Mid Dev — ngày 7-8
-- [ ] RLS policy SQL cho `users` — Trung — ngày 8
-- [ ] `tests/test_tenant_isolation.py` — Intern 2 — ngày 9-10
+- [x] Setup `pyproject.toml` (uv), cấu hình `ruff`/`mypy`/`pytest` — Mid Dev — ngày 1-2
+- [x] `config.py` — Settings fail-fast (JWT_SECRET không có default) — Mid Dev — ngày 2
+- [x] `models/base.py` (TenantScopedBase) + `database.py` (async engine + event listener filter) — Mid Dev — ngày 3-4
+- [x] `models/organization.py`, `models/user.py` + Alembic migration đầu tiên — Mid Dev — ngày 4-5
+- [x] `middleware/tenant.py`, `middleware/auth.py` — Mid Dev — ngày 6-7
+- [x] `core/security.py`, `routers/auth.py` — Mid Dev — ngày 7-8
+- [x] RLS policy SQL cho `users` — Trung — ngày 8
+- [x] `tests/test_tenant_isolation.py` — Intern 2 — ngày 9-10
 
 ### Frontend
-- [ ] Scaffold Next.js 15 App Router, cấu hình Tailwind + shadcn/ui — Intern 1 — ngày 1-3
-- [ ] Trang `(auth)/login` — Intern 1 — ngày 4-6
-- [ ] `lib/api-client.ts` (gắn JWT vào header) — Intern 1 — ngày 7-8
+- [x] Scaffold Next.js 15 App Router, cấu hình Tailwind + shadcn/ui — Intern 1 — ngày 1-3
+- [x] Trang `(auth)/login` — Intern 1 — ngày 4-6
+- [x] `lib/api-client.ts` (gắn JWT vào header) — Intern 1 — ngày 7-8
 
 ### DevOps / Testing
 - [ ] `docker-compose.yml` chạy local (db, redis, backend) — Intern 1 — ngày 1-2
-- [ ] GitHub Actions CI cơ bản (test backend) — Trung — ngày 9-10
+- [x] GitHub Actions CI cơ bản (test backend) — Trung — ngày 9-10
 - [ ] `/security-review` chạy trên toàn bộ module auth/tenant trước khi merge — Trung — ngày 10
 
 ## Out of scope (không làm trong sprint này)
@@ -114,3 +114,30 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   api-client); GitHub Actions CI.
 - Blocker: máy scaffold không có Docker/uv → chưa verify compose + migration trên PostgreSQL thật
   (test chạy trên SQLite in-memory, RLS chỉ verify được trên PG).
+
+### 2026-07-03 (Claude Code — Sprint 2-4 backend + frontend Sprint 1)
+- Done:
+  - **Sprint 2-3 (ATS Core)**: module `campaigns` + `candidates` — pipeline 7 trạng thái
+    tuần tự (state machine trong `services/candidate_service.py`, vi phạm → 422),
+    candidate_type hợp nhất, EPA opt-in consent theo NĐ 13/2023 (rút consent = xóa data,
+    endpoint DELETE /candidates/{id}/epa-data), guard IDOR campaign cross-tenant,
+    stats endpoint. Migration 0002 + RLS cho 3 bảng.
+  - **Sprint 4 (Job Board)**: module `job_posts` (slug unique/org, tự slugify tiếng Việt,
+    publish/unpublish) + public career API theo subdomain (GET /public/jobs,
+    POST /public/jobs/{slug}/apply → tạo candidate NEW, rate-limit 10/min, chặn nộp trùng).
+  - **Sprint 1 frontend**: Next.js 15 scaffold, login page (RHF+zod), api-client
+    (JWT + auto refresh), zustand store, middleware.ts subdomain→/career/{slug},
+    career page SSR, dashboard tối giản. Đã verify end-to-end trên browser thật:
+    login → dashboard → /auth/me + /candidates/stats. Thêm CORSMiddleware backend.
+  - CI GitHub Actions (backend pytest+ruff+coverage≥70%, frontend typecheck+build).
+  - Backend: 65 test pass, ruff sạch. Frontend: typecheck + build pass.
+- Next: Trung review RLS + acceptance test; Sprint 5 EPA Engine.
+- **Blocker Sprint 5-6**: `legacy/fortune-hr/` và `legacy/smarthire-html/` ĐANG RỖNG —
+  theo CLAUDE.md phải port nguyên xi từ code nguồn, KHÔNG được tự sáng tác thuật toán
+  Can Chi/DISC. Cần Trung copy code nguồn Fortune HR (server.js chứa LunarData) và
+  SmartHire vào legacy/ trước khi chạy /epa-port. Nội dung 12 archetype cũng chờ
+  bản viết tay của Trung (core IP).
+- Lưu ý: pipeline hiện enforce đúng theo Critical Business Rules (chỉ tuần tự, DECISION
+  → HIRED/REJECTED) — nghĩa là muốn loại ứng viên sớm phải đi qua đủ các bước.
+  Nếu nghiệp vụ thực tế cần "REJECTED từ bất kỳ bước nào", cần Trung quyết và
+  sửa rule trong CLAUDE.md + ADR trước khi đổi code.
