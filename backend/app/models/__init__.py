@@ -1,6 +1,17 @@
 # Models package — import tất cả model để Alembic autogenerate và Base.metadata thấy đủ bảng
 from app.models.base import Base, TenantScopedBase
+from app.models.campaign import Campaign
+from app.models.candidate import Candidate
+from app.models.job_post import JobPost
 from app.models.organization import Organization
 from app.models.user import User
 
-__all__ = ["Base", "TenantScopedBase", "Organization", "User"]
+__all__ = [
+    "Base",
+    "TenantScopedBase",
+    "Organization",
+    "User",
+    "Campaign",
+    "Candidate",
+    "JobPost",
+]

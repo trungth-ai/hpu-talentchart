@@ -12,7 +12,7 @@ from app.exceptions import AppException
 from app.middleware.auth import AuthMiddleware
 from app.middleware.rate_limit import limiter
 from app.middleware.tenant import TenantMiddleware
-from app.routers import auth, users
+from app.routers import auth, campaigns, candidates, job_posts, public_careers, users
 
 app = FastAPI(
     title="TalentChart API",
@@ -30,6 +30,10 @@ app.add_middleware(AuthMiddleware)
 # Routers
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
+app.include_router(campaigns.router, prefix="/api/v1")
+app.include_router(candidates.router, prefix="/api/v1")
+app.include_router(job_posts.router, prefix="/api/v1")
+app.include_router(public_careers.router, prefix="/api/v1")
 
 
 # ─── Exception handlers — mọi lỗi đều trả envelope chuẩn ───
