@@ -28,7 +28,8 @@ async def create_tenant(slug: str, name: str, email: str, password: str) -> None
             select(Organization).where(Organization.slug == slug)
         )
         if existing.scalar_one_or_none():
-            print(f"❌ Organization slug '{slug}' đã tồn tại")
+            # Không dùng emoji — console Windows (cp1252) không in được
+            print(f"[LOI] Organization slug '{slug}' da ton tai")
             return
 
         org = Organization(name=name, slug=slug)
@@ -52,8 +53,8 @@ async def create_tenant(slug: str, name: str, email: str, password: str) -> None
         finally:
             reset_current_org_id(token)
 
-        print(f"✅ Đã tạo organization '{name}' (slug: {slug})")
-        print(f"   Owner: {email} — đăng nhập tại https://{slug}.talentchart.hpu.edu.vn")
+        print(f"[OK] Da tao organization '{name}' (slug: {slug})")
+        print(f"     Owner: {email} - dang nhap tai https://{slug}.talentchart.hpu.edu.vn")
 
 
 if __name__ == "__main__":

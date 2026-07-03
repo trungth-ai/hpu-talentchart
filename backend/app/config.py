@@ -34,6 +34,18 @@ class Settings(BaseSettings):
 
     # Domain gốc để resolve tenant theo subdomain: {org-slug}.talentchart.hpu.edu.vn
     BASE_DOMAIN: str = "talentchart.hpu.edu.vn"
+
+    # CORS — dev cho phép localhost:3000; production set qua env (phân cách dấu phẩy)
+    CORS_ORIGINS: str = "http://localhost:3000"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+
+    @property
+    def cors_origin_regex(self) -> str:
+        # Cho phép mọi subdomain tenant: https://{slug}.talentchart.hpu.edu.vn
+        return rf"https://([a-z0-9-]+\.)?{self.BASE_DOMAIN.replace('.', r'\.')}"
     # Các subdomain hệ thống, KHÔNG phải slug của tenant
     RESERVED_SUBDOMAINS: frozenset[str] = frozenset({"app", "www", "storage", "api"})
 

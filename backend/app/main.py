@@ -4,9 +4,11 @@
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
+from app.config import get_settings
 from app.core.responses import error
 from app.exceptions import AppException
 from app.middleware.auth import AuthMiddleware
@@ -26,6 +28,17 @@ app.state.limiter = limiter
 # Middleware — add TenantMiddleware TRƯỚC để AuthMiddleware (add sau) chạy trước
 app.add_middleware(TenantMiddleware)
 app.add_middleware(AuthMiddleware)
+
+# CORS — frontend admin (localhost:3000 dev) + mọi subdomain tenant (production)
+settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origin_list,
+    allow_origin_regex=settings.cors_origin_regex,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Routers
 app.include_router(auth.router, prefix="/api/v1")
