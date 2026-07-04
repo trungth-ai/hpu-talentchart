@@ -48,6 +48,19 @@ def create_access_token(user) -> str:
     )
 
 
+def create_candidate_token(candidate) -> str:
+    """Token riêng cho ỨNG VIÊN (ADR-004) — type=candidate, không có org_role,
+    không dùng được cho API quản trị (get_current_user chỉ nhận type=access)."""
+    return _create_token(
+        {
+            "sub": str(candidate.id),
+            "organization_id": str(candidate.organization_id),
+            "type": "candidate",
+        },
+        timedelta(minutes=settings.CANDIDATE_TOKEN_EXPIRE_MINUTES),
+    )
+
+
 def create_refresh_token(user) -> str:
     """Refresh token chỉ chứa định danh tối thiểu — không chứa role."""
     return _create_token(

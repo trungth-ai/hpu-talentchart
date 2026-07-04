@@ -4,6 +4,7 @@ from app.models.campaign import Campaign
 from app.models.candidate import Candidate
 from app.models.job_post import JobPost
 from app.models.organization import Organization
+from app.models.test_session import TestSession
 from app.models.user import User
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "Campaign",
     "Candidate",
     "JobPost",
+    "TestSession",
 ]

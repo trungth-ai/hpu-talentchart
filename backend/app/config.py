@@ -32,6 +32,11 @@ class Settings(BaseSettings):
     # Bcrypt cost (theo PLAN.md Sprint 1)
     BCRYPT_ROUNDS: int = 12
 
+    # Google OAuth (ADR-004) — rỗng = tắt đăng nhập Google
+    GOOGLE_CLIENT_ID: str = ""
+    # TTL token của ứng viên (type=candidate)
+    CANDIDATE_TOKEN_EXPIRE_MINUTES: int = 60
+
     # Domain gốc để resolve tenant theo subdomain: {org-slug}.talentchart.hpu.edu.vn
     BASE_DOMAIN: str = "talentchart.hpu.edu.vn"
 

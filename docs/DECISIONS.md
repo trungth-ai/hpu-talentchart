@@ -6,6 +6,54 @@
 
 ---
 
+## ADR-004: Google OAuth qua ID token verification, phân quyền theo Workspace domain của tenant
+
+**Status:** Accepted
+**Date:** 2026-07-03
+**Decided by:** Trung (yêu cầu) — Claude Code (thiết kế)
+
+### Context
+
+Yêu cầu: (1) tài khoản quản lý/sử dụng đăng nhập bằng Google theo domain `hpu.edu.vn`;
+(2) ứng viên đăng nhập bằng tài khoản Google bất kỳ. Hệ thống multi-tenant nên mỗi tenant
+có thể có Workspace domain riêng (HPU = hpu.edu.vn, tenant khác = domain khác).
+
+### Decision
+
+1. **Frontend dùng Google Identity Services (GIS)** lấy `id_token`, gửi về backend —
+   backend KHÔNG làm OAuth redirect flow (không cần lưu client_secret cho flow này).
+2. **Backend verify id_token** qua endpoint `https://oauth2.googleapis.com/tokeninfo`
+   (kiểm `aud` = GOOGLE_CLIENT_ID, `email_verified`, `exp` do Google check) — đủ an toàn
+   cho quy mô hiện tại, không thêm dependency `google-auth`.
+3. **Staff (`POST /api/v1/auth/google`)**: bắt buộc có tenant context; domain email phải khớp
+   `organization.settings.google_workspace_domain` (per-tenant, HPU = hpu.edu.vn).
+   User đã tồn tại → đăng nhập; chưa tồn tại và domain khớp → auto-provision với
+   `org_role=member` (quyền thấp nhất, admin nâng quyền sau). Tắt auto-provision bằng
+   `settings.google_auto_provision=false`.
+4. **Ứng viên (`POST /api/v1/public/auth/google`)**: Google bất kỳ (email đã verify),
+   find-or-create `Candidate` theo email trong tenant, cấp JWT riêng `type=candidate`
+   TTL 60 phút — KHÔNG dùng chung token với staff (không có org_role, không vào được
+   API quản trị).
+5. Login mật khẩu giữ nguyên làm fallback (dev, tenant chưa có Workspace).
+
+### Consequences
+
+- (+) Mỗi tenant tự cấu hình domain; thêm tenant mới không đổi code.
+- (+) Candidate token tách biệt hoàn toàn khỏi staff token — giảm bề mặt tấn công.
+- (−) Gọi Google tokeninfo mỗi lần login (thêm ~100ms); chấp nhận được, có thể chuyển
+  sang verify chữ ký local (google-auth + cached certs) khi lưu lượng tăng.
+- (−) Cần cấu hình `GOOGLE_CLIENT_ID` trong env cả backend lẫn frontend
+  (`NEXT_PUBLIC_GOOGLE_CLIENT_ID`); chưa cấu hình → endpoint trả lỗi nghiệp vụ rõ ràng.
+
+### Alternatives considered
+
+1. **OAuth authorization-code flow đầy đủ ở backend**: an toàn tương đương với ID token
+   cho mục đích authentication thuần, nhưng phức tạp hơn (redirect, state, client_secret) — loại.
+2. **Thư viện `google-auth` verify chữ ký local**: nhanh hơn nhưng thêm dependency và cache
+   certs; để dành khi scale — chưa cần.
+
+---
+
 ## ADR-003: Multi-tenant theo Shared Schema + PostgreSQL RLS (không schema-per-tenant)
 
 **Status:** Accepted

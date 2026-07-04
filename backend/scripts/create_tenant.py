@@ -21,7 +21,9 @@ from app.database import async_session_factory, set_rls_guc  # noqa: E402
 from app.models import Organization, User  # noqa: E402
 
 
-async def create_tenant(slug: str, name: str, email: str, password: str) -> None:
+async def create_tenant(
+    slug: str, name: str, email: str, password: str, google_domain: str | None = None
+) -> None:
     async with async_session_factory() as session:
         # Kiểm tra slug trùng
         existing = await session.execute(
@@ -32,7 +34,13 @@ async def create_tenant(slug: str, name: str, email: str, password: str) -> None
             print(f"[LOI] Organization slug '{slug}' da ton tai")
             return
 
-        org = Organization(name=name, slug=slug)
+        settings: dict = {"eastern_layer_enabled": False}
+        if google_domain:
+            # Bật đăng nhập Google Workspace cho staff theo domain (ADR-004)
+            settings["google_workspace_domain"] = google_domain.lower()
+            settings["google_auto_provision"] = True
+
+        org = Organization(name=name, slug=slug, settings=settings)
         session.add(org)
         await session.flush()  # lấy org.id trước khi tạo user
 
@@ -63,6 +71,13 @@ if __name__ == "__main__":
     parser.add_argument("--name", required=True, help="Tên tổ chức")
     parser.add_argument("--email", required=True, help="Email user owner")
     parser.add_argument("--password", required=True, help="Mật khẩu user owner")
+    parser.add_argument(
+        "--google-domain",
+        default=None,
+        help="Google Workspace domain cho staff login (VD: hpu.edu.vn)",
+    )
     args = parser.parse_args()
 
-    asyncio.run(create_tenant(args.slug, args.name, args.email, args.password))
+    asyncio.run(
+        create_tenant(args.slug, args.name, args.email, args.password, args.google_domain)
+    )
