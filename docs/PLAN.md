@@ -141,3 +141,29 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   → HIRED/REJECTED) — nghĩa là muốn loại ứng viên sớm phải đi qua đủ các bước.
   Nếu nghiệp vụ thực tế cần "REJECTED từ bất kỳ bước nào", cần Trung quyết và
   sửa rule trong CLAUDE.md + ADR trước khi đổi code.
+
+### 2026-07-04 (Claude Code — DISC port + Google OAuth + rà soát tổng thể)
+- Done:
+  - **DISC port từ SmartHire** (tìm thấy nguồn tại D:/PROJECT/hpu-smart-hire — Python):
+    copy nguồn vào `legacy/smarthire-html/`, port NGUYÊN XI 40 câu DISC + 30 câu
+    personality (9 nhóm) + toàn bộ thuật toán chấm điểm/phân tích/gợi ý phỏng vấn.
+    `tests/test_disc_parity.py` load trực tiếp file legacy và so khớp 29 bộ trả lời
+    (25 random seeded + 4 edge case) — khớp 100%. Cải tiến duy nhất (không đụng thuật
+    toán): câu hỏi public KHÔNG kèm mapping D/I/S/C (hệ cũ nhúng đáp án vào HTML).
+  - **Flow test**: TestSession (migration 0003 + RLS), POST /test-links (pipeline
+    SCREENING→TEST_SENT, gửi lại = vô hiệu link cũ), public GET/submit theo token
+    (→TEST_DONE), kết quả HR đầy đủ / ứng viên chỉ Behavioural Layer.
+  - **Google OAuth (ADR-004)**: staff login theo Workspace domain per-tenant
+    (HPU = hpu.edu.vn, auto-provision member), ứng viên Google bất kỳ với JWT
+    type=candidate riêng + candidate portal (/me, /me/test). Nút Google trên login
+    page (GIS, tự ẩn khi chưa cấu hình NEXT_PUBLIC_GOOGLE_CLIENT_ID).
+  - **Frontend**: trang làm bài /test/{token} (2 phần, progress bar, chặn most=least,
+    màn hình kết quả DISC).
+  - **Rà soát**: backend 124 test pass + ruff sạch; frontend typecheck + build pass;
+    e2e trên browser thật: tạo candidate → SCREENING → gửi link → làm đủ 70 câu trên UI
+    → nộp → kết quả D/60-0-20-20 → pipeline TEST_DONE → HR xem kết quả đầy đủ.
+- Next: điền GOOGLE_CLIENT_ID thật (tạo trên Google Cloud Console, authorized origins
+  = app.talentchart.hpu.edu.vn + *.talentchart... + localhost:3000) rồi test Google
+  login thật; Trung review RLS 3 migration; Sprint 5 EPA vẫn chờ code Fortune HR.
+- Blocker: `legacy/fortune-hr/` vẫn RỖNG (Can Chi/EPA — Sprint 5); Google login chưa
+  test với token thật (chưa có GOOGLE_CLIENT_ID — mock trong test).

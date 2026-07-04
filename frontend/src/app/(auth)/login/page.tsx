@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { GoogleLoginButton } from '@/components/features/google-login-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,8 +38,18 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) });
+
+  const orgSlugValue = watch('org_slug') ?? '';
+
+  const handleGoogleSuccess = (data: unknown) => {
+    const login = data as LoginData;
+    setTokens(login.access_token, login.refresh_token);
+    setUser(login.user);
+    router.replace('/dashboard');
+  };
 
   const onSubmit = async (form: LoginForm) => {
     setServerError(null);
@@ -130,6 +141,12 @@ export default function LoginPage() {
             {isSubmitting ? 'Đang đăng nhập…' : 'Đăng nhập'}
           </Button>
         </form>
+
+        <GoogleLoginButton
+          orgSlug={orgSlugValue}
+          onSuccess={handleGoogleSuccess}
+          onError={setServerError}
+        />
       </div>
     </div>
   );

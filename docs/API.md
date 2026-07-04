@@ -14,6 +14,30 @@
 
 JWT access claims: `sub` (user_id), `organization_id`, `org_role`, `system_role`, `type=access`.
 
+### Google OAuth (ADR-004)
+
+| Method | Endpoint | Auth | Ghi chú |
+|---|---|---|---|
+| POST | `/auth/google` | — | STAFF: body `{id_token}` (từ Google Identity Services). Email phải thuộc `org.settings.google_workspace_domain` (HPU = hpu.edu.vn) → 403 nếu sai domain. User mới auto-provision role `member`. Rate-limit 5/phút |
+| POST | `/public/auth/google` | — | ỨNG VIÊN: Google bất kỳ (email verified), find-or-create candidate theo email trong tenant (subdomain). Trả `candidate_token` (JWT `type=candidate`, 60 phút) — không vào được API quản trị |
+
+## Candidate Portal (token type=candidate)
+
+| Method | Endpoint | Ghi chú |
+|---|---|---|
+| GET | `/public/candidates/me` | Trạng thái hồ sơ của chính ứng viên |
+| GET | `/public/candidates/me/test` | Link bài test đang mở (404 nếu chưa được gửi) |
+
+## Test DISC (port từ SmartHire — có test parity)
+
+| Method | Endpoint | Auth | Ghi chú |
+|---|---|---|---|
+| POST | `/test-links` | ≥ hr_manager | Body `{candidate_id, expires_hours=72}`. Candidate phải ở SCREENING (tự chuyển TEST_SENT) hoặc TEST_SENT (gửi lại — link cũ bị vô hiệu) |
+| GET | `/test-links` | ≥ hr_manager | Danh sách link, filter `candidate_id` |
+| GET | `/test-links/candidates/{id}/result` | ≥ hr_manager | Kết quả ĐẦY ĐỦ: DISC + 9 nhóm tính cách + phân tích + gợi ý câu hỏi phỏng vấn. ⚠️ Chỉ là tín hiệu tham khảo, không phải yếu tố quyết định duy nhất |
+| GET | `/public/test/{token}` | — | Câu hỏi (40 DISC + 30 personality) — KHÔNG kèm đáp án mapping |
+| POST | `/public/test/{token}/submit` | — | Body `{disc_answers, personality_answers}`. Chấm điểm server-side, candidate TEST_SENT→TEST_DONE. Ứng viên chỉ nhận Behavioural Layer. Rate-limit 10/phút |
+
 ## Users (role ≥ hr_manager)
 
 | Method | Endpoint | Ghi chú |
