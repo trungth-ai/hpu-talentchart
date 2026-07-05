@@ -40,21 +40,21 @@ TalentChart — nền tảng SaaS B2B tuyển dụng & đánh giá nhân sự đ
 ```bash
 # Dev
 docker compose -f docker-compose.dev.yml up -d
-docker compose exec backend uv run uvicorn app.main:app --reload
+docker compose exec backend uvicorn app.main:app --reload
 cd frontend && pnpm dev
 
 # Migration
-docker compose exec backend uv run alembic upgrade head
-docker compose exec backend uv run alembic revision --autogenerate -m "..."
+docker compose exec backend alembic upgrade head
+docker compose exec backend alembic revision --autogenerate -m "..."
 
 # Tests
-docker compose exec backend uv run pytest -v
-docker compose exec backend uv run pytest --cov=app
+docker compose exec backend pytest -v
+docker compose exec backend pytest --cov=app
 cd frontend && pnpm test
 
 # Lint + typecheck
-docker compose exec backend uv run ruff check . --fix
-docker compose exec backend uv run mypy app/
+docker compose exec backend ruff check . --fix
+docker compose exec backend mypy app/
 cd frontend && pnpm lint && pnpm typecheck
 
 # Production

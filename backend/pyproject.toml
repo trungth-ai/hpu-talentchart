@@ -27,8 +27,9 @@ dependencies = [
     "openpyxl>=3.1.0",
 ]
 
-[tool.uv]
-dev-dependencies = [
+# dependency-groups thay cho tool.uv.dev-dependencies (đã deprecated)
+[dependency-groups]
+dev = [
     "pytest>=8.3.0",
     "pytest-asyncio>=0.26.0",
     "pytest-cov>=6.0.0",
