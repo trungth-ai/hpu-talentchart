@@ -47,6 +47,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* inline vào bundle lúc build (xem frontend/Dockerfile)
+        NEXT_PUBLIC_API_URL: https://app.talentchart.hpu.edu.vn
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
+        NEXT_PUBLIC_BASE_DOMAIN: talentchart.hpu.edu.vn
     container_name: talentchart-frontend
     restart: unless-stopped
 

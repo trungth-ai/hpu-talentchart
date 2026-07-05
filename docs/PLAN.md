@@ -214,3 +214,31 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 - Next: Trung review nội dung 12 archetype + xử lý tay 5+38 nhân sự chưa match;
   Sprint 7 frontend dashboard (màn archetype/EPA); điền ANTHROPIC_API_KEY để bật
   narrative polish.
+
+### 2026-07-05 tối (Claude Code — Sprint 7 frontend + Sprint 8 cutover readiness)
+- Done Sprint 7 (frontend hoàn chỉnh):
+  - Admin layout: sidebar điều hướng 4 khu vực + auth guard + thông tin user/logout.
+  - Dashboard: 8 ô pipeline (click → lọc danh sách), đợt tuyển đang mở, hồ sơ mới
+    nhất, widget EPA hôm nay (tự ẩn khi tenant chưa bật Eastern Layer).
+  - Candidates: list (search/filter stage/type/pagination) + trang chi tiết đầy đủ:
+    thông tin liên hệ, nút chuyển pipeline CHỈ hiện bước tuần tự hợp lệ, gửi/gửi lại
+    link test DISC, kết quả DISC (biểu đồ 4 thang + khuyến nghị kèm disclaimer +
+    gợi ý câu hỏi phỏng vấn), khối 12 Personality Archetype (narrative + điểm mạnh/
+    cần lưu ý).
+  - Campaigns: list + form tạo (lương Integer VNĐ, hiển thị N.NNN.NNN đ) + nút
+    mở/đóng đợt tuyển. Job Posts: list + form tạo + đăng/gỡ Career Page.
+  - Verify e2e trên browser: login → dashboard đủ số liệu thật (108 hồ sơ) →
+    chi tiết ứng viên demo hiện DISC I/60% + archetype "Người Kết Nối" →
+    click chuyển pipeline trên UI lưu thật vào DB (INTERVIEW). Build + typecheck pass.
+- Done Sprint 8 (cutover readiness):
+  - Sửa frontend/Dockerfile: template gốc dùng pnpm-lock (không tồn tại) →
+    npm ci + NEXT_PUBLIC_* build args; compose production truyền args tương ứng.
+  - scripts/backup-postgres.sh (docker-compose backup service tham chiếu — trước
+    đây thiếu file), .env.production.example (đủ biến, chú thích rõ).
+  - **docs/DEPLOY.md — runbook cutover 7 bước**: pre-flight checklist (HUONG-DAN §9),
+    backup trước migration, verify RLS trên PG thật, khởi tạo tenant HPU + import
+    107 nhân sự + đối chiếu danh bạ, smoke test (kèm case Đinh Sửu), rollback.
+- LƯU Ý: cutover THẬT (bước 5-6 DEPLOY.md) phải do Trung chạy trên server HPU —
+  migration production thuộc nhóm việc không giao AI tự làm (HUONG-DAN §8).
+- Trạng thái Phase 1: Sprint 1-8 code xong toàn bộ. Chờ: review của Trung
+  (RLS + archetype content), GOOGLE_CLIENT_ID/ANTHROPIC_API_KEY thật, và cutover.
