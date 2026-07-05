@@ -167,3 +167,29 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   login thật; Trung review RLS 3 migration; Sprint 5 EPA vẫn chờ code Fortune HR.
 - Blocker: `legacy/fortune-hr/` vẫn RỖNG (Can Chi/EPA — Sprint 5); Google login chưa
   test với token thật (chưa có GOOGLE_CLIENT_ID — mock trong test).
+
+### 2026-07-05 (Claude Code — Sprint 5 EPA Engine + import nhân sự)
+- Done:
+  - **EPA port từ Fortune HR v6.2** (Trung đã copy nguồn vào D:/PROJECT/hpu-smart-hire/
+    fortune-hr-v6.2, tôi copy tiếp vào legacy/fortune-hr/): port NGUYÊN XI LunarData
+    1900-2099, getLunarDate, Can Chi/Nạp Âm/Mệnh theo NĂM ÂM LỊCH, Tam hợp/Xung,
+    compatibility (50 +25 −30), team-suggest. Thành `app/services/epa/{lunar,canchi,
+    tamhop,compatibility,team_suggest}.py`.
+  - **Parity 300 case**: fixture sinh bằng cách CHẠY code JS gốc qua Node (TZ=UTC —
+    phát hiện code gốc phụ thuộc timezone do tzdata lịch sử VN; production Docker
+    chạy UTC nên chuẩn hành vi = số học ngày thuần). Case bắt buộc 1/1/1938 → Đinh Sửu ✓.
+    Quirk giữ nguyên khi port: cùng địa chi → điểm 45 (vừa +25 tam hợp vừa −30 xung).
+  - **EPA API**: /epa/today, /epa/candidates/{id}/zodiac, /epa/compatibility,
+    /epa/team-suggest — gate 2 lớp: org.settings.eastern_layer_enabled (mặc định TẮT)
+    + epa_consent/birth_date từng người; mọi response kèm disclaimer.
+  - **Import nhân sự từ "Luong T8 gửi Trung.xlsx"**: scripts/import_employees.py —
+    107 nhân sự (file có 2 phân đoạn TT đánh lại + 2 hàng rác "Copy" đã lọc),
+    candidate_type=employee, pipeline HIRED, employee_code NV0001-0107, KHÔNG import
+    lương, ngày sinh chỉ khi --with-epa-consent. Migration 0004 thêm employee_code +
+    department. Email placeholder @import.hpu.edu.vn chờ cập nhật email thật.
+  - **E2E trên dữ liệu thật**: Trần Hữu Nghị (1/1/1938) → Đinh Sửu/Mệnh Thủy qua API;
+    team-suggest HCTH 21 người. Backend 447 test pass, ruff sạch, typecheck pass.
+- Next: Trung cập nhật email thật cho 107 nhân sự (match Google login); Sprint 6
+  (12 Archetype fusion — CẦN nội dung viết tay của Trung, AI chỉ polish); Sprint 7
+  frontend dashboard + màn EPA.
+- Blocker Sprint 6: nội dung gốc 12 Personality Archetype (core IP — Trung viết tay).

@@ -18,6 +18,7 @@ from app.routers import (
     auth,
     campaigns,
     candidates,
+    epa,
     job_posts,
     public_candidates,
     public_careers,
@@ -57,6 +58,7 @@ app.include_router(campaigns.router, prefix="/api/v1")
 app.include_router(candidates.router, prefix="/api/v1")
 app.include_router(job_posts.router, prefix="/api/v1")
 app.include_router(test_links.router, prefix="/api/v1")
+app.include_router(epa.router, prefix="/api/v1")
 app.include_router(public_careers.router, prefix="/api/v1")
 app.include_router(public_tests.router, prefix="/api/v1")
 app.include_router(public_candidates.router, prefix="/api/v1")

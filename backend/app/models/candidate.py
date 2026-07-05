@@ -43,6 +43,10 @@ class Candidate(TenantScopedBase):
         String(20), default="applicant", nullable=False
     )
 
+    # Dành cho candidate_type=employee (hợp nhất nhân sự từ Fortune HR/SmartHire)
+    employee_code: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    department: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+
     # Pipeline tuyển dụng — chuyển trạng thái qua service, KHÔNG set trực tiếp từ API
     pipeline_stage: Mapped[str] = mapped_column(String(20), default="NEW", nullable=False)
 

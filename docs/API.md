@@ -90,6 +90,25 @@ Dữ liệu EPA (`birth_date`, `birth_time`, `birth_place`) chỉ nhận khi `ep
 | GET | `/public/jobs/{slug}` | Chi tiết tin (không lộ campaign_id/status nội bộ) |
 | POST | `/public/jobs/{slug}/apply` | Tạo candidate `NEW`, source `career_page`. Rate-limit 10/phút/IP. Nộp trùng → 422 |
 
+## EPA — Eastern Personality Assessment (port từ Fortune HR, có test parity 300 case)
+
+⚠️ Toàn bộ nhóm này yêu cầu: (1) `org.settings.eastern_layer_enabled = true` (mặc định TẮT — Critical Business Rules), (2) candidate đã `epa_consent` + có `birth_date` (NĐ 13/2023). Mọi response kèm `disclaimer` — kết quả chỉ là tín hiệu tham khảo.
+
+| Method | Endpoint | Auth | Ghi chú |
+|---|---|---|---|
+| GET | `/epa/today` | ≥ hr_manager | Can Chi hôm nay (dashboard) |
+| GET | `/epa/candidates/{id}/zodiac` | ≥ hr_manager | Can Chi/Nạp Âm/Mệnh (tính theo NĂM ÂM LỊCH — 1/1/1938 → Đinh Sửu) |
+| GET | `/epa/compatibility?candidate1_id&candidate2_id` | ≥ hr_manager | Điểm tương hợp: 50 +25 tam hợp −30 xung, kẹp 0-100 |
+| POST | `/epa/team-suggest` | ≥ hr_manager | Body `{size, department?, candidate_type=employee}` — 3 phương án xếp hạng theo điểm tam hợp |
+
+## Import nhân sự (script — không phải API)
+
+```bash
+# Từ backend/ — import file Excel lương (candidate_type=employee, pipeline HIRED)
+python scripts/import_employees.py --file "Luong T8.xlsx" --org-slug hpu [--with-epa-consent] [--dry-run]
+```
+Ngày sinh CHỈ import khi `--with-epa-consent`. Không import cột lương. Email đặt placeholder `@import.hpu.edu.vn` — cập nhật email thật để match Google login.
+
 ## System
 
 | Method | Endpoint | Ghi chú |
