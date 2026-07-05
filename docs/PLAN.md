@@ -10,14 +10,14 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 
 ## Deliverables
 
-- [ ] `backend/app/models/base.py` — `TenantScopedBase` (organization_id NOT NULL, id UUID, created_at/updated_at, status) — DRI: Mid Dev
-- [ ] `backend/app/models/organization.py`, `backend/app/models/user.py` — DRI: Mid Dev
-- [ ] `backend/app/middleware/tenant.py` — resolve org theo thứ tự JWT → subdomain → header dev — DRI: Mid Dev
-- [ ] `backend/app/core/security.py` — JWT (access 15p/refresh 7 ngày) + bcrypt cost 12 — DRI: Mid Dev
-- [ ] `backend/app/routers/auth.py` — `POST /auth/login`, `POST /auth/refresh`, `GET /auth/me` — DRI: Mid Dev
-- [ ] PostgreSQL RLS policy cho `users` và mọi bảng tenant-scoped tương lai — DRI: Trung review
-- [ ] `backend/tests/test_tenant_isolation.py` — test 2 organization không thấy dữ liệu của nhau — DRI: Intern 2
-- [ ] Docker Compose local chạy được (`db`, `redis`, `backend`) — DRI: Intern 1
+- [x] `backend/app/models/base.py` — `TenantScopedBase` (organization_id NOT NULL, id UUID, created_at/updated_at, status) — DRI: Mid Dev
+- [x] `backend/app/models/organization.py`, `backend/app/models/user.py` — DRI: Mid Dev
+- [x] `backend/app/middleware/tenant.py` — resolve org theo thứ tự JWT → subdomain → header dev — DRI: Mid Dev
+- [x] `backend/app/core/security.py` — JWT (access 15p/refresh 7 ngày) + bcrypt cost 12 — DRI: Mid Dev
+- [x] `backend/app/routers/auth.py` — `POST /auth/login`, `POST /auth/refresh`, `GET /auth/me` — DRI: Mid Dev
+- [x] PostgreSQL RLS policy cho `users` — đã viết trong migration `0001` (ENABLE + FORCE + policy theo `app.current_org_id`) — **chờ Trung review trước khi chạy trên staging**
+- [x] `backend/tests/test_tenant_isolation.py` — 26 test pass (isolation + auth), coverage 90%
+- [ ] Docker Compose local chạy được (`db`, `redis`, `backend`) — `docker-compose.dev.yml` đã viết, **chưa verify** (máy scaffold không có Docker) — DRI: Intern 1
 
 ## User stories
 
@@ -54,23 +54,23 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 ## Tasks technical
 
 ### Backend
-- [ ] Setup `pyproject.toml` (uv), cấu hình `ruff`/`mypy`/`pytest` — Mid Dev — ngày 1-2
-- [ ] `config.py` — Settings fail-fast (JWT_SECRET không có default) — Mid Dev — ngày 2
-- [ ] `models/base.py` (TenantScopedBase) + `database.py` (async engine + event listener filter) — Mid Dev — ngày 3-4
-- [ ] `models/organization.py`, `models/user.py` + Alembic migration đầu tiên — Mid Dev — ngày 4-5
-- [ ] `middleware/tenant.py`, `middleware/auth.py` — Mid Dev — ngày 6-7
-- [ ] `core/security.py`, `routers/auth.py` — Mid Dev — ngày 7-8
-- [ ] RLS policy SQL cho `users` — Trung — ngày 8
-- [ ] `tests/test_tenant_isolation.py` — Intern 2 — ngày 9-10
+- [x] Setup `pyproject.toml` (uv), cấu hình `ruff`/`mypy`/`pytest` — Mid Dev — ngày 1-2
+- [x] `config.py` — Settings fail-fast (JWT_SECRET không có default) — Mid Dev — ngày 2
+- [x] `models/base.py` (TenantScopedBase) + `database.py` (async engine + event listener filter) — Mid Dev — ngày 3-4
+- [x] `models/organization.py`, `models/user.py` + Alembic migration đầu tiên — Mid Dev — ngày 4-5
+- [x] `middleware/tenant.py`, `middleware/auth.py` — Mid Dev — ngày 6-7
+- [x] `core/security.py`, `routers/auth.py` — Mid Dev — ngày 7-8
+- [x] RLS policy SQL cho `users` — Trung — ngày 8
+- [x] `tests/test_tenant_isolation.py` — Intern 2 — ngày 9-10
 
 ### Frontend
-- [ ] Scaffold Next.js 15 App Router, cấu hình Tailwind + shadcn/ui — Intern 1 — ngày 1-3
-- [ ] Trang `(auth)/login` — Intern 1 — ngày 4-6
-- [ ] `lib/api-client.ts` (gắn JWT vào header) — Intern 1 — ngày 7-8
+- [x] Scaffold Next.js 15 App Router, cấu hình Tailwind + shadcn/ui — Intern 1 — ngày 1-3
+- [x] Trang `(auth)/login` — Intern 1 — ngày 4-6
+- [x] `lib/api-client.ts` (gắn JWT vào header) — Intern 1 — ngày 7-8
 
 ### DevOps / Testing
 - [ ] `docker-compose.yml` chạy local (db, redis, backend) — Intern 1 — ngày 1-2
-- [ ] GitHub Actions CI cơ bản (test backend) — Trung — ngày 9-10
+- [x] GitHub Actions CI cơ bản (test backend) — Trung — ngày 9-10
 - [ ] `/security-review` chạy trên toàn bộ module auth/tenant trước khi merge — Trung — ngày 10
 
 ## Out of scope (không làm trong sprint này)
@@ -102,3 +102,143 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
 - Done: —
 - Today: Setup project skeleton (backend + frontend + docker)
 - Blocker: —
+
+### 2026-07-02 (Claude Code — backend foundation)
+- Done: toàn bộ backend Sprint 1 — config fail-fast, TenantScopedBase, Organization/User,
+  database.py (event listener auto-filter + flush guard + RLS GUC), middleware auth/tenant,
+  JWT + bcrypt 12, routers auth (login/refresh/me) + users (list/get), migration Alembic 0001
+  kèm RLS policy, 26 test pass (isolation + auth), coverage 90%, ruff sạch.
+  Sửa backend/Dockerfile (template cũ sai), thêm docker-compose.dev.yml + scripts/create_tenant.py.
+- Next: Trung review RLS policy (migration 0001); Intern 1 verify docker-compose.dev.yml
+  trên máy có Docker + chạy `alembic upgrade head`; scaffold frontend Next.js 15 (login page,
+  api-client); GitHub Actions CI.
+- Blocker: máy scaffold không có Docker/uv → chưa verify compose + migration trên PostgreSQL thật
+  (test chạy trên SQLite in-memory, RLS chỉ verify được trên PG).
+
+### 2026-07-03 (Claude Code — Sprint 2-4 backend + frontend Sprint 1)
+- Done:
+  - **Sprint 2-3 (ATS Core)**: module `campaigns` + `candidates` — pipeline 7 trạng thái
+    tuần tự (state machine trong `services/candidate_service.py`, vi phạm → 422),
+    candidate_type hợp nhất, EPA opt-in consent theo NĐ 13/2023 (rút consent = xóa data,
+    endpoint DELETE /candidates/{id}/epa-data), guard IDOR campaign cross-tenant,
+    stats endpoint. Migration 0002 + RLS cho 3 bảng.
+  - **Sprint 4 (Job Board)**: module `job_posts` (slug unique/org, tự slugify tiếng Việt,
+    publish/unpublish) + public career API theo subdomain (GET /public/jobs,
+    POST /public/jobs/{slug}/apply → tạo candidate NEW, rate-limit 10/min, chặn nộp trùng).
+  - **Sprint 1 frontend**: Next.js 15 scaffold, login page (RHF+zod), api-client
+    (JWT + auto refresh), zustand store, middleware.ts subdomain→/career/{slug},
+    career page SSR, dashboard tối giản. Đã verify end-to-end trên browser thật:
+    login → dashboard → /auth/me + /candidates/stats. Thêm CORSMiddleware backend.
+  - CI GitHub Actions (backend pytest+ruff+coverage≥70%, frontend typecheck+build).
+  - Backend: 65 test pass, ruff sạch. Frontend: typecheck + build pass.
+- Next: Trung review RLS + acceptance test; Sprint 5 EPA Engine.
+- **Blocker Sprint 5-6**: `legacy/fortune-hr/` và `legacy/smarthire-html/` ĐANG RỖNG —
+  theo CLAUDE.md phải port nguyên xi từ code nguồn, KHÔNG được tự sáng tác thuật toán
+  Can Chi/DISC. Cần Trung copy code nguồn Fortune HR (server.js chứa LunarData) và
+  SmartHire vào legacy/ trước khi chạy /epa-port. Nội dung 12 archetype cũng chờ
+  bản viết tay của Trung (core IP).
+- Lưu ý: pipeline hiện enforce đúng theo Critical Business Rules (chỉ tuần tự, DECISION
+  → HIRED/REJECTED) — nghĩa là muốn loại ứng viên sớm phải đi qua đủ các bước.
+  Nếu nghiệp vụ thực tế cần "REJECTED từ bất kỳ bước nào", cần Trung quyết và
+  sửa rule trong CLAUDE.md + ADR trước khi đổi code.
+
+### 2026-07-04 (Claude Code — DISC port + Google OAuth + rà soát tổng thể)
+- Done:
+  - **DISC port từ SmartHire** (tìm thấy nguồn tại D:/PROJECT/hpu-smart-hire — Python):
+    copy nguồn vào `legacy/smarthire-html/`, port NGUYÊN XI 40 câu DISC + 30 câu
+    personality (9 nhóm) + toàn bộ thuật toán chấm điểm/phân tích/gợi ý phỏng vấn.
+    `tests/test_disc_parity.py` load trực tiếp file legacy và so khớp 29 bộ trả lời
+    (25 random seeded + 4 edge case) — khớp 100%. Cải tiến duy nhất (không đụng thuật
+    toán): câu hỏi public KHÔNG kèm mapping D/I/S/C (hệ cũ nhúng đáp án vào HTML).
+  - **Flow test**: TestSession (migration 0003 + RLS), POST /test-links (pipeline
+    SCREENING→TEST_SENT, gửi lại = vô hiệu link cũ), public GET/submit theo token
+    (→TEST_DONE), kết quả HR đầy đủ / ứng viên chỉ Behavioural Layer.
+  - **Google OAuth (ADR-004)**: staff login theo Workspace domain per-tenant
+    (HPU = hpu.edu.vn, auto-provision member), ứng viên Google bất kỳ với JWT
+    type=candidate riêng + candidate portal (/me, /me/test). Nút Google trên login
+    page (GIS, tự ẩn khi chưa cấu hình NEXT_PUBLIC_GOOGLE_CLIENT_ID).
+  - **Frontend**: trang làm bài /test/{token} (2 phần, progress bar, chặn most=least,
+    màn hình kết quả DISC).
+  - **Rà soát**: backend 124 test pass + ruff sạch; frontend typecheck + build pass;
+    e2e trên browser thật: tạo candidate → SCREENING → gửi link → làm đủ 70 câu trên UI
+    → nộp → kết quả D/60-0-20-20 → pipeline TEST_DONE → HR xem kết quả đầy đủ.
+- Next: điền GOOGLE_CLIENT_ID thật (tạo trên Google Cloud Console, authorized origins
+  = app.talentchart.hpu.edu.vn + *.talentchart... + localhost:3000) rồi test Google
+  login thật; Trung review RLS 3 migration; Sprint 5 EPA vẫn chờ code Fortune HR.
+- Blocker: `legacy/fortune-hr/` vẫn RỖNG (Can Chi/EPA — Sprint 5); Google login chưa
+  test với token thật (chưa có GOOGLE_CLIENT_ID — mock trong test).
+
+### 2026-07-05 (Claude Code — Sprint 5 EPA Engine + import nhân sự)
+- Done:
+  - **EPA port từ Fortune HR v6.2** (Trung đã copy nguồn vào D:/PROJECT/hpu-smart-hire/
+    fortune-hr-v6.2, tôi copy tiếp vào legacy/fortune-hr/): port NGUYÊN XI LunarData
+    1900-2099, getLunarDate, Can Chi/Nạp Âm/Mệnh theo NĂM ÂM LỊCH, Tam hợp/Xung,
+    compatibility (50 +25 −30), team-suggest. Thành `app/services/epa/{lunar,canchi,
+    tamhop,compatibility,team_suggest}.py`.
+  - **Parity 300 case**: fixture sinh bằng cách CHẠY code JS gốc qua Node (TZ=UTC —
+    phát hiện code gốc phụ thuộc timezone do tzdata lịch sử VN; production Docker
+    chạy UTC nên chuẩn hành vi = số học ngày thuần). Case bắt buộc 1/1/1938 → Đinh Sửu ✓.
+    Quirk giữ nguyên khi port: cùng địa chi → điểm 45 (vừa +25 tam hợp vừa −30 xung).
+  - **EPA API**: /epa/today, /epa/candidates/{id}/zodiac, /epa/compatibility,
+    /epa/team-suggest — gate 2 lớp: org.settings.eastern_layer_enabled (mặc định TẮT)
+    + epa_consent/birth_date từng người; mọi response kèm disclaimer.
+  - **Import nhân sự từ "Luong T8 gửi Trung.xlsx"**: scripts/import_employees.py —
+    107 nhân sự (file có 2 phân đoạn TT đánh lại + 2 hàng rác "Copy" đã lọc),
+    candidate_type=employee, pipeline HIRED, employee_code NV0001-0107, KHÔNG import
+    lương, ngày sinh chỉ khi --with-epa-consent. Migration 0004 thêm employee_code +
+    department. Email placeholder @import.hpu.edu.vn chờ cập nhật email thật.
+  - **E2E trên dữ liệu thật**: Trần Hữu Nghị (1/1/1938) → Đinh Sửu/Mệnh Thủy qua API;
+    team-suggest HCTH 21 người. Backend 447 test pass, ruff sạch, typecheck pass.
+- Next: Trung cập nhật email thật cho 107 nhân sự (match Google login); Sprint 6
+  (12 Archetype fusion — CẦN nội dung viết tay của Trung, AI chỉ polish); Sprint 7
+  frontend dashboard + màn EPA.
+- Blocker Sprint 6: nội dung gốc 12 Personality Archetype (core IP — Trung viết tay).
+
+### 2026-07-05 chiều (Claude Code — Sprint 6: 12 Archetype + đối chiếu danh bạ)
+- Done:
+  - **12 Personality Archetype (ADR-005)**: Trung cung cấp docs/DISC-Tieng-Viet.pdf
+    (báo cáo DISCstyles 40 trang) làm nguồn nội dung. Biên soạn chi tiết 12 archetype
+    tiếng Việt trong `app/data/archetypes.py` (mỗi archetype: mô tả, 4-5 điểm mạnh,
+    watchouts, nên/không nên khi giao tiếp, động lực, hành vi khi stress, gợi ý cải
+    thiện, độ phù hợp môi trường đại học) — **CẦN TRUNG REVIEW nội dung (core IP)**.
+  - **Fusion engine** `app/services/epa/archetype.py`: deterministic scoring — DISC
+    base +2, profile đảo +1, Mệnh +1, Tam hợp +1; hòa → DISC thắng. Không consent →
+    DISC thuần. Narrative template + Claude API polish (ANTHROPIC_API_KEY, cache).
+  - **Endpoint** GET /epa/candidates/{id}/archetype — Behavioural Layer (không cần
+    Eastern toggle); chi tiết fusion chỉ hiện khi Eastern Layer bật.
+  - **Đối chiếu contacts.csv** (2540 liên hệ, 281 email @hpu.edu.vn):
+    scripts/update_contacts.py match tên không dấu → cập nhật **63/107 nhân sự**
+    email thật + SĐT + địa chỉ (migration 0005 thêm address). 5 trùng tên +
+    38 không có trong danh bạ → cần xử lý tay (danh sách in khi chạy script).
+  - Backend 460 test pass, ruff sạch.
+- Next: Trung review nội dung 12 archetype + xử lý tay 5+38 nhân sự chưa match;
+  Sprint 7 frontend dashboard (màn archetype/EPA); điền ANTHROPIC_API_KEY để bật
+  narrative polish.
+
+### 2026-07-05 tối (Claude Code — Sprint 7 frontend + Sprint 8 cutover readiness)
+- Done Sprint 7 (frontend hoàn chỉnh):
+  - Admin layout: sidebar điều hướng 4 khu vực + auth guard + thông tin user/logout.
+  - Dashboard: 8 ô pipeline (click → lọc danh sách), đợt tuyển đang mở, hồ sơ mới
+    nhất, widget EPA hôm nay (tự ẩn khi tenant chưa bật Eastern Layer).
+  - Candidates: list (search/filter stage/type/pagination) + trang chi tiết đầy đủ:
+    thông tin liên hệ, nút chuyển pipeline CHỈ hiện bước tuần tự hợp lệ, gửi/gửi lại
+    link test DISC, kết quả DISC (biểu đồ 4 thang + khuyến nghị kèm disclaimer +
+    gợi ý câu hỏi phỏng vấn), khối 12 Personality Archetype (narrative + điểm mạnh/
+    cần lưu ý).
+  - Campaigns: list + form tạo (lương Integer VNĐ, hiển thị N.NNN.NNN đ) + nút
+    mở/đóng đợt tuyển. Job Posts: list + form tạo + đăng/gỡ Career Page.
+  - Verify e2e trên browser: login → dashboard đủ số liệu thật (108 hồ sơ) →
+    chi tiết ứng viên demo hiện DISC I/60% + archetype "Người Kết Nối" →
+    click chuyển pipeline trên UI lưu thật vào DB (INTERVIEW). Build + typecheck pass.
+- Done Sprint 8 (cutover readiness):
+  - Sửa frontend/Dockerfile: template gốc dùng pnpm-lock (không tồn tại) →
+    npm ci + NEXT_PUBLIC_* build args; compose production truyền args tương ứng.
+  - scripts/backup-postgres.sh (docker-compose backup service tham chiếu — trước
+    đây thiếu file), .env.production.example (đủ biến, chú thích rõ).
+  - **docs/DEPLOY.md — runbook cutover 7 bước**: pre-flight checklist (HUONG-DAN §9),
+    backup trước migration, verify RLS trên PG thật, khởi tạo tenant HPU + import
+    107 nhân sự + đối chiếu danh bạ, smoke test (kèm case Đinh Sửu), rollback.
+- LƯU Ý: cutover THẬT (bước 5-6 DEPLOY.md) phải do Trung chạy trên server HPU —
+  migration production thuộc nhóm việc không giao AI tự làm (HUONG-DAN §8).
+- Trạng thái Phase 1: Sprint 1-8 code xong toàn bộ. Chờ: review của Trung
+  (RLS + archetype content), GOOGLE_CLIENT_ID/ANTHROPIC_API_KEY thật, và cutover.

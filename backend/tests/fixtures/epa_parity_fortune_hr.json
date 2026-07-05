@@ -1,0 +1,5702 @@
+[
+ {
+  "input": {
+   "day": 1,
+   "month": 1,
+   "year": 1938
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Đinh Sửu",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1937,
+   "lunarMonth": 11,
+   "lunarDay": 30
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 1,
+   "year": 1938
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1938,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 2,
+   "year": 1938
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1938,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 2,
+   "year": 1985
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Giáp Tý",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1984,
+   "lunarMonth": 12,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 2,
+   "year": 1985
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Ất Sửu",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1985,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 2,
+   "year": 1985
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Ất Sửu",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1985,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 4,
+   "month": 2,
+   "year": 2000
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Kỷ Mão",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1999,
+   "lunarMonth": 12,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 2,
+   "year": 2000
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2000,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 2,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Ất Tỵ",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2025,
+   "lunarMonth": 12,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 2,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2026,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 1,
+   "year": 1960
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1960,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 1,
+   "year": 1960
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1960,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 1,
+   "year": 1900
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1900,
+   "lunarMonth": 1,
+   "lunarDay": -29
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 1,
+   "year": 1900
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1900,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 2,
+   "year": 1900
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1900,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 12,
+   "year": 2099
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2099,
+   "lunarMonth": 11,
+   "lunarDay": 20
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 2,
+   "year": 2000
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2000,
+   "lunarMonth": 1,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 2,
+   "year": 1996
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1996,
+   "lunarMonth": 1,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 1,
+   "year": 2012
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Nhâm Thìn",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2012,
+   "lunarMonth": 1,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 1,
+   "year": 2012
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Tân Mão",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2011,
+   "lunarMonth": 12,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 6,
+   "year": 2020
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2020,
+   "lunarMonth": 5,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 3,
+   "year": 2033
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Quý Sửu",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2033,
+   "lunarMonth": 2,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 8,
+   "year": 1954
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Giáp Ngọ",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1954,
+   "lunarMonth": 7,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 3,
+   "year": 1994
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Giáp Tuất",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1994,
+   "lunarMonth": 2,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 4,
+   "year": 2049
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2049,
+   "lunarMonth": 3,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 9,
+   "year": 2000
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2000,
+   "lunarMonth": 8,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 6,
+   "year": 1900
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1900,
+   "lunarMonth": 5,
+   "lunarDay": 30
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 8,
+   "year": 1910
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Canh Tuất",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 1910,
+   "lunarMonth": 6,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 1,
+   "year": 1953
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Nhâm Thìn",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1952,
+   "lunarMonth": 11,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 7,
+   "year": 2056
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2056,
+   "lunarMonth": 5,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 11,
+   "year": 1934
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Giáp Tuất",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1934,
+   "lunarMonth": 10,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 4,
+   "year": 2061
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2061,
+   "lunarMonth": 3,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 1,
+   "year": 1907
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1906,
+   "lunarMonth": 12,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 3,
+   "year": 2019
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2019,
+   "lunarMonth": 2,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 4,
+   "year": 1941
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1941,
+   "lunarMonth": 3,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 7,
+   "year": 2071
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Tân Mão",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2071,
+   "lunarMonth": 6,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 4,
+   "year": 1956
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Bính Thân",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1956,
+   "lunarMonth": 2,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 9,
+   "year": 2031
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Tân Hợi",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 2031,
+   "lunarMonth": 8,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 2,
+   "year": 2085
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Ất Tỵ",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2085,
+   "lunarMonth": 2,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 12,
+   "year": 1986
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1986,
+   "lunarMonth": 11,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 1,
+   "year": 1922
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Tân Dậu",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1921,
+   "lunarMonth": 12,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 8,
+   "year": 1996
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1996,
+   "lunarMonth": 7,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 9,
+   "year": 1915
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1915,
+   "lunarMonth": 8,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 9,
+   "year": 1955
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1955,
+   "lunarMonth": 7,
+   "lunarDay": 20
+  }
+ },
+ {
+  "input": {
+   "day": 4,
+   "month": 10,
+   "year": 2004
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Giáp Thân",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2004,
+   "lunarMonth": 8,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 7,
+   "year": 2099
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2099,
+   "lunarMonth": 6,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 7,
+   "year": 1986
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1986,
+   "lunarMonth": 6,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 4,
+   "year": 2019
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2019,
+   "lunarMonth": 3,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 6,
+   "year": 1959
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1959,
+   "lunarMonth": 5,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 12,
+   "year": 2039
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2039,
+   "lunarMonth": 11,
+   "lunarDay": 13
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 7,
+   "year": 1986
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1986,
+   "lunarMonth": 6,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 9,
+   "year": 1920
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Canh Thân",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1920,
+   "lunarMonth": 7,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 11,
+   "year": 2057
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Đinh Sửu",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2057,
+   "lunarMonth": 10,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 10,
+   "year": 1995
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Ất Hợi",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1995,
+   "lunarMonth": 8,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 3,
+   "year": 2094
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Giáp Dần",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2094,
+   "lunarMonth": 2,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 3,
+   "year": 2039
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2039,
+   "lunarMonth": 2,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 8,
+   "year": 1932
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Nhâm Thân",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1932,
+   "lunarMonth": 7,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 8,
+   "year": 1941
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1941,
+   "lunarMonth": 7,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 10,
+   "year": 1965
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Ất Tỵ",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1965,
+   "lunarMonth": 9,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 11,
+   "year": 1926
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1926,
+   "lunarMonth": 10,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 9,
+   "year": 1901
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Tân Sửu",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1901,
+   "lunarMonth": 8,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 11,
+   "year": 2075
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2075,
+   "lunarMonth": 9,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 6,
+   "year": 2020
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2020,
+   "lunarMonth": 4,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 9,
+   "year": 1909
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1909,
+   "lunarMonth": 8,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 4,
+   "year": 1958
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1958,
+   "lunarMonth": 2,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 3,
+   "year": 1905
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Ất Tỵ",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1905,
+   "lunarMonth": 2,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 12,
+   "year": 2014
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Giáp Ngọ",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2014,
+   "lunarMonth": 10,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 7,
+   "year": 1934
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Giáp Tuất",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1934,
+   "lunarMonth": 5,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 6,
+   "year": 1978
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Mậu Ngọ",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1978,
+   "lunarMonth": 5,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 5,
+   "year": 2037
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2037,
+   "lunarMonth": 3,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 4,
+   "year": 2079
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2079,
+   "lunarMonth": 3,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 7,
+   "year": 2022
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Nhâm Dần",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 2022,
+   "lunarMonth": 6,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 4,
+   "year": 1947
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Đinh Hợi",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1947,
+   "lunarMonth": 2,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 9,
+   "year": 1964
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Giáp Thìn",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1964,
+   "lunarMonth": 8,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 9,
+   "year": 1933
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1933,
+   "lunarMonth": 7,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 4,
+   "year": 1924
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Giáp Tý",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1924,
+   "lunarMonth": 2,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 3,
+   "year": 2015
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2015,
+   "lunarMonth": 1,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 9,
+   "year": 1975
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1975,
+   "lunarMonth": 8,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 6,
+   "year": 2062
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Nhâm Ngọ",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2062,
+   "lunarMonth": 4,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 7,
+   "year": 2073
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Quý Tỵ",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2073,
+   "lunarMonth": 6,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 6,
+   "year": 2078
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2078,
+   "lunarMonth": 4,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 10,
+   "year": 2023
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 2023,
+   "lunarMonth": 8,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 7,
+   "year": 1977
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1977,
+   "lunarMonth": 6,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 11,
+   "year": 1998
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1998,
+   "lunarMonth": 10,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 1,
+   "year": 2048
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Đinh Mão",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2047,
+   "lunarMonth": 11,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 7,
+   "year": 1933
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1933,
+   "lunarMonth": 5,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 12,
+   "year": 2052
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Nhâm Thân",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2052,
+   "lunarMonth": 11,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 11,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2026,
+   "lunarMonth": 10,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 5,
+   "year": 2019
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2019,
+   "lunarMonth": 4,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 9,
+   "year": 2075
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2075,
+   "lunarMonth": 8,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 8,
+   "year": 2087
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Đinh Mùi",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2087,
+   "lunarMonth": 7,
+   "lunarDay": 13
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 2,
+   "year": 2068
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Mậu Tý",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2068,
+   "lunarMonth": 1,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 2,
+   "year": 1903
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 1903,
+   "lunarMonth": 1,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 12,
+   "year": 2045
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Ất Sửu",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2045,
+   "lunarMonth": 11,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 9,
+   "year": 1993
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1993,
+   "lunarMonth": 7,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 2,
+   "year": 1954
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Quý Tỵ",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1953,
+   "lunarMonth": 12,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 6,
+   "year": 1958
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1958,
+   "lunarMonth": 5,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 25,
+   "month": 10,
+   "year": 2043
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Quý Hợi",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2043,
+   "lunarMonth": 9,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 8,
+   "year": 1939
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Kỷ Mão",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1939,
+   "lunarMonth": 7,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 6,
+   "year": 1988
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Mậu Thìn",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1988,
+   "lunarMonth": 5,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 4,
+   "year": 1985
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Ất Sửu",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1985,
+   "lunarMonth": 2,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 7,
+   "year": 1929
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1929,
+   "lunarMonth": 6,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 7,
+   "year": 2006
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Bính Tuất",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2006,
+   "lunarMonth": 6,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 2,
+   "year": 1987
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Đinh Mão",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1987,
+   "lunarMonth": 1,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 12,
+   "year": 1929
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1929,
+   "lunarMonth": 11,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 6,
+   "year": 2074
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Giáp Ngọ",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2074,
+   "lunarMonth": 5,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 10,
+   "year": 1919
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1919,
+   "lunarMonth": 8,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 3,
+   "year": 1974
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Giáp Dần",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1974,
+   "lunarMonth": 2,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 2,
+   "year": 2012
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Nhâm Thìn",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2012,
+   "lunarMonth": 2,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 25,
+   "month": 8,
+   "year": 2050
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2050,
+   "lunarMonth": 7,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 10,
+   "year": 2009
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Kỷ Sửu",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2009,
+   "lunarMonth": 8,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 1,
+   "year": 1935
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Giáp Tuất",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1934,
+   "lunarMonth": 11,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 4,
+   "year": 1911
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Tân Hợi",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 1911,
+   "lunarMonth": 3,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 7,
+   "year": 2033
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Quý Sửu",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2033,
+   "lunarMonth": 7,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 5,
+   "year": 1904
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Giáp Thìn",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1904,
+   "lunarMonth": 3,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 10,
+   "year": 1956
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Bính Thân",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1956,
+   "lunarMonth": 9,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 30,
+   "month": 12,
+   "year": 1940
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1940,
+   "lunarMonth": 12,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 7,
+   "year": 1953
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Quý Tỵ",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1953,
+   "lunarMonth": 6,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 9,
+   "year": 2087
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Đinh Mùi",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2087,
+   "lunarMonth": 8,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 4,
+   "year": 2061
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2061,
+   "lunarMonth": 3,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 7,
+   "year": 2050
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2050,
+   "lunarMonth": 6,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 30,
+   "month": 7,
+   "year": 2010
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Canh Dần",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2010,
+   "lunarMonth": 6,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 10,
+   "year": 2096
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Bính Thìn",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2096,
+   "lunarMonth": 8,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 9,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2026,
+   "lunarMonth": 8,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 11,
+   "year": 1977
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1977,
+   "lunarMonth": 9,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 5,
+   "year": 2075
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2075,
+   "lunarMonth": 3,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 11,
+   "year": 2006
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Bính Tuất",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2006,
+   "lunarMonth": 9,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 9,
+   "year": 2073
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Quý Tỵ",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2073,
+   "lunarMonth": 8,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 12,
+   "year": 1957
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1957,
+   "lunarMonth": 10,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 24,
+   "month": 8,
+   "year": 1954
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Giáp Ngọ",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1954,
+   "lunarMonth": 7,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 9,
+   "year": 2047
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Đinh Mão",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2047,
+   "lunarMonth": 7,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 11,
+   "year": 2069
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Kỷ Sửu",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2069,
+   "lunarMonth": 10,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 1,
+   "year": 1994
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1993,
+   "lunarMonth": 12,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 9,
+   "year": 2078
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2078,
+   "lunarMonth": 8,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 8,
+   "year": 1988
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Mậu Thìn",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1988,
+   "lunarMonth": 7,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 1,
+   "year": 2003
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Nhâm Ngọ",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2002,
+   "lunarMonth": 12,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 2,
+   "year": 1919
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1919,
+   "lunarMonth": 1,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 11,
+   "year": 2065
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Ất Dậu",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2065,
+   "lunarMonth": 10,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 1,
+   "year": 1916
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1915,
+   "lunarMonth": 12,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 4,
+   "year": 2040
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Canh Thân",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2040,
+   "lunarMonth": 3,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 11,
+   "year": 2025
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Ất Tỵ",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2025,
+   "lunarMonth": 10,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 2,
+   "year": 1969
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1969,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 6,
+   "year": 1947
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Đinh Hợi",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1947,
+   "lunarMonth": 4,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 9,
+   "year": 1952
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Nhâm Thìn",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1952,
+   "lunarMonth": 7,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 4,
+   "month": 8,
+   "year": 1997
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Đinh Sửu",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1997,
+   "lunarMonth": 7,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 9,
+   "year": 2056
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2056,
+   "lunarMonth": 8,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 1,
+   "year": 1923
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Nhâm Tuất",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1922,
+   "lunarMonth": 11,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 8,
+   "month": 3,
+   "year": 1968
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Mậu Thân",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1968,
+   "lunarMonth": 2,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 7,
+   "year": 2098
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Mậu Ngọ",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2098,
+   "lunarMonth": 6,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 8,
+   "year": 1968
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Mậu Thân",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1968,
+   "lunarMonth": 7,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 10,
+   "year": 2046
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2046,
+   "lunarMonth": 9,
+   "lunarDay": 13
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 10,
+   "year": 1940
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1940,
+   "lunarMonth": 9,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 24,
+   "month": 1,
+   "year": 1927
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1926,
+   "lunarMonth": 12,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 24,
+   "month": 11,
+   "year": 1986
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1986,
+   "lunarMonth": 10,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 12,
+   "year": 1998
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1998,
+   "lunarMonth": 10,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 7,
+   "year": 1929
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1929,
+   "lunarMonth": 6,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 8,
+   "month": 10,
+   "year": 1941
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1941,
+   "lunarMonth": 8,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 8,
+   "year": 1926
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1926,
+   "lunarMonth": 7,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 3,
+   "year": 2011
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Tân Mão",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2011,
+   "lunarMonth": 2,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 9,
+   "year": 2004
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Giáp Thân",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2004,
+   "lunarMonth": 7,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 7,
+   "year": 2091
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Tân Hợi",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 2091,
+   "lunarMonth": 5,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 4,
+   "year": 1909
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1909,
+   "lunarMonth": 3,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 4,
+   "year": 2052
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Nhâm Thân",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2052,
+   "lunarMonth": 3,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 3,
+   "year": 1991
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Tân Mùi",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1991,
+   "lunarMonth": 2,
+   "lunarDay": 5
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 3,
+   "year": 2001
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2001,
+   "lunarMonth": 3,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 2,
+   "year": 1917
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1917,
+   "lunarMonth": 2,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 6,
+   "year": 1942
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Nhâm Ngọ",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1942,
+   "lunarMonth": 5,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 6,
+   "year": 2023
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 2023,
+   "lunarMonth": 5,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 12,
+   "year": 1931
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Tân Mùi",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1931,
+   "lunarMonth": 11,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 3,
+   "year": 1969
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1969,
+   "lunarMonth": 1,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 6,
+   "year": 2052
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Nhâm Thân",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2052,
+   "lunarMonth": 5,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 6,
+   "year": 1950
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Canh Dần",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1950,
+   "lunarMonth": 4,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 5,
+   "year": 2072
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Nhâm Thìn",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2072,
+   "lunarMonth": 3,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 7,
+   "year": 1950
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Canh Dần",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1950,
+   "lunarMonth": 5,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 1,
+   "year": 2033
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Nhâm Tý",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2032,
+   "lunarMonth": 12,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 8,
+   "year": 2052
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Nhâm Thân",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2052,
+   "lunarMonth": 8,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 8,
+   "year": 1910
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Canh Tuất",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 1910,
+   "lunarMonth": 7,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 7,
+   "year": 1996
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1996,
+   "lunarMonth": 6,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 7,
+   "year": 1990
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1990,
+   "lunarMonth": 5,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 1,
+   "year": 2041
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Canh Thân",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2040,
+   "lunarMonth": 12,
+   "lunarDay": 20
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 5,
+   "year": 1936
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1936,
+   "lunarMonth": 4,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 4,
+   "year": 2086
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2086,
+   "lunarMonth": 3,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 6,
+   "year": 2080
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2080,
+   "lunarMonth": 4,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 6,
+   "year": 2013
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Quý Tỵ",
+   "napAm": "Trường Lưu Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2013,
+   "lunarMonth": 5,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 4,
+   "month": 10,
+   "year": 1993
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1993,
+   "lunarMonth": 8,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 30,
+   "month": 8,
+   "year": 2042
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Nhâm Tuất",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2042,
+   "lunarMonth": 7,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 6,
+   "year": 2066
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Bính Tuất",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2066,
+   "lunarMonth": 5,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 1,
+   "year": 2082
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Tân Sửu",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2081,
+   "lunarMonth": 12,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 9,
+   "year": 1997
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Đinh Sửu",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1997,
+   "lunarMonth": 8,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 11,
+   "year": 2022
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Nhâm Dần",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 2022,
+   "lunarMonth": 10,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 30,
+   "month": 12,
+   "year": 2096
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Bính Thìn",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2096,
+   "lunarMonth": 11,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 12,
+   "year": 2062
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Nhâm Ngọ",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2062,
+   "lunarMonth": 11,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 2,
+   "year": 1931
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Tân Mùi",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1931,
+   "lunarMonth": 1,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 6,
+   "year": 1906
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1906,
+   "lunarMonth": 5,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 10,
+   "year": 2035
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2035,
+   "lunarMonth": 9,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 6,
+   "year": 2068
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Mậu Tý",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2068,
+   "lunarMonth": 5,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 4,
+   "year": 2031
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Tân Hợi",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 2031,
+   "lunarMonth": 3,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 9,
+   "year": 1974
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Giáp Dần",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1974,
+   "lunarMonth": 7,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 3,
+   "year": 1927
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Đinh Mão",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1927,
+   "lunarMonth": 2,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 8,
+   "year": 1974
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Giáp Dần",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1974,
+   "lunarMonth": 7,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 10,
+   "year": 1981
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Tân Dậu",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1981,
+   "lunarMonth": 9,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 9,
+   "year": 1903
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 1903,
+   "lunarMonth": 8,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 8,
+   "year": 1950
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Canh Dần",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1950,
+   "lunarMonth": 7,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 5,
+   "year": 1993
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1993,
+   "lunarMonth": 4,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 4,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2026,
+   "lunarMonth": 2,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 12,
+   "year": 2005
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Ất Dậu",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2005,
+   "lunarMonth": 11,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 1,
+   "year": 2018
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2017,
+   "lunarMonth": 12,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 6,
+   "year": 2059
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Kỷ Mão",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2059,
+   "lunarMonth": 5,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 5,
+   "year": 2066
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Bính Tuất",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2066,
+   "lunarMonth": 4,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 12,
+   "year": 1933
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1933,
+   "lunarMonth": 10,
+   "lunarDay": 19
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 9,
+   "year": 2035
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2035,
+   "lunarMonth": 8,
+   "lunarDay": 17
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 8,
+   "year": 2009
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Kỷ Sửu",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2009,
+   "lunarMonth": 7,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 1,
+   "year": 2054
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2053,
+   "lunarMonth": 11,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 11,
+   "year": 1919
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1919,
+   "lunarMonth": 9,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 7,
+   "year": 1906
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1906,
+   "lunarMonth": 5,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 8,
+   "year": 2049
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2049,
+   "lunarMonth": 7,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 10,
+   "year": 1981
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Tân Dậu",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1981,
+   "lunarMonth": 9,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 9,
+   "year": 1939
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Kỷ Mão",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1939,
+   "lunarMonth": 8,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 8,
+   "year": 1909
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1909,
+   "lunarMonth": 7,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 7,
+   "year": 2070
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Canh Dần",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2070,
+   "lunarMonth": 6,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 5,
+   "year": 2017
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2017,
+   "lunarMonth": 4,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 2,
+   "year": 1938
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1938,
+   "lunarMonth": 1,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 4,
+   "year": 2046
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Bính Dần",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2046,
+   "lunarMonth": 3,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 6,
+   "year": 2088
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Mậu Thân",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2088,
+   "lunarMonth": 4,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 8,
+   "year": 1967
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Đinh Mùi",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1967,
+   "lunarMonth": 7,
+   "lunarDay": 26
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 9,
+   "year": 2078
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2078,
+   "lunarMonth": 8,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 7,
+   "year": 2081
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Tân Sửu",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2081,
+   "lunarMonth": 6,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 2,
+   "year": 1946
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Bính Tuất",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1946,
+   "lunarMonth": 1,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 7,
+   "year": 2096
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Bính Thìn",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2096,
+   "lunarMonth": 6,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 8,
+   "year": 1904
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Giáp Thìn",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1904,
+   "lunarMonth": 7,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 29,
+   "month": 4,
+   "year": 2097
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2097,
+   "lunarMonth": 3,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 12,
+   "year": 1944
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Giáp Thân",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1944,
+   "lunarMonth": 10,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 5,
+   "year": 2002
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Nhâm Ngọ",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2002,
+   "lunarMonth": 3,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 12,
+   "year": 1957
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1957,
+   "lunarMonth": 10,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 7,
+   "year": 1963
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 1963,
+   "lunarMonth": 5,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 3,
+   "year": 1989
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1989,
+   "lunarMonth": 2,
+   "lunarDay": 11
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 8,
+   "year": 2079
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Kỷ Hợi",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2079,
+   "lunarMonth": 7,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 8,
+   "year": 2077
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2077,
+   "lunarMonth": 7,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 8,
+   "year": 1988
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Mậu Thìn",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1988,
+   "lunarMonth": 7,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 8,
+   "year": 2017
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2017,
+   "lunarMonth": 6,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 3,
+   "year": 1981
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Tân Dậu",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1981,
+   "lunarMonth": 1,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 5,
+   "year": 2042
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Nhâm Tuất",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2042,
+   "lunarMonth": 3,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 2,
+   "year": 1903
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 1903,
+   "lunarMonth": 1,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 1,
+   "year": 1956
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Ất Mùi",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1955,
+   "lunarMonth": 12,
+   "lunarDay": 3
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 2,
+   "year": 2039
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Kỷ Mùi",
+   "napAm": "Thiên Thượng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2039,
+   "lunarMonth": 1,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 4,
+   "year": 1943
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Quý Mùi",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1943,
+   "lunarMonth": 3,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 20,
+   "month": 5,
+   "year": 1968
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Mậu Thân",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1968,
+   "lunarMonth": 4,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 10,
+   "year": 1993
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 1993,
+   "lunarMonth": 8,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 5,
+   "year": 1939
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Kỷ Mão",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1939,
+   "lunarMonth": 4,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 12,
+   "year": 2071
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Tân Mão",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2071,
+   "lunarMonth": 10,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 8,
+   "year": 1934
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Giáp Tuất",
+   "napAm": "Sơn Đầu Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1934,
+   "lunarMonth": 7,
+   "lunarDay": 10
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 12,
+   "year": 2050
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2050,
+   "lunarMonth": 10,
+   "lunarDay": 30
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 2,
+   "year": 1975
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1975,
+   "lunarMonth": 1,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 3,
+   "year": 2014
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Giáp Ngọ",
+   "napAm": "Sa Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 2014,
+   "lunarMonth": 2,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 15,
+   "month": 2,
+   "year": 2071
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Tân Mão",
+   "napAm": "Tùng Bách Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2071,
+   "lunarMonth": 1,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 8,
+   "year": 2004
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Giáp Thân",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2004,
+   "lunarMonth": 7,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 9,
+   "year": 2005
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Ất Dậu",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2005,
+   "lunarMonth": 8,
+   "lunarDay": 13
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 11,
+   "year": 2080
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2080,
+   "lunarMonth": 9,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 13,
+   "month": 12,
+   "year": 1945
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Ất Dậu",
+   "napAm": "Tuyền Trung Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1945,
+   "lunarMonth": 11,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 7,
+   "year": 2040
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Canh Thân",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2040,
+   "lunarMonth": 6,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 5,
+   "year": 1964
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Giáp Thìn",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1964,
+   "lunarMonth": 3,
+   "lunarDay": 30
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 11,
+   "year": 2028
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Thân",
+   "conGiap": "Khỉ",
+   "emoji": "🐵",
+   "tuoiAm": "Mậu Thân",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2028,
+   "lunarMonth": 10,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 16,
+   "month": 8,
+   "year": 1947
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Đinh Hợi",
+   "napAm": "Ốc Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1947,
+   "lunarMonth": 7,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 9,
+   "year": 2003
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Quý Mùi",
+   "napAm": "Dương Liễu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2003,
+   "lunarMonth": 8,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 12,
+   "year": 1981
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Tân Dậu",
+   "napAm": "Thạch Lựu Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1981,
+   "lunarMonth": 11,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 1,
+   "year": 1985
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Giáp Tý",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1984,
+   "lunarMonth": 11,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 10,
+   "month": 2,
+   "year": 1909
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Kỷ Dậu",
+   "napAm": "Đại Trạch Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1909,
+   "lunarMonth": 1,
+   "lunarDay": 20
+  }
+ },
+ {
+  "input": {
+   "day": 14,
+   "month": 7,
+   "year": 2053
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Quý Dậu",
+   "napAm": "Kiếm Phong Kim",
+   "menh": "Kim",
+   "lunarYear": 2053,
+   "lunarMonth": 5,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 23,
+   "month": 12,
+   "year": 1975
+  },
+  "expected": {
+   "thienCan": "Ất",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Ất Mão",
+   "napAm": "Đại Khê Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1975,
+   "lunarMonth": 11,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 24,
+   "month": 5,
+   "year": 1987
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Đinh Mão",
+   "napAm": "Lư Trung Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 1987,
+   "lunarMonth": 4,
+   "lunarDay": 27
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 8,
+   "year": 1958
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Mậu Tuất",
+   "napAm": "Bình Địa Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1958,
+   "lunarMonth": 6,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 11,
+   "year": 1922
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Nhâm Tuất",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1922,
+   "lunarMonth": 9,
+   "lunarDay": 24
+  }
+ },
+ {
+  "input": {
+   "day": 2,
+   "month": 12,
+   "year": 1923
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Hợi",
+   "conGiap": "Lợn",
+   "emoji": "🐷",
+   "tuoiAm": "Quý Hợi",
+   "napAm": "Đại Hải Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1923,
+   "lunarMonth": 10,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 3,
+   "month": 7,
+   "year": 2050
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2050,
+   "lunarMonth": 5,
+   "lunarDay": 15
+  }
+ },
+ {
+  "input": {
+   "day": 6,
+   "month": 11,
+   "year": 2023
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Mão",
+   "conGiap": "Mèo",
+   "emoji": "🐱",
+   "tuoiAm": "Quý Mão",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 2023,
+   "lunarMonth": 9,
+   "lunarDay": 23
+  }
+ },
+ {
+  "input": {
+   "day": 31,
+   "month": 3,
+   "year": 2068
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Mậu Tý",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2068,
+   "lunarMonth": 2,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 6,
+   "year": 1990
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Canh Ngọ",
+   "napAm": "Lộ Bàng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1990,
+   "lunarMonth": 5,
+   "lunarDay": 9
+  }
+ },
+ {
+  "input": {
+   "day": 12,
+   "month": 1,
+   "year": 1978
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1977,
+   "lunarMonth": 12,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 5,
+   "year": 1996
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Bính Tý",
+   "napAm": "Giản Hạ Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1996,
+   "lunarMonth": 3,
+   "lunarDay": 14
+  }
+ },
+ {
+  "input": {
+   "day": 8,
+   "month": 10,
+   "year": 2092
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Nhâm Tý",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 2092,
+   "lunarMonth": 9,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 3,
+   "year": 1924
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Giáp Tý",
+   "napAm": "Hải Trung Kim",
+   "menh": "Kim",
+   "lunarYear": 1924,
+   "lunarMonth": 2,
+   "lunarDay": 18
+  }
+ },
+ {
+  "input": {
+   "day": 27,
+   "month": 12,
+   "year": 2058
+  },
+  "expected": {
+   "thienCan": "Mậu",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Mậu Dần",
+   "napAm": "Thành Đầu Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2058,
+   "lunarMonth": 11,
+   "lunarDay": 12
+  }
+ },
+ {
+  "input": {
+   "day": 22,
+   "month": 3,
+   "year": 2077
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Dậu",
+   "conGiap": "Gà",
+   "emoji": "🐔",
+   "tuoiAm": "Đinh Dậu",
+   "napAm": "Sơn Hạ Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2077,
+   "lunarMonth": 2,
+   "lunarDay": 28
+  }
+ },
+ {
+  "input": {
+   "day": 7,
+   "month": 10,
+   "year": 2001
+  },
+  "expected": {
+   "thienCan": "Tân",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Tân Tỵ",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 2001,
+   "lunarMonth": 8,
+   "lunarDay": 21
+  }
+ },
+ {
+  "input": {
+   "day": 28,
+   "month": 11,
+   "year": 1900
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 1900,
+   "lunarMonth": 10,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 5,
+   "month": 3,
+   "year": 2086
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2086,
+   "lunarMonth": 1,
+   "lunarDay": 20
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 12,
+   "year": 1902
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Dần",
+   "conGiap": "Hổ",
+   "emoji": "🐯",
+   "tuoiAm": "Nhâm Dần",
+   "napAm": "Kim Bạch Kim",
+   "menh": "Kim",
+   "lunarYear": 1902,
+   "lunarMonth": 11,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 2,
+   "year": 2026
+  },
+  "expected": {
+   "thienCan": "Bính",
+   "diaChi": "Ngọ",
+   "conGiap": "Ngựa",
+   "emoji": "🐴",
+   "tuoiAm": "Bính Ngọ",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 2026,
+   "lunarMonth": 1,
+   "lunarDay": 2
+  }
+ },
+ {
+  "input": {
+   "day": 1,
+   "month": 10,
+   "year": 2037
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Đinh Tỵ",
+   "napAm": "Sa Trung Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2037,
+   "lunarMonth": 8,
+   "lunarDay": 22
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 3,
+   "year": 2069
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Kỷ Sửu",
+   "napAm": "Tích Lịch Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2069,
+   "lunarMonth": 2,
+   "lunarDay": 25
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 1,
+   "year": 1973
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Nhâm Tý",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1972,
+   "lunarMonth": 12,
+   "lunarDay": 6
+  }
+ },
+ {
+  "input": {
+   "day": 18,
+   "month": 12,
+   "year": 2080
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2080,
+   "lunarMonth": 11,
+   "lunarDay": 8
+  }
+ },
+ {
+  "input": {
+   "day": 26,
+   "month": 1,
+   "year": 1941
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Canh Thìn",
+   "napAm": "Bạch Lạp Kim",
+   "menh": "Kim",
+   "lunarYear": 1940,
+   "lunarMonth": 12,
+   "lunarDay": 29
+  }
+ },
+ {
+  "input": {
+   "day": 11,
+   "month": 12,
+   "year": 1907
+  },
+  "expected": {
+   "thienCan": "Đinh",
+   "diaChi": "Mùi",
+   "conGiap": "Dê",
+   "emoji": "🐐",
+   "tuoiAm": "Đinh Mùi",
+   "napAm": "Thiên Hà Thủy",
+   "menh": "Thủy",
+   "lunarYear": 1907,
+   "lunarMonth": 11,
+   "lunarDay": 7
+  }
+ },
+ {
+  "input": {
+   "day": 24,
+   "month": 12,
+   "year": 2090
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tuất",
+   "conGiap": "Chó",
+   "emoji": "🐶",
+   "tuoiAm": "Canh Tuất",
+   "napAm": "Thoa Xuyến Kim",
+   "menh": "Kim",
+   "lunarYear": 2090,
+   "lunarMonth": 11,
+   "lunarDay": 4
+  }
+ },
+ {
+  "input": {
+   "day": 9,
+   "month": 5,
+   "year": 1929
+  },
+  "expected": {
+   "thienCan": "Kỷ",
+   "diaChi": "Tỵ",
+   "conGiap": "Rắn",
+   "emoji": "🐍",
+   "tuoiAm": "Kỷ Tỵ",
+   "napAm": "Đại Lâm Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1929,
+   "lunarMonth": 4,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 17,
+   "month": 8,
+   "year": 1913
+  },
+  "expected": {
+   "thienCan": "Quý",
+   "diaChi": "Sửu",
+   "conGiap": "Trâu",
+   "emoji": "🐮",
+   "tuoiAm": "Quý Sửu",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1913,
+   "lunarMonth": 7,
+   "lunarDay": 16
+  }
+ },
+ {
+  "input": {
+   "day": 19,
+   "month": 8,
+   "year": 2020
+  },
+  "expected": {
+   "thienCan": "Canh",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Canh Tý",
+   "napAm": "Bích Thượng Thổ",
+   "menh": "Thổ",
+   "lunarYear": 2020,
+   "lunarMonth": 7,
+   "lunarDay": 1
+  }
+ },
+ {
+  "input": {
+   "day": 21,
+   "month": 11,
+   "year": 1912
+  },
+  "expected": {
+   "thienCan": "Nhâm",
+   "diaChi": "Tý",
+   "conGiap": "Chuột",
+   "emoji": "🐭",
+   "tuoiAm": "Nhâm Tý",
+   "napAm": "Tang Đố Mộc",
+   "menh": "Mộc",
+   "lunarYear": 1912,
+   "lunarMonth": 10,
+   "lunarDay": 13
+  }
+ },
+ {
+  "input": {
+   "day": 25,
+   "month": 6,
+   "year": 2024
+  },
+  "expected": {
+   "thienCan": "Giáp",
+   "diaChi": "Thìn",
+   "conGiap": "Rồng",
+   "emoji": "🐲",
+   "tuoiAm": "Giáp Thìn",
+   "napAm": "Phúc Đăng Hỏa",
+   "menh": "Hỏa",
+   "lunarYear": 2024,
+   "lunarMonth": 5,
+   "lunarDay": 20
+  }
+ }
+]

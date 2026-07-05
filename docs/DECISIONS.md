@@ -6,6 +6,98 @@
 
 ---
 
+## ADR-005: 12 Personality Archetype — fusion DISC + Mệnh + Tam hợp bằng scoring xác định
+
+**Status:** Accepted
+**Date:** 2026-07-05
+**Decided by:** Trung (cung cấp tài liệu nguồn) — Claude Code (thiết kế mapping)
+
+### Context
+
+Critical Business Rules: "12 Personality Archetype = fusion DISC (16 profile) + Mệnh (5 hành)
++ Tam hợp (4 nhóm) + narrative". Trung cung cấp tài liệu DISC chi tiết
+(`docs/DISC-Tieng-Viet.pdf` — báo cáo DISCstyles 40 trang tiếng Việt) làm nguồn nội dung
+mô tả archetype. Cần thuật toán fusion XÁC ĐỊNH (deterministic, test được), không dựa vào
+LLM để chọn archetype.
+
+### Decision
+
+1. **Base mapping DISC 16 profile → 12 archetype** (bảng trong `app/data/archetypes.py`):
+   D→CHALLENGER, D/I→CATALYST, D/S→EXECUTOR, D/C→STRATEGIST, I→CONNECTOR,
+   I/D→VISIONARY, I/S→MENTOR, I/C→VISIONARY, S→HARMONIZER, S/D→BUILDER, S/I→MENTOR,
+   S/C→GUARDIAN, C→ANALYST, C/D→STRATEGIST, C/S→CRAFTSMAN, C/I→CRAFTSMAN.
+2. **Fusion scoring**: base archetype +2 điểm; archetype của profile đảo (secondary/primary)
+   +1; Mệnh +1 cho 2 archetype cùng hành (Kim: STRATEGIST/CRAFTSMAN, Mộc: BUILDER/MENTOR,
+   Thủy: CONNECTOR/ANALYST, Hỏa: CATALYST/CHALLENGER, Thổ: GUARDIAN/HARMONIZER);
+   Tam hợp +1 cho 3 archetype cùng nhóm (Thân-Tý-Thìn: VISIONARY/STRATEGIST/ANALYST,
+   Dần-Ngọ-Tuất: CHALLENGER/EXECUTOR/CATALYST, Tỵ-Dậu-Sửu: CRAFTSMAN/GUARDIAN/BUILDER,
+   Hợi-Mão-Mùi: MENTOR/HARMONIZER/CONNECTOR). Điểm cao nhất thắng; hòa → base DISC thắng.
+   → Eastern data chỉ XÔ ĐẨY được kết quả khi cả Mệnh + Tam hợp cùng chỉ về hướng khác.
+3. **Không có dữ liệu sinh/consent** → archetype tính từ DISC thuần (Behavioural Layer
+   vẫn hoạt động đầy đủ — đúng rule Eastern Layer là toggle riêng).
+4. **Narrative**: sinh từ template tiếng Việt (nội dung archetype + điểm DISC); nếu có
+   `ANTHROPIC_API_KEY` thì gọi Claude API polish (best-effort, lỗi → dùng template),
+   cache theo hash input (Redis 30 ngày trên production — risk #4 HUONG-DAN).
+5. **Nội dung 12 archetype** biên soạn từ `docs/DISC-Tieng-Viet.pdf` (Trung cung cấp
+   2026-07-05) — cần Trung review nội dung trước go-live vì đây là core IP.
+
+### Consequences
+
+- (+) Deterministic, test được từng nhánh fusion; không phụ thuộc LLM để phân loại.
+- (+) Ứng viên không consent vẫn có archetype (DISC-only) — đúng luật + đúng business rule.
+- (−) Mapping 16→12 có chủ đích để một số profile chia sẻ archetype — nếu Trung muốn
+  mapping khác chỉ cần sửa bảng trong `app/data/archetypes.py` (test parity mapping đi kèm).
+
+---
+
+## ADR-004: Google OAuth qua ID token verification, phân quyền theo Workspace domain của tenant
+
+**Status:** Accepted
+**Date:** 2026-07-03
+**Decided by:** Trung (yêu cầu) — Claude Code (thiết kế)
+
+### Context
+
+Yêu cầu: (1) tài khoản quản lý/sử dụng đăng nhập bằng Google theo domain `hpu.edu.vn`;
+(2) ứng viên đăng nhập bằng tài khoản Google bất kỳ. Hệ thống multi-tenant nên mỗi tenant
+có thể có Workspace domain riêng (HPU = hpu.edu.vn, tenant khác = domain khác).
+
+### Decision
+
+1. **Frontend dùng Google Identity Services (GIS)** lấy `id_token`, gửi về backend —
+   backend KHÔNG làm OAuth redirect flow (không cần lưu client_secret cho flow này).
+2. **Backend verify id_token** qua endpoint `https://oauth2.googleapis.com/tokeninfo`
+   (kiểm `aud` = GOOGLE_CLIENT_ID, `email_verified`, `exp` do Google check) — đủ an toàn
+   cho quy mô hiện tại, không thêm dependency `google-auth`.
+3. **Staff (`POST /api/v1/auth/google`)**: bắt buộc có tenant context; domain email phải khớp
+   `organization.settings.google_workspace_domain` (per-tenant, HPU = hpu.edu.vn).
+   User đã tồn tại → đăng nhập; chưa tồn tại và domain khớp → auto-provision với
+   `org_role=member` (quyền thấp nhất, admin nâng quyền sau). Tắt auto-provision bằng
+   `settings.google_auto_provision=false`.
+4. **Ứng viên (`POST /api/v1/public/auth/google`)**: Google bất kỳ (email đã verify),
+   find-or-create `Candidate` theo email trong tenant, cấp JWT riêng `type=candidate`
+   TTL 60 phút — KHÔNG dùng chung token với staff (không có org_role, không vào được
+   API quản trị).
+5. Login mật khẩu giữ nguyên làm fallback (dev, tenant chưa có Workspace).
+
+### Consequences
+
+- (+) Mỗi tenant tự cấu hình domain; thêm tenant mới không đổi code.
+- (+) Candidate token tách biệt hoàn toàn khỏi staff token — giảm bề mặt tấn công.
+- (−) Gọi Google tokeninfo mỗi lần login (thêm ~100ms); chấp nhận được, có thể chuyển
+  sang verify chữ ký local (google-auth + cached certs) khi lưu lượng tăng.
+- (−) Cần cấu hình `GOOGLE_CLIENT_ID` trong env cả backend lẫn frontend
+  (`NEXT_PUBLIC_GOOGLE_CLIENT_ID`); chưa cấu hình → endpoint trả lỗi nghiệp vụ rõ ràng.
+
+### Alternatives considered
+
+1. **OAuth authorization-code flow đầy đủ ở backend**: an toàn tương đương với ID token
+   cho mục đích authentication thuần, nhưng phức tạp hơn (redirect, state, client_secret) — loại.
+2. **Thư viện `google-auth` verify chữ ký local**: nhanh hơn nhưng thêm dependency và cache
+   certs; để dành khi scale — chưa cần.
+
+---
+
 ## ADR-003: Multi-tenant theo Shared Schema + PostgreSQL RLS (không schema-per-tenant)
 
 **Status:** Accepted
