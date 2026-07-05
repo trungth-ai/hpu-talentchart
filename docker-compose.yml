@@ -8,6 +8,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    # Đặt tên image tường minh — worker/beat dùng CHUNG image này
+    # (tránh 3 bản build riêng bị lệch version khi chỉ rebuild 1 service)
+    image: talentchart-backend:latest
     container_name: talentchart-backend
     restart: unless-stopped
 
@@ -84,9 +87,9 @@ services:
 
   # ─── Celery worker ───
   worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    # Dùng chung image với backend — build 1 lần, không lệch version
+    image: talentchart-backend:latest
+    pull_policy: never
     container_name: talentchart-worker
     restart: unless-stopped
     command: ["celery", "-A", "app.celery_app", "worker", "--loglevel=info", "-Q", "default"]
@@ -111,9 +114,8 @@ services:
 
   # ─── Celery beat (scheduled tasks) ───
   beat:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: talentchart-backend:latest
+    pull_policy: never
     container_name: talentchart-beat
     restart: unless-stopped
     command: ["celery", "-A", "app.celery_app", "beat", "--loglevel=info"]
