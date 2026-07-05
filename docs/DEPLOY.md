@@ -38,7 +38,7 @@ cd ~/hpu-dev/talentchart
 
 # Staging = chạy compose với domain staging hoặc test trên docker network nội bộ
 docker compose --env-file .env.production up -d --build db redis
-docker compose --env-file .env.production run --rm backend uv run alembic upgrade head
+docker compose --env-file .env.production run --rm backend alembic upgrade head
 ```
 
 ## 3. Backup TRƯỚC migration (bắt buộc mỗi lần deploy)
@@ -52,7 +52,7 @@ docker compose exec db pg_dump -U talentchart -F c talentchart > backups/pre-dep
 
 ```bash
 docker compose --env-file .env.production up -d --build
-docker compose exec backend uv run alembic upgrade head
+docker compose exec backend alembic upgrade head
 # Verify RLS đã bật (lớp bảo vệ số 3):
 docker compose exec db psql -U talentchart -c \
   "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public';"
@@ -63,18 +63,21 @@ docker compose exec db psql -U talentchart -c \
 
 ```bash
 # 5.1 Tạo tenant HPU + tài khoản owner + bật Google Workspace domain
-docker compose exec backend uv run python scripts/create_tenant.py \
+docker compose exec backend python scripts/create_tenant.py \
   --slug hpu --name "Trường Đại học Hải Phòng" \
   --email trungth@hpu.edu.vn --password "<mật-khẩu-mạnh>" \
   --google-domain hpu.edu.vn
 
 # 5.2 Import 107 nhân sự từ file lương (đã có cơ sở đồng ý từ Fortune HR cũ)
-docker compose exec backend uv run python scripts/import_employees.py \
-  --file "/app/data/Luong T8.xlsx" --org-slug hpu --with-epa-consent
+# Copy file dữ liệu vào container trước (image không chứa file nhạy cảm):
+docker cp "Luong T8.xlsx" talentchart-backend:/tmp/luong-t8.xlsx
+docker cp contacts.csv talentchart-backend:/tmp/contacts.csv
+docker compose exec backend python scripts/import_employees.py \
+  --file /tmp/luong-t8.xlsx --org-slug hpu --with-epa-consent
 
 # 5.3 Đối chiếu danh bạ → email thật + SĐT + địa chỉ (63/107 tự match)
-docker compose exec backend uv run python scripts/update_contacts.py \
-  --csv "/app/data/contacts.csv" --org-slug hpu
+docker compose exec backend python scripts/update_contacts.py \
+  --csv /tmp/contacts.csv --org-slug hpu
 # → Xử lý tay 5 người trùng tên + 38 người không có trong danh bạ (script in danh sách)
 
 # 5.4 Bật Eastern Layer cho HPU (nếu muốn hiện Can Chi/Mệnh/Tam hợp)
@@ -104,7 +107,7 @@ curl -X POST https://app.talentchart.hpu.edu.vn/api/v1/auth/login \
 ```bash
 git reset --hard HEAD~1 && docker compose --env-file .env.production up -d --build
 # Nếu migration đã chạy và cần lùi:
-docker compose exec backend uv run alembic downgrade -1
+docker compose exec backend alembic downgrade -1
 # Khôi phục dữ liệu từ backup bước 3:
 docker compose exec -T db pg_restore -U talentchart -d talentchart --clean < backups/pre-deploy-*.dump
 ```

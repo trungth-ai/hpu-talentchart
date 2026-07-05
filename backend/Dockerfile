@@ -13,6 +13,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY pyproject.toml uv.lock* ./
 RUN uv sync --no-dev --no-install-project || uv sync --no-dev --no-install-project --no-cache
 
+# ★ Venv vào PATH — runtime gọi thẳng uvicorn/celery/alembic, KHÔNG qua `uv run`
+# (appuser không có home dir → uv run lúc runtime sẽ lỗi Permission denied khi tạo cache)
+ENV PATH="/app/.venv/bin:$PATH" \
+    UV_CACHE_DIR=/tmp/uv-cache
+
 # Copy application code
 COPY app/ ./app/
 COPY alembic/ ./alembic/
@@ -27,5 +32,5 @@ EXPOSE 8003
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:8003/health || exit 1
 
-CMD ["uv", "run", "--no-dev", "uvicorn", "app.main:app", \
+CMD ["uvicorn", "app.main:app", \
      "--host", "0.0.0.0", "--port", "8003", "--workers", "2"]

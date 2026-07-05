@@ -12,11 +12,14 @@ services:
     restart: unless-stopped
 
     environment:
-      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD}@db:5432/talentchart
+      # :? → compose fail-fast ngay khi secret bắt buộc bị bỏ trống (checklist §9)
+      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD:?DB_PASSWORD bat buoc}@db:5432/talentchart
       - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD}@db:5432/talentchart
-      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
-      - JWT_SECRET=${JWT_SECRET}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:?REDIS_PASSWORD bat buoc}@redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET bat buoc}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - RATE_LIMIT_STORAGE_URI=redis://:${REDIS_PASSWORD}@redis:6379/1
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
@@ -91,7 +94,9 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD}@db:5432/talentchart
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      # config.py fail-fast: JWT_SECRET bắt buộc cho MỌI process import app
+      - JWT_SECRET=${JWT_SECRET}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
@@ -114,6 +119,7 @@ services:
     command: ["celery", "-A", "app.celery_app", "beat", "--loglevel=info"]
     environment:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       redis: { condition: service_healthy }
     networks:
@@ -160,8 +166,9 @@ services:
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+      # Fail-fast — để trống sẽ rơi về minioadmin:minioadmin (nguy hiểm)
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY bat buoc}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY bat buoc}
     volumes:
       - talentchart-miniodata:/data
     healthcheck:
@@ -184,7 +191,8 @@ services:
     volumes:
       - ./backups:/backups
       - ./scripts/backup-postgres.sh:/backup.sh:ro
-    entrypoint: ["/bin/sh", "-c", "while true; do /backup.sh; sleep 86400; done"]
+    # Gọi qua `sh` — file mount :ro từ git không có execute bit
+    entrypoint: ["/bin/sh", "-c", "while true; do sh /backup.sh; sleep 86400; done"]
     depends_on:
       db: { condition: service_healthy }
     networks:
