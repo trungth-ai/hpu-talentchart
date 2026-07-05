@@ -34,6 +34,9 @@ class Settings(BaseSettings):
 
     # Google OAuth (ADR-004) — rỗng = tắt đăng nhập Google
     GOOGLE_CLIENT_ID: str = ""
+
+    # Claude API — rỗng = narrative dùng template, không gọi API (ADR-005)
+    ANTHROPIC_API_KEY: str = ""
     # TTL token của ứng viên (type=candidate)
     CANDIDATE_TOKEN_EXPIRE_MINUTES: int = 60
 

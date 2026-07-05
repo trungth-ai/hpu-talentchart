@@ -193,3 +193,24 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   (12 Archetype fusion — CẦN nội dung viết tay của Trung, AI chỉ polish); Sprint 7
   frontend dashboard + màn EPA.
 - Blocker Sprint 6: nội dung gốc 12 Personality Archetype (core IP — Trung viết tay).
+
+### 2026-07-05 chiều (Claude Code — Sprint 6: 12 Archetype + đối chiếu danh bạ)
+- Done:
+  - **12 Personality Archetype (ADR-005)**: Trung cung cấp docs/DISC-Tieng-Viet.pdf
+    (báo cáo DISCstyles 40 trang) làm nguồn nội dung. Biên soạn chi tiết 12 archetype
+    tiếng Việt trong `app/data/archetypes.py` (mỗi archetype: mô tả, 4-5 điểm mạnh,
+    watchouts, nên/không nên khi giao tiếp, động lực, hành vi khi stress, gợi ý cải
+    thiện, độ phù hợp môi trường đại học) — **CẦN TRUNG REVIEW nội dung (core IP)**.
+  - **Fusion engine** `app/services/epa/archetype.py`: deterministic scoring — DISC
+    base +2, profile đảo +1, Mệnh +1, Tam hợp +1; hòa → DISC thắng. Không consent →
+    DISC thuần. Narrative template + Claude API polish (ANTHROPIC_API_KEY, cache).
+  - **Endpoint** GET /epa/candidates/{id}/archetype — Behavioural Layer (không cần
+    Eastern toggle); chi tiết fusion chỉ hiện khi Eastern Layer bật.
+  - **Đối chiếu contacts.csv** (2540 liên hệ, 281 email @hpu.edu.vn):
+    scripts/update_contacts.py match tên không dấu → cập nhật **63/107 nhân sự**
+    email thật + SĐT + địa chỉ (migration 0005 thêm address). 5 trùng tên +
+    38 không có trong danh bạ → cần xử lý tay (danh sách in khi chạy script).
+  - Backend 460 test pass, ruff sạch.
+- Next: Trung review nội dung 12 archetype + xử lý tay 5+38 nhân sự chưa match;
+  Sprint 7 frontend dashboard (màn archetype/EPA); điền ANTHROPIC_API_KEY để bật
+  narrative polish.

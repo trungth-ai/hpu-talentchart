@@ -38,6 +38,7 @@ class Candidate(TenantScopedBase):
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    address: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     candidate_type: Mapped[str] = mapped_column(
         String(20), default="applicant", nullable=False

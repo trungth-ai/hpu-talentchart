@@ -100,6 +100,7 @@ Dữ liệu EPA (`birth_date`, `birth_time`, `birth_place`) chỉ nhận khi `ep
 | GET | `/epa/candidates/{id}/zodiac` | ≥ hr_manager | Can Chi/Nạp Âm/Mệnh (tính theo NĂM ÂM LỊCH — 1/1/1938 → Đinh Sửu) |
 | GET | `/epa/compatibility?candidate1_id&candidate2_id` | ≥ hr_manager | Điểm tương hợp: 50 +25 tam hợp −30 xung, kẹp 0-100 |
 | POST | `/epa/team-suggest` | ≥ hr_manager | Body `{size, department?, candidate_type=employee}` — 3 phương án xếp hạng theo điểm tam hợp |
+| GET | `/epa/candidates/{id}/archetype` | ≥ hr_manager | **12 Personality Archetype** (ADR-005): fusion DISC + Mệnh + Tam hợp. Thuộc Behavioural Layer — KHÔNG cần bật Eastern Layer; cần ứng viên đã hoàn thành DISC. Không consent → tính từ DISC thuần. Chi tiết fusion chỉ hiện khi Eastern Layer bật. Kèm narrative (Claude API polish nếu có ANTHROPIC_API_KEY, fallback template) |
 
 ## Import nhân sự (script — không phải API)
 
@@ -108,6 +109,12 @@ Dữ liệu EPA (`birth_date`, `birth_time`, `birth_place`) chỉ nhận khi `ep
 python scripts/import_employees.py --file "Luong T8.xlsx" --org-slug hpu [--with-epa-consent] [--dry-run]
 ```
 Ngày sinh CHỈ import khi `--with-epa-consent`. Không import cột lương. Email đặt placeholder `@import.hpu.edu.vn` — cập nhật email thật để match Google login.
+
+```bash
+# Đối chiếu danh bạ Google Contacts → email thật + SĐT + địa chỉ (match tên không dấu)
+python scripts/update_contacts.py --csv "contacts.csv" --org-slug hpu [--dry-run]
+```
+Chỉ cập nhật khi match tên duy nhất 2 phía; trùng tên/không tìm thấy → in báo cáo xử lý tay.
 
 ## System
 

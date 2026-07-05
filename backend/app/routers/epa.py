@@ -21,8 +21,9 @@ from app.database import get_db
 from app.exceptions import BusinessRuleError, ResourceNotFound
 from app.models.candidate import Candidate
 from app.models.organization import Organization
+from app.models.test_session import TestSession
 from app.models.user import User
-from app.services.epa import canchi, compatibility, team_suggest
+from app.services.epa import archetype, canchi, compatibility, narrative, team_suggest
 
 router = APIRouter(prefix="/epa", tags=["epa"])
 
@@ -122,6 +123,78 @@ async def epa_compatibility(
             "disclaimer": DISCLAIMER,
         }
     )
+
+
+async def _is_eastern_layer_enabled(db: AsyncSession) -> bool:
+    org_id = get_current_org_id()
+    result = await db.execute(
+        select(Organization.settings).where(Organization.id == org_id)
+    )
+    settings = result.scalar_one_or_none() or {}
+    return bool(settings.get("eastern_layer_enabled", False))
+
+
+@router.get("/candidates/{candidate_id}/archetype")
+async def candidate_archetype(
+    candidate_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """12 Personality Archetype — fusion DISC + Mệnh + Tam hợp (ADR-005, Sprint 6).
+
+    Thuộc BEHAVIOURAL LAYER (mặc định): không cần bật Eastern Layer.
+    - Cần ứng viên đã hoàn thành bài test DISC.
+    - Dữ liệu sinh (nếu có consent) được dùng NỘI BỘ cho fusion; chi tiết
+      mệnh/tam hợp chỉ hiển thị khi org bật Eastern Layer.
+    """
+    result = await db.execute(select(Candidate).where(Candidate.id == candidate_id))
+    candidate = result.scalar_one_or_none()
+    if candidate is None:
+        raise ResourceNotFound("ứng viên/nhân sự")
+
+    # Kết quả DISC mới nhất (bắt buộc)
+    test_result = await db.execute(
+        select(TestSession)
+        .where(TestSession.candidate_id == candidate.id)
+        .where(TestSession.completed_at.isnot(None))
+        .order_by(TestSession.completed_at.desc())
+        .limit(1)
+    )
+    test = test_result.scalar_one_or_none()
+    if test is None or not test.disc_profile:
+        raise BusinessRuleError(
+            f"{candidate.full_name} chưa hoàn thành bài test DISC — "
+            "gửi bài test trước khi xem archetype"
+        )
+
+    # Eastern inputs — chỉ khi ứng viên đã opt-in và có ngày sinh (NĐ 13/2023)
+    menh = dia_chi = None
+    if candidate.epa_consent and candidate.birth_date:
+        bd = candidate.birth_date
+        zodiac = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
+        menh, dia_chi = zodiac["menh"], zodiac["dia_chi"]
+
+    fusion_result = archetype.compute_archetype(test.disc_profile, menh, dia_chi)
+    draft = archetype.build_narrative(
+        candidate.full_name, fusion_result["archetype"], test.disc_profile, test.disc_scores
+    )
+    polished = await narrative.polish_narrative(draft)
+
+    payload = {
+        "candidate_id": str(candidate.id),
+        "full_name": candidate.full_name,
+        "disc_profile": test.disc_profile,
+        "disc_scores": test.disc_scores,
+        "archetype": fusion_result["archetype"],
+        "narrative": polished,
+        "used_eastern_data": fusion_result["used_eastern_data"],
+        "disclaimer": DISCLAIMER,
+    }
+    # Chi tiết fusion (nhắc đến Mệnh/Tam hợp) chỉ hiện khi Eastern Layer bật
+    if await _is_eastern_layer_enabled(db):
+        payload["fusion"] = fusion_result["fusion"]
+
+    return success(payload)
 
 
 class TeamSuggestRequest(BaseModel):
