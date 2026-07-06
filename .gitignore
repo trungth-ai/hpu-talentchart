@@ -14,10 +14,12 @@ node_modules/
 .env
 .env.production
 .env.local
-data/
-logs/
-uploads/
-backups/
+# Anchor về root (/) — pattern không anchor sẽ match mọi cấp,
+# từng nuốt nhầm backend/app/data/ (câu hỏi DISC + 12 archetype)
+/data/
+/logs/
+/uploads/
+/backups/
 .vscode/
 .idea/
 *.swp
