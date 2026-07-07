@@ -67,9 +67,13 @@ class TenantMiddleware(BaseHTTPMiddleware):
                 except ValueError:
                     org_id = None
 
-            # 2) Subdomain
+            # 2) Subdomain — ưu tiên X-Forwarded-Host (đi qua proxy/Next rewrites
+            # thì Host bị thay bằng địa chỉ nội bộ của backend)
             if org_id is None:
-                slug = _extract_subdomain(request.headers.get("host", ""))
+                host = request.headers.get(
+                    "x-forwarded-host", request.headers.get("host", "")
+                )
+                slug = _extract_subdomain(host)
                 if slug:
                     org_id = await _resolve_org_id_by_slug(slug)
 

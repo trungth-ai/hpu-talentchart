@@ -13,9 +13,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Biến NEXT_PUBLIC_* phải có lúc BUILD (Next.js inline vào bundle)
-ARG NEXT_PUBLIC_API_URL=https://app.talentchart.hpu.edu.vn
+# API_URL mặc định RỖNG = same-origin (/api qua Next rewrites — khỏi CORS)
+ARG NEXT_PUBLIC_API_URL=""
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=""
-ARG NEXT_PUBLIC_BASE_DOMAIN=talentchart.hpu.edu.vn
+ARG NEXT_PUBLIC_BASE_DOMAIN=hr.hpu.edu.vn
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID \
     NEXT_PUBLIC_BASE_DOMAIN=$NEXT_PUBLIC_BASE_DOMAIN

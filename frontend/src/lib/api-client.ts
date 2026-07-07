@@ -3,7 +3,9 @@
 
 import { useAuthStore } from '@/stores/auth';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8003';
+// Mặc định same-origin ('') — /api/* được next.config rewrites chuyển tiếp vào backend.
+// Chỉ set NEXT_PUBLIC_API_URL khi API nằm ở origin khác (hiếm).
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export interface ApiEnvelope<T> {
   status: 'success' | 'error';

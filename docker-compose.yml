@@ -57,40 +57,30 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # NEXT_PUBLIC_* inline vào bundle lúc build — domain lấy từ .env
-        NEXT_PUBLIC_API_URL: https://${APP_DOMAIN:?APP_DOMAIN bat buoc (vd hr.hpu.edu.vn)}
+        # NEXT_PUBLIC_* inline vào bundle lúc build
+        # API_URL để RỖNG = same-origin (gọi /api tương đối, qua Next rewrites)
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
-        NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN}
+        NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN bat buoc (vd hr.hpu.edu.vn)}
     container_name: talentchart-frontend
     restart: unless-stopped
 
     environment:
-      - NEXT_PUBLIC_API_URL=https://${APP_DOMAIN}
       - NODE_ENV=production
+      # Next rewrites chuyển tiếp /api/* vào backend nội bộ (same-origin, khỏi CORS)
+      - BACKEND_INTERNAL_URL=http://talentchart-backend:8003
+
+    # ★ Server HPU dùng Caddy HỆ THỐNG (không phải caddy-docker-proxy):
+    # Caddyfile đã có sẵn block `hr.hpu.edu.vn → reverse_proxy localhost:3300`
+    # → chỉ cần publish frontend ra port đó. /api tự đi qua Next rewrites.
+    ports:
+      - "${FRONTEND_PORT:-3300}:3000"
 
     depends_on:
       backend: { condition: service_healthy }
 
     networks:
       - talentchart-internal
-      - caddy-proxy
-
-    # ★ Caddy labels — routing theo domain trong .env (APP_DOMAIN, CAREER_DOMAIN)
-    # Dùng cert HTTP-01 từng domain — KHÔNG cần plugin Cloudflare DNS
-    # (wildcard *.domain + dns cloudflare từng làm hỏng toàn bộ Caddyfile
-    #  khi Caddy không có plugin → mọi trang trắng)
-    labels:
-      # App chính (admin + API): /api/* → backend, còn lại → Next.js
-      caddy_0: ${APP_DOMAIN}
-      caddy_0.0_route: "/api/*"
-      caddy_0.0_route.reverse_proxy: "talentchart-backend:8003"
-      caddy_0.1_route.reverse_proxy: "{{upstreams 3000}}"
-
-      # Career page công khai của tenant HPU (thêm DNS record riêng)
-      caddy_1: ${CAREER_DOMAIN:-hpu.hr.hpu.edu.vn}
-      caddy_1.0_route: "/api/*"
-      caddy_1.0_route.reverse_proxy: "talentchart-backend:8003"
-      caddy_1.1_route.reverse_proxy: "{{upstreams 3000}}"
 
   # ─── Celery worker ───
   worker:
@@ -190,10 +180,6 @@ services:
       interval: 30s
     networks:
       - talentchart-internal
-      - caddy-proxy
-    labels:
-      caddy: "storage.talentchart.hpu.edu.vn"
-      caddy.reverse_proxy: "{{upstreams 9001}}"
 
   # ─── Backup automation ───
   backup:
@@ -225,5 +211,3 @@ volumes:
 networks:
   talentchart-internal:
     driver: bridge
-  caddy-proxy:
-    external: true

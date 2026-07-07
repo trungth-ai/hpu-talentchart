@@ -6,7 +6,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8003';
+// Same-origin — /api/* đi qua next.config rewrites
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 declare global {
   interface Window {

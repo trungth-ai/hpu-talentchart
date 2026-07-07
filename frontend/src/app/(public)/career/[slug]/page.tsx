@@ -3,7 +3,8 @@
 
 import { formatVND } from '@/lib/utils';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8003';
+// Server Component chạy phía Node → gọi thẳng backend nội bộ (không qua rewrite)
+const API_URL = process.env.BACKEND_INTERNAL_URL ?? 'http://localhost:8003';
 
 interface PublicJob {
   id: string;

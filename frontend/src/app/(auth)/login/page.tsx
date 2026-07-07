@@ -57,7 +57,7 @@ export default function LoginPage() {
       // Gọi fetch trực tiếp (không qua api client) để gắn X-Org-Slug —
       // resolve tenant khi chạy trên domain chính; production dùng subdomain
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8003'}/api/v1/auth/login`,
+        `${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/v1/auth/login`,
         {
           method: 'POST',
           headers: {

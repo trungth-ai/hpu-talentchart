@@ -8,6 +8,14 @@ const BASE_DOMAIN = process.env.NEXT_PUBLIC_BASE_DOMAIN ?? 'talentchart.hpu.edu.
 const RESERVED_SUBDOMAINS = new Set(['app', 'www', 'storage', 'api']);
 
 export function middleware(request: NextRequest) {
+  // /api và /health do next.config rewrites xử lý — không rewrite tenant
+  if (
+    request.nextUrl.pathname.startsWith('/api') ||
+    request.nextUrl.pathname === '/health'
+  ) {
+    return NextResponse.next();
+  }
+
   const host = request.headers.get('host')?.split(':')[0].toLowerCase() ?? '';
   const suffix = `.${BASE_DOMAIN}`;
 
