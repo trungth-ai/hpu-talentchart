@@ -62,6 +62,8 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
         NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN bat buoc (vd hr.hpu.edu.vn)}
+        # Rewrites /api được chốt lúc build — trỏ vào container backend
+        BACKEND_INTERNAL_URL: http://talentchart-backend:8003
     container_name: talentchart-frontend
     restart: unless-stopped
 
