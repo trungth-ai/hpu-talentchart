@@ -20,6 +20,9 @@ services:
       - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD}@db:5432/talentchart
       - REDIS_URL=redis://:${REDIS_PASSWORD:?REDIS_PASSWORD bat buoc}@redis:6379/0
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET bat buoc}
+      # Domain gốc để resolve tenant theo subdomain (hpu.hr.hpu.edu.vn → slug hpu)
+      - BASE_DOMAIN=${APP_DOMAIN}
+      - CORS_ORIGINS=https://${APP_DOMAIN}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - RATE_LIMIT_STORAGE_URI=redis://:${REDIS_PASSWORD}@redis:6379/1
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
@@ -54,15 +57,15 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # NEXT_PUBLIC_* inline vào bundle lúc build (xem frontend/Dockerfile)
-        NEXT_PUBLIC_API_URL: https://app.talentchart.hpu.edu.vn
+        # NEXT_PUBLIC_* inline vào bundle lúc build — domain lấy từ .env
+        NEXT_PUBLIC_API_URL: https://${APP_DOMAIN:?APP_DOMAIN bat buoc (vd hr.hpu.edu.vn)}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
-        NEXT_PUBLIC_BASE_DOMAIN: talentchart.hpu.edu.vn
+        NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN}
     container_name: talentchart-frontend
     restart: unless-stopped
 
     environment:
-      - NEXT_PUBLIC_API_URL=https://app.talentchart.hpu.edu.vn
+      - NEXT_PUBLIC_API_URL=https://${APP_DOMAIN}
       - NODE_ENV=production
 
     depends_on:
@@ -72,18 +75,22 @@ services:
       - talentchart-internal
       - caddy-proxy
 
-    # ★ Caddy labels — auto routing với wildcard SSL
+    # ★ Caddy labels — routing theo domain trong .env (APP_DOMAIN, CAREER_DOMAIN)
+    # Dùng cert HTTP-01 từng domain — KHÔNG cần plugin Cloudflare DNS
+    # (wildcard *.domain + dns cloudflare từng làm hỏng toàn bộ Caddyfile
+    #  khi Caddy không có plugin → mọi trang trắng)
     labels:
-      # Main admin app
-      caddy_0: "app.talentchart.hpu.edu.vn"
-      caddy_0.reverse_proxy: "{{upstreams 3000}}"
-      caddy_0.handle_path_/api/*.0_reverse_proxy: "talentchart-backend:8003"
+      # App chính (admin + API): /api/* → backend, còn lại → Next.js
+      caddy_0: ${APP_DOMAIN}
+      caddy_0.0_route: "/api/*"
+      caddy_0.0_route.reverse_proxy: "talentchart-backend:8003"
+      caddy_0.1_route.reverse_proxy: "{{upstreams 3000}}"
 
-      # Wildcard cho subdomain career pages
-      caddy_1: "*.talentchart.hpu.edu.vn"
-      caddy_1.tls: "{env.CLOUDFLARE_API_TOKEN} dns cloudflare"
-      caddy_1.reverse_proxy: "{{upstreams 3000}}"
-      caddy_1.handle_path_/api/*.0_reverse_proxy: "talentchart-backend:8003"
+      # Career page công khai của tenant HPU (thêm DNS record riêng)
+      caddy_1: ${CAREER_DOMAIN:-hpu.hr.hpu.edu.vn}
+      caddy_1.0_route: "/api/*"
+      caddy_1.0_route.reverse_proxy: "talentchart-backend:8003"
+      caddy_1.1_route.reverse_proxy: "{{upstreams 3000}}"
 
   # ─── Celery worker ───
   worker:
@@ -92,6 +99,9 @@ services:
     pull_policy: never
     container_name: talentchart-worker
     restart: unless-stopped
+    # Tắt healthcheck HTTP thừa kế từ image backend (celery không phục vụ HTTP)
+    healthcheck:
+      disable: true
     command: ["celery", "-A", "app.celery_app", "worker", "--loglevel=info", "-Q", "default"]
 
     environment:
@@ -118,6 +128,8 @@ services:
     pull_policy: never
     container_name: talentchart-beat
     restart: unless-stopped
+    healthcheck:
+      disable: true
     command: ["celery", "-A", "app.celery_app", "beat", "--loglevel=info"]
     environment:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
