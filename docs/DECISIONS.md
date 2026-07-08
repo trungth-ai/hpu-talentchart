@@ -6,6 +6,67 @@
 
 ---
 
+## ADR-006: Resolve tenant trên domain chính bằng "Mã tổ chức" (header X-Org-Slug)
+
+**Status:** Accepted
+**Date:** 2026-07-08
+**Decided by:** Trung
+
+### Context
+
+Go-live HPU chạy trên **domain phẳng `hr.hpu.edu.vn`** (không dựng subdomain riêng cho từng
+tenant). Kiến trúc gốc (ADR-003) resolve `organization_id` theo thứ tự: JWT claim → subdomain
+`{slug}.BASE_DOMAIN` → header `X-Org-Slug` (CHỈ bật ở `is_development`). Trên `hr.hpu.edu.vn`
+KHÔNG có subdomain nên với login (chưa có JWT) và các server-side fetch (career page) thì org
+không thể resolve nếu chạy đúng production. Thực tế "đang chạy được" chỉ vì một **bug**:
+`docker-compose.yml` set `ENV=production` trong khi `config.py` đọc `APP_ENV` → `APP_ENV` giữ
+default `development` → `is_development=True` vô tình trên production (kéo theo lộ đường tắt dev).
+
+### Decision
+
+1. **`X-Org-Slug` ("Mã tổ chức") là cơ chế resolve tenant CHÍNH THỨC trên domain chính**, honor
+   ở MỌI môi trường — nhưng CHỈ là **fallback** sau JWT (1) và subdomain (2), không override được
+   tenant context đã xác định. Header chỉ CHỌN tổ chức để đăng nhập, không cấp quyền.
+2. **Sửa bug môi trường**: truyền `APP_ENV=${APP_ENV:-production}` vào container backend/worker
+   (không dùng biến `ENV` sai tên) → production chạy đúng chế độ.
+3. **Mô hình domain**: `hr.hpu.edu.vn` = app admin + đăng nhập; `{slug}.hr.hpu.edu.vn` = career
+   page công khai theo tenant. Giai đoạn HPU-only chỉ cần thêm block Caddy `hpu.hr.hpu.edu.vn`
+   (KHÔNG cần wildcard). Khi mở đa tenant (SaaS) mới cần wildcard `*.hr.hpu.edu.vn` + TLS.
+
+### Rationale
+
+1. Header chỉ là bộ chọn org; xác thực vẫn bắt buộc credential hợp lệ → không phải backdoor.
+2. Là fallback sau JWT + subdomain nên tenant subdomain / phiên đã đăng nhập luôn thắng — không
+   thể dùng header để nhảy tenant khi context đã có.
+3. Rủi ro còn lại chỉ là dò slug tồn tại (enumeration) — thấp, vì slug đã công khai trong URL
+   career page; login luôn trả thông báo chung ("Email hoặc mật khẩu không đúng").
+4. Bỏ phụ thuộc `is_development` cho luồng tenant → không còn cám dỗ ép prod chạy như dev.
+
+### Consequences
+
+**Positive:**
+- Login + career page hoạt động đúng trên domain phẳng ở production, không phụ thuộc bug env.
+- Đóng lỗ hổng "production chạy chế độ development" (lộ `/docs`, đường tắt dev).
+
+**Negative:**
+- Một header do client gửi tham gia chọn tenant — chấp nhận có kiểm soát (fallback + auth gate),
+  cần nêu rõ khi chạy `/security-review`.
+- Khi lên đa tenant thật cần bổ sung wildcard DNS/TLS và cân nhắc rate-limit/ghi log theo org.
+
+### Alternatives considered
+
+1. **Subdomain per-tenant cho cả app admin** (`hpu.hr.hpu.edu.vn` để đăng nhập): cần wildcard
+   DNS/TLS ngay, thừa cho giai đoạn chỉ có HPU — hoãn tới khi mở SaaS.
+2. **Giữ `X-Org-Slug` dev-only + ép `APP_ENV=development` ở prod**: sai bản chất, mở toàn bộ
+   đường tắt dev trên production — loại.
+
+### References
+
+- ADR-003 (Multi-tenant isolation 3 lớp), `backend/app/middleware/tenant.py`
+- `docker-compose.yml`, `.env.production.example`, `docs/DEPLOY.md`
+
+---
+
 ## ADR-005: 12 Personality Archetype — fusion DISC + Mệnh + Tam hợp bằng scoring xác định
 
 **Status:** Accepted

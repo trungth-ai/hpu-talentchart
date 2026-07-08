@@ -16,9 +16,9 @@ services:
 
     environment:
       # :? → compose fail-fast ngay khi secret bắt buộc bị bỏ trống (checklist §9)
-      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD}@db:5432/talentchart
+      - DATABASE_URL=postgresql+asyncpg://talentchart:${DB_PASSWORD:?DB_PASSWORD bat buoc}@db:5432/talentchart
       - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD}@db:5432/talentchart
-      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - REDIS_URL=redis://:${REDIS_PASSWORD:?REDIS_PASSWORD bat buoc}@redis:6379/0
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET bat buoc}
       # Domain gốc để resolve tenant theo subdomain (hpu.hr.hpu.edu.vn → slug hpu)
       - BASE_DOMAIN=${APP_DOMAIN}
@@ -33,7 +33,9 @@ services:
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - ENV=production
+      # ★ config.py đọc APP_ENV (KHÔNG phải ENV) — set đúng để production không
+      # chạy nhầm chế độ development (lộ /docs, bật đường tắt dev...). Xem ADR-006.
+      - APP_ENV=${APP_ENV:-production}
       - LOG_LEVEL=INFO
       - SENTRY_DSN=${SENTRY_DSN}
 
@@ -61,7 +63,9 @@ services:
         # API_URL để RỖNG = same-origin (gọi /api tương đối, qua Next rewrites)
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
-        NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN}
+        NEXT_PUBLIC_BASE_DOMAIN: ${APP_DOMAIN:?APP_DOMAIN bat buoc (vd hr.hpu.edu.vn)}
+        # Rewrites /api được chốt lúc build — trỏ vào container backend
+        BACKEND_INTERNAL_URL: http://talentchart-backend:8003
     container_name: talentchart-frontend
     restart: unless-stopped
 
@@ -99,6 +103,7 @@ services:
       - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
       # config.py fail-fast: JWT_SECRET bắt buộc cho MỌI process import app
       - JWT_SECRET=${JWT_SECRET}
+      - APP_ENV=${APP_ENV:-production}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
@@ -171,8 +176,8 @@ services:
     command: server /data --console-address ":9001"
     environment:
       # Fail-fast — để trống sẽ rơi về minioadmin:minioadmin (nguy hiểm)
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY bat buoc}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY bat buoc}
     volumes:
       - talentchart-miniodata:/data
     healthcheck:
