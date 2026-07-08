@@ -1,6 +1,6 @@
 # Auth router — login/refresh/me + Google OAuth cho staff (ADR-004)
-# Login scoped theo tổ chức: tenant middleware phải resolve được org
-# (qua subdomain hoặc X-Org-Slug dev) TRƯỚC khi login.
+# Login scoped theo tổ chức: tenant middleware phải resolve được org TRƯỚC khi login
+# (qua JWT / subdomain / header X-Org-Slug = "Mã tổ chức" trên domain chính — ADR-006).
 
 import secrets
 from datetime import UTC, datetime

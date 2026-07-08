@@ -1,9 +1,10 @@
 # ★ TenantMiddleware — lớp bảo vệ số 1 (CRITICAL, xem ADR-003)
 #
-# Resolve organization_id theo thứ tự ưu tiên (PLAN.md):
+# Resolve organization_id theo thứ tự ưu tiên (PLAN.md, ADR-003, ADR-006):
 #   1. JWT claim `organization_id` (AuthMiddleware đã decode trước đó)
-#   2. Subdomain: {org-slug}.talentchart.hpu.edu.vn
-#   3. Header `X-Org-Slug` — CHỈ cho phép ở môi trường development
+#   2. Subdomain: {org-slug}.{BASE_DOMAIN}  (VD: hpu.hr.hpu.edu.vn — career page)
+#   3. Header `X-Org-Slug` = "Mã tổ chức" nhập ở trang đăng nhập trên domain chính
+#      (hr.hpu.edu.vn không có subdomain). Chỉ là FALLBACK sau (1)+(2) — xem ADR-006.
 #
 # Sau khi resolve → set tenant context (contextvars) để database.py tự filter query,
 # và reset context ở finally để không leak sang request khác.
@@ -77,11 +78,15 @@ class TenantMiddleware(BaseHTTPMiddleware):
                 if slug:
                     org_id = await _resolve_org_id_by_slug(slug)
 
-            # 3) Header dev — chỉ môi trường development
-            if org_id is None and settings.is_development:
-                dev_slug = request.headers.get("x-org-slug")
-                if dev_slug:
-                    org_id = await _resolve_org_id_by_slug(dev_slug.strip().lower())
+            # 3) Header X-Org-Slug = "Mã tổ chức" người dùng nhập ở trang đăng nhập
+            # trên domain chính (hr.hpu.edu.vn KHÔNG có subdomain). Chỉ là FALLBACK:
+            # JWT (1) và subdomain (2) luôn thắng nên header KHÔNG override được tenant
+            # context đã xác định. Header chỉ CHỌN tổ chức để đăng nhập — vẫn phải có
+            # credential hợp lệ, không cấp quyền gì thêm (ADR-006).
+            if org_id is None:
+                org_slug = request.headers.get("x-org-slug")
+                if org_slug:
+                    org_id = await _resolve_org_id_by_slug(org_slug.strip().lower())
 
         request.state.organization_id = org_id
         token = set_current_org_id(org_id)

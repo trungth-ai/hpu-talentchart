@@ -62,7 +62,8 @@ async def create_tenant(
             reset_current_org_id(token)
 
         print(f"[OK] Da tao organization '{name}' (slug: {slug})")
-        print(f"     Owner: {email} - dang nhap tai https://{slug}.talentchart.hpu.edu.vn")
+        print(f"     Owner: {email}")
+        print(f"     Dang nhap tai domain chinh, nhap 'Ma to chuc' = {slug} (ADR-006)")
 
 
 if __name__ == "__main__":
