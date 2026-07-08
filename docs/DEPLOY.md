@@ -1,45 +1,87 @@
-# DEPLOY.md — Runbook triển khai & Cutover go-live HPU (Sprint 8)
+# DEPLOY.md — Runbook triển khai & Cutover go-live HPU
 
-> Quy trình 7 bước theo `/deploy` + checklist HUONG-DAN §9. Người thực hiện: Trung.
-> Server: HPU (Docker + caddy-docker-proxy, network `caddy-proxy` đã tạo bởi `~/hpu-dev/setup.sh`).
+> Quy trình theo `/deploy` + checklist HUONG-DAN §9. Người thực hiện: **Trung** (migration
+> production KHÔNG giao AI — playbook §8).
+> Server: HPU (Docker). Reverse proxy: **Caddy HỆ THỐNG của server** (không phải
+> caddy-docker-proxy) — stack chỉ publish frontend ra host port, Caddy trỏ domain vào port đó.
+
+## Mô hình domain (ADR-006)
+
+| Domain | Vai trò | Caddy → |
+|---|---|---|
+| `hr.hpu.edu.vn` | App admin + đăng nhập staff (nhập **Mã tổ chức** = slug) | `localhost:3300` |
+| `hpu.hr.hpu.edu.vn` | Career page công khai của tenant HPU | `localhost:3300` |
+
+- Đăng nhập trên domain phẳng resolve tenant qua header `X-Org-Slug` = "Mã tổ chức" (ADR-006);
+  KHÔNG cần subdomain riêng để login.
+- **Giai đoạn HPU-only: KHÔNG cần wildcard.** Chỉ 2 record + 2 block Caddy ở trên.
+- Khi mở đa tenant (SaaS) về sau: thêm wildcard DNS `*.hr.hpu.edu.vn` + TLS DNS-01
+  (`CLOUDFLARE_API_TOKEN`) cho career page mỗi tenant.
+
+---
 
 ## 0. Điều kiện tiên quyết (làm 1 lần)
 
-- [ ] DNS: `app.talentchart.hpu.edu.vn` + wildcard `*.talentchart.hpu.edu.vn` trỏ về server
-- [ ] `CLOUDFLARE_API_TOKEN` có quyền DNS edit (wildcard SSL cho subdomain tenant)
-- [ ] Google Cloud Console: tạo OAuth Client ID
-  - Authorized JavaScript origins: `https://app.talentchart.hpu.edu.vn`, `https://hpu.talentchart.hpu.edu.vn`
+- [ ] DNS: A record `hr.hpu.edu.vn` **và** `hpu.hr.hpu.edu.vn` trỏ về IP server (không wildcard)
+- [ ] Block trong Caddyfile hệ thống của server:
+  ```caddy
+  hr.hpu.edu.vn {
+      reverse_proxy localhost:3300
+  }
+  hpu.hr.hpu.edu.vn {
+      reverse_proxy localhost:3300
+  }
+  ```
+  → reload: `sudo systemctl reload caddy` (hoặc `caddy reload --config /etc/caddy/Caddyfile`)
+- [ ] Google Cloud Console — OAuth Client ID (ADR-004):
+  - Authorized JavaScript origins: `https://hr.hpu.edu.vn`
   - (Dev: thêm `http://localhost:3000`)
-- [ ] `cp .env.production.example .env.production` và điền đủ — **không giá trị nào rỗng**
+- [ ] `cp .env.production.example .env.production` và điền đủ — **không secret nào để rỗng**
+  (đặc biệt `APP_DOMAIN=hr.hpu.edu.vn`, `FRONTEND_PORT=3300`, `JWT_SECRET`, `DB_PASSWORD`,
+  `REDIS_PASSWORD`, `MINIO_ACCESS_KEY/SECRET_KEY`).
 
-## 1. Pre-flight check (trên máy dev / CI)
+## 1. Pre-flight check (trên máy dev / CI — KHÔNG trên production)
 
 ```bash
-# Backend
-cd backend && uv run ruff check . && uv run pytest --cov=app --cov-fail-under=70
+# Backend (máy Windows dev KHÔNG có uv/docker → chạy thẳng venv)
+backend/.venv/Scripts/python -m pytest --cov=app --cov-fail-under=70
+backend/.venv/Scripts/python -m ruff check .
 # Frontend
 cd frontend && npm ci && npm run typecheck && npm run build
-# CI GitHub Actions phải xanh trên nhánh sẽ deploy
+# CI GitHub Actions phải XANH trên nhánh sẽ deploy
 ```
 
 Checklist bắt buộc trước khi deploy production (HUONG-DAN §9):
 - [ ] `/security-review --pr` sạch — đặc biệt Multi-tenant safety (RLS migration 0001-0003)
+      **và cơ chế X-Org-Slug ở ADR-006** (header chọn tenant — xác nhận vẫn là fallback + auth gate)
 - [ ] `/review` đạt 7 tiêu chí
-- [ ] `test_tenant_isolation.py` + toàn bộ suite pass (hiện tại: 460 tests)
+- [ ] `test_tenant_isolation.py` + toàn bộ suite pass
 - [ ] Coverage > 70%
 - [ ] Nội dung 12 Archetype đã được Trung review (core IP — ADR-005)
 
-## 2. Staging trước, production sau
+## 2. Lấy code + build (trên server)
 
 ```bash
-# Trên server, lần đầu:
+# Lần đầu:
 git clone https://github.com/trungth-ai/hpu-talentchart ~/hpu-dev/talentchart
 cd ~/hpu-dev/talentchart
+# Lần sau:
+git pull origin main   # ⚠️ phải có commit vá "bake BACKEND_INTERNAL_URL" (273b225 trở đi)
 
-# Staging = chạy compose với domain staging hoặc test trên docker network nội bộ
+# Khởi động db + redis trước để chạy migration
 docker compose --env-file .env.production up -d --build db redis
 docker compose --env-file .env.production run --rm backend alembic upgrade head
 ```
+
+> ⚠️ **BẪY THƯỜNG GẶP — proxy `/api` về `localhost:8003`.** Next.js **đóng băng rewrites lúc
+> BUILD**, nên `BACKEND_INTERNAL_URL` phải đúng ở thời điểm build image frontend (đã set qua
+> build ARG trong `frontend/Dockerfile` + `docker-compose.yml`). Nếu chạy image frontend CŨ
+> (build trước bản vá) sẽ thấy log `Failed to proxy http://localhost:8003/... ECONNREFUSED` và
+> UI báo "Không kết nối được máy chủ". Khắc phục: **build lại frontend**:
+> ```bash
+> docker compose --env-file .env.production build --no-cache frontend
+> docker compose --env-file .env.production up -d frontend
+> ```
 
 ## 3. Backup TRƯỚC migration (bắt buộc mỗi lần deploy)
 
@@ -48,15 +90,17 @@ docker compose exec db pg_dump -U talentchart -F c talentchart > backups/pre-dep
 # Container backup tự chạy hằng ngày (scripts/backup-postgres.sh, giữ 14 ngày)
 ```
 
-## 4. Migration + khởi động đầy đủ
+## 4. Khởi động đầy đủ + verify RLS
 
 ```bash
 docker compose --env-file .env.production up -d --build
-docker compose exec backend alembic upgrade head
+# (migration đã chạy ở bước 2; nếu deploy lại có migration mới thì chạy lại upgrade head)
+docker compose exec backend alembic current            # kỳ vọng: head (0005)
+
 # Verify RLS đã bật (lớp bảo vệ số 3):
 docker compose exec db psql -U talentchart -c \
-  "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public';"
-# → users, campaigns, candidates, job_posts, test_sessions đều rowsecurity = t
+  "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public' ORDER BY 1;"
+# → users, campaigns, candidates, job_posts, test_sessions... đều rowsecurity = t
 ```
 
 ## 5. Khởi tạo dữ liệu HPU (cutover — chạy 1 lần duy nhất)
@@ -67,9 +111,9 @@ docker compose exec backend python scripts/create_tenant.py \
   --slug hpu --name "Trường Đại học Hải Phòng" \
   --email trungth@hpu.edu.vn --password "<mật-khẩu-mạnh>" \
   --google-domain hpu.edu.vn
+# → Đăng nhập tại https://hr.hpu.edu.vn, ô "Mã tổ chức" nhập: hpu
 
 # 5.2 Import 107 nhân sự từ file lương (đã có cơ sở đồng ý từ Fortune HR cũ)
-# Copy file dữ liệu vào container trước (image không chứa file nhạy cảm):
 docker cp "Luong T8.xlsx" talentchart-backend:/tmp/luong-t8.xlsx
 docker cp contacts.csv talentchart-backend:/tmp/contacts.csv
 docker compose exec backend python scripts/import_employees.py \
@@ -80,27 +124,38 @@ docker compose exec backend python scripts/update_contacts.py \
   --csv /tmp/contacts.csv --org-slug hpu
 # → Xử lý tay 5 người trùng tên + 38 người không có trong danh bạ (script in danh sách)
 
-# 5.4 Bật Eastern Layer cho HPU (nếu muốn hiện Can Chi/Mệnh/Tam hợp)
-# UPDATE organizations SET settings = settings || '{"eastern_layer_enabled": true}'
-# WHERE slug = 'hpu';   -- hoặc chờ màn settings ở release sau
+# 5.4 (Tùy chọn) Bật Eastern Layer cho HPU — hiện Can Chi/Mệnh/Tam hợp:
+# docker compose exec db psql -U talentchart -c \
+#   "SET app.current_org_id='<org-uuid>'; \
+#    UPDATE organizations SET settings = settings || '{\"eastern_layer_enabled\": true}' WHERE slug='hpu';"
 ```
+
+> ℹ️ Kiểm tra dữ liệu qua psql: bảng `users` bật **FORCE ROW LEVEL SECURITY** nên phải
+> `SET app.current_org_id='<org-uuid>'` trong cùng phiên mới thấy row (deny-by-default).
+> Lấy org-uuid: `SELECT id FROM organizations WHERE slug='hpu';`
 
 ## 6. Smoke test production
 
 ```bash
-curl -f https://app.talentchart.hpu.edu.vn/health
-# Login (Postman/curl) → 200 + token:
-curl -X POST https://app.talentchart.hpu.edu.vn/api/v1/auth/login \
+# Health (không cần tenant)
+curl -f https://hr.hpu.edu.vn/health
+
+# Login qua Mã tổ chức (header X-Org-Slug = slug) → 200 + token:
+curl -X POST https://hr.hpu.edu.vn/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"trungth@hpu.edu.vn","password":"..."}' \
-  -H "Host: hpu.talentchart.hpu.edu.vn"
-# Career page tenant: https://hpu.talentchart.hpu.edu.vn (public)
-# Xác nhận CÔ LẬP TENANT: tạo org thử nghiệm thứ 2, xác nhận không thấy dữ liệu HPU
+  -H "X-Org-Slug: hpu" \
+  -d '{"email":"trungth@hpu.edu.vn","password":"<mật-khẩu>"}'
+
+# Career page công khai tenant HPU:
+curl -f https://hpu.hr.hpu.edu.vn
 ```
 
+- [ ] Đăng nhập UI tại https://hr.hpu.edu.vn (Mã tổ chức: `hpu`) thành công
 - [ ] Đăng nhập Google bằng tài khoản @hpu.edu.vn thật hoạt động
 - [ ] Gửi 1 bài test DISC thật → làm bài → HR xem kết quả + archetype
 - [ ] Case kiểm chứng EPA: Trần Hữu Nghị (1/1/1938) → Đinh Sửu
+- [ ] Xác nhận CÔ LẬP TENANT: tạo org thử nghiệm thứ 2, đăng nhập bằng Mã tổ chức khác,
+      xác nhận KHÔNG thấy dữ liệu HPU
 
 ## 7. Rollback (khi có sự cố)
 
@@ -114,7 +169,16 @@ docker compose exec -T db pg_restore -U talentchart -d talentchart --clean < bac
 
 ## Theo dõi sau go-live (HUONG-DAN §10)
 
-- Log backend: `docker compose logs -f backend` (structlog JSON)
+- Log tổng hợp: `docker compose logs -f frontend backend` (structlog JSON ở backend)
 - Chi phí Anthropic API: narrative có cache — theo dõi usage console.anthropic.com
 - Backup hằng ngày trong `./backups/` (container `talentchart-backup`, giữ 14 ngày)
 - Mọi PR chạm query DB → `/security-review` trước merge
+
+## Phụ lục — chuyển sang đa tenant (SaaS, làm sau)
+
+Khi phục vụ nhiều tổ chức ngoài HPU:
+1. DNS wildcard `*.hr.hpu.edu.vn` + block Caddy wildcard (TLS DNS-01, cần `CLOUDFLARE_API_TOKEN`).
+2. Mỗi tenant tạo bằng `scripts/create_tenant.py --slug <slug> ...`; login bằng Mã tổ chức
+   tương ứng; career page tại `<slug>.hr.hpu.edu.vn`.
+3. Rà lại `/security-review` cơ chế X-Org-Slug (ADR-006) ở bối cảnh nhiều tenant + cân nhắc
+   rate-limit/log theo org.
