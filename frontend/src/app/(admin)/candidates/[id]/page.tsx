@@ -22,6 +22,7 @@ import {
   type ArchetypeResult,
   type Candidate,
   type CompatibilityResult,
+  type PersonalityResult,
   type TestLink,
   type TodayCanChi,
   type ZodiacResult,
@@ -68,6 +69,16 @@ export default function CandidateDetailPage({
     retry: false,
   });
   const archetype = archetypeRes?.data;
+
+  // Tính cách đặc trưng theo ngày sinh (cung hoàng đạo) — cần consent + birth_date,
+  // KHÔNG cần bật Eastern Layer. Lỗi (chưa consent/ngày sinh) → ẩn mục.
+  const { data: personalityRes } = useQuery({
+    queryKey: ['candidate', id, 'personality'],
+    queryFn: () => api.get<PersonalityResult>(`/api/v1/epa/candidates/${id}/personality`),
+    enabled: Boolean(candidate),
+    retry: false,
+  });
+  const personality = personalityRes?.data;
 
   // Dò Eastern Layer: /epa/today lỗi (422/400) → org chưa bật → ẩn toàn bộ mục Đông phương
   const { data: easternProbe } = useQuery({
@@ -219,6 +230,69 @@ export default function CandidateDetailPage({
               </div>
             </dl>
           </section>
+
+          {/* Tính cách đặc trưng theo ngày sinh (cung hoàng đạo) — 2.4, đặt trên Hành động */}
+          {personality && (
+            <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-2xl">{personality.horoscope.emoji}</span>
+                <div>
+                  <h2 className="font-semibold text-gray-900">
+                    Tính cách đặc trưng · {personality.horoscope.name}
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    {personality.horoscope.date_range} · {personality.horoscope.element} · Tuổi{' '}
+                    {personality.zodiac_summary.con_giap} ({personality.zodiac_summary.menh})
+                  </p>
+                </div>
+              </div>
+              <p className="mb-3 text-sm leading-relaxed text-gray-700">
+                {personality.horoscope.personality}
+              </p>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <h3 className="mb-1 text-xs font-semibold uppercase text-green-600">Điểm mạnh</h3>
+                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
+                    {personality.horoscope.strengths.map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="mb-1 text-xs font-semibold uppercase text-amber-600">Điểm yếu</h3>
+                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
+                    {personality.horoscope.weaknesses.map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="mb-1 text-xs font-semibold uppercase text-primary-600">
+                    Nghề phù hợp
+                  </h3>
+                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
+                    {personality.horoscope.careers.map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="mb-1 text-xs font-semibold uppercase text-gray-500">Màu sắc hợp</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {personality.horoscope.lucky_colors.map((c) => (
+                      <span
+                        key={c}
+                        className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700"
+                      >
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-xs text-gray-400">{personality.disclaimer}</p>
+            </section>
+          )}
 
           <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
             <h2 className="mb-3 font-semibold text-gray-900">Hành động</h2>

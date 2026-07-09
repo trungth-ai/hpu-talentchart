@@ -144,6 +144,30 @@ export interface CompatibilityResult {
   disclaimer: string;
 }
 
+// Tính cách đặc trưng theo ngày sinh — cung hoàng đạo (2.4)
+export interface HoroscopeSign {
+  code: string;
+  name: string;
+  name_book: string;
+  emoji: string;
+  date_range: string;
+  element: string;
+  ruling_planet: string;
+  lucky_colors: string[];
+  personality: string;
+  strengths: string[];
+  weaknesses: string[];
+  careers: string[];
+}
+
+export interface PersonalityResult {
+  candidate_id: string;
+  full_name: string;
+  horoscope: HoroscopeSign;
+  zodiac_summary: { con_giap: string; emoji: string; tuoi_am: string; menh: string };
+  disclaimer: string;
+}
+
 // Can Chi hôm nay (dashboard) — dùng để dò Eastern Layer có bật không
 export interface TodayCanChi {
   lunar_date: string;

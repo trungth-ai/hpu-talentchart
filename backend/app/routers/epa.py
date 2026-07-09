@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.permissions import require_hr_manager
 from app.core.responses import success
 from app.core.tenant_context import get_current_org_id
+from app.data.horoscope import get_sign_by_date
 from app.database import get_db
 from app.exceptions import BusinessRuleError, ResourceNotFound
 from app.models.candidate import Candidate
@@ -195,6 +196,39 @@ async def candidate_archetype(
         payload["fusion"] = fusion_result["fusion"]
 
     return success(payload)
+
+
+@router.get("/candidates/{candidate_id}/personality")
+async def candidate_personality(
+    candidate_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """Tính cách đặc trưng theo NGÀY SINH: cung hoàng đạo (chiêm tinh phương Tây) + con giáp.
+
+    KHÔNG cần bật Eastern Layer (đây là mô tả tính cách tham khảo), nhưng cần ứng viên đã
+    opt-in (epa_consent) và có birth_date (NĐ 13/2023). Nội dung cung hoàng đạo lấy từ tài
+    liệu Trung cung cấp; chi tiết tính cách theo con giáp sẽ bổ sung khi có tài liệu nguồn.
+    """
+    candidate = await _get_candidate_with_birth(candidate_id, db)
+    bd = candidate.birth_date
+    horoscope = get_sign_by_date(bd)
+    zodiac = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
+
+    return success(
+        {
+            "candidate_id": str(candidate.id),
+            "full_name": candidate.full_name,
+            "horoscope": horoscope,
+            "zodiac_summary": {
+                "con_giap": zodiac["con_giap"],
+                "emoji": zodiac["emoji"],
+                "tuoi_am": zodiac["tuoi_am"],
+                "menh": zodiac["menh"],
+            },
+            "disclaimer": DISCLAIMER,
+        }
+    )
 
 
 class TeamSuggestRequest(BaseModel):
