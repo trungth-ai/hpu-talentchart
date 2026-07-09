@@ -141,6 +141,8 @@ export interface CompatibilityResult {
   person2: { id: string; full_name: string; zodiac: ZodiacInfo };
   score: number;
   notes: string[];
+  detail: string | null; // mô tả chi tiết cặp tuổi (từ sách con giáp)
+  detail_from: string | null;
   disclaimer: string;
 }
 

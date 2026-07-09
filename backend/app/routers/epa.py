@@ -126,12 +126,28 @@ async def epa_compatibility(
     z1, z2 = _zodiac_of(c1), _zodiac_of(c2)
     result = compatibility.compatibility_score(z1, z2)
 
+    # Mô tả tương hợp/tương xung chi tiết từ sách con giáp (ma trận theo địa chi).
+    # Ưu tiên X→Y; không có thì tra ngược Y→X (kèm ghi chú góc nhìn).
+    detail = None
+    detail_from = None
+    row = await db.get(AstrologyReference, ("compat", z1["dia_chi"]))
+    if row and z2["dia_chi"] in row.content:
+        detail = row.content[z2["dia_chi"]]
+        detail_from = c1.full_name
+    else:
+        row2 = await db.get(AstrologyReference, ("compat", z2["dia_chi"]))
+        if row2 and z1["dia_chi"] in row2.content:
+            detail = row2.content[z1["dia_chi"]]
+            detail_from = c2.full_name
+
     return success(
         {
             "person1": {"id": str(c1.id), "full_name": c1.full_name, "zodiac": z1},
             "person2": {"id": str(c2.id), "full_name": c2.full_name, "zodiac": z2},
             "score": result["score"],
             "notes": result["notes"],
+            "detail": detail,           # mô tả chi tiết cặp tuổi (có thể None)
+            "detail_from": detail_from,  # mô tả xét theo góc nhìn của ai
             "disclaimer": DISCLAIMER,
         }
     )

@@ -42,6 +42,11 @@ async def seed() -> None:
                 },
             )
         )
+    # Tương hợp/tương xung 12 con giáp (EPA) — ma trận theo từng tuổi (địa chi X)
+    for dia_chi, pairs in data.get("compat", {}).items():
+        if pairs:
+            animal = ZODIAC_ANIMALS.get(dia_chi, {}).get("animal", dia_chi)
+            rows.append(("compat", dia_chi, f"Tương hợp tuổi {animal}", pairs))
 
     async with async_session_factory() as session:
         for kind, key, title, content in rows:
@@ -57,7 +62,8 @@ async def seed() -> None:
 
     print(f"[OK] Da nap {len(rows)} dong astrology_reference "
           f"({sum(k=='zodiac' for k,_,_,_ in rows)} con giap, "
-          f"{sum(k=='horoscope' for k,_,_,_ in rows)} cung hoang dao)")
+          f"{sum(k=='horoscope' for k,_,_,_ in rows)} cung hoang dao, "
+          f"{sum(k=='compat' for k,_,_,_ in rows)} bang tuong hop)")
 
 
 if __name__ == "__main__":

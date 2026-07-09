@@ -568,6 +568,16 @@ export default function CandidateDetailPage({
                       ))}
                     </ul>
                   )}
+                  {compatRes.data.detail && (
+                    <div className="rounded-lg bg-primary-50/60 p-3 text-sm leading-relaxed text-gray-700">
+                      {compatRes.data.detail}
+                      {compatRes.data.detail_from && (
+                        <span className="mt-1 block text-xs text-gray-400">
+                          (Nhận định theo góc nhìn tuổi của {compatRes.data.detail_from})
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <p className="text-xs text-gray-400">{compatRes.data.disclaimer}</p>
                 </div>
               )}
