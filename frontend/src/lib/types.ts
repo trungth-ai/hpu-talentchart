@@ -208,7 +208,7 @@ export interface FortuneResult {
     canchi: { solar_date: string; lunar_date: string; day_canchi: string; year_canchi: string };
     narrative: string;
   };
-  month: { month: number; year: number; narrative: string };
+  month: { month: number; year: number; narrative: string; book_guidance: string | null };
   ai_generated: boolean;
   disclaimer: string;
 }

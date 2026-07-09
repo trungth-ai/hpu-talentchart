@@ -47,6 +47,10 @@ async def seed() -> None:
         if pairs:
             animal = ZODIAC_ANIMALS.get(dia_chi, {}).get("animal", dia_chi)
             rows.append(("compat", dia_chi, f"Tương hợp tuổi {animal}", pairs))
+    # Chỉ nam vận trình mỗi tháng theo cung (12 tháng) — dùng cho vận trình THÁNG
+    for code, months in data.get("monthly", {}).items():
+        if months:
+            rows.append(("month", code, name_by_code.get(code, code), months))
 
     async with async_session_factory() as session:
         for kind, key, title, content in rows:

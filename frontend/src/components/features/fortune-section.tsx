@@ -64,6 +64,14 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
             Tháng {f.month.month}/{f.month.year}
           </h3>
           <p className="leading-relaxed text-gray-700">{f.month.narrative}</p>
+          {f.month.book_guidance && (
+            <details className="mt-1 text-xs text-gray-500">
+              <summary className="cursor-pointer hover:text-gray-700">
+                Chỉ nam theo sách (tháng {f.month.month})
+              </summary>
+              <p className="mt-1 whitespace-pre-wrap leading-relaxed">{f.month.book_guidance}</p>
+            </details>
+          )}
         </div>
       </div>
 

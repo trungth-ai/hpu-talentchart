@@ -284,10 +284,18 @@ async def candidate_fortune(
         f"tuổi {z['con_giap']} ({z['tuoi_am']}, mệnh {z['menh']}), "
         f"cung hoàng đạo {sign['name']} ({sign['element']})."
     )
+    # Chỉ nam vận trình tháng theo sách (nếu đã seed) — đưa vào facts để Claude bám sát
+    month_row = await db.get(AstrologyReference, ("month", sign["code"]))
+    month_guidance = month_row.content.get(str(today.month)) if month_row else None
     month_facts = (
         f"Tháng {today.month}/{today.year} dương lịch. Nhân sự {candidate.full_name} "
         f"tuổi {z['con_giap']} (mệnh {z['menh']}), cung hoàng đạo {sign['name']} ({sign['element']})."
     )
+    if month_guidance:
+        month_facts += (
+            f" Chỉ nam vận trình tháng {today.month} (theo sách) cho cung "
+            f"{sign['name']}: {month_guidance}"
+        )
     return success(
         {
             "candidate_id": str(candidate.id),
@@ -298,6 +306,7 @@ async def candidate_fortune(
                 "month": today.month,
                 "year": today.year,
                 "narrative": await fortune.fortune_narrative("month", month_facts),
+                "book_guidance": month_guidance,
             },
             "ai_generated": bool(fortune.settings.ANTHROPIC_API_KEY),
             "disclaimer": DISCLAIMER,
