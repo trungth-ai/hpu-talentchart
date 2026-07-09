@@ -32,6 +32,7 @@ from app.services.epa import (
     biorhythm,
     canchi,
     compatibility,
+    fortune,
     narrative,
     team_suggest,
 )
@@ -242,6 +243,67 @@ async def candidate_personality(
             "disclaimer": DISCLAIMER,
         }
     )
+
+
+@router.get("/candidates/{candidate_id}/fortune")
+async def candidate_fortune(
+    candidate_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """Vận trình NGÀY + THÁNG — tính offline (Can Chi + cung) rồi Claude diễn giải chi tiết.
+
+    Cần epa_consent + birth_date. Không có ANTHROPIC_API_KEY thì trả phần dữ kiện (template).
+    """
+    candidate = await _get_candidate_with_birth(candidate_id, db)
+    bd = candidate.birth_date
+    z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
+    sign = get_sign_by_date(bd)
+    tc = canchi.get_today_canchi()
+    today = datetime.now(UTC).date()
+
+    day_facts = (
+        f"Hôm nay dương lịch {tc['solar_date']}, âm lịch {tc['lunar_date']}, "
+        f"ngày {tc['day_canchi']}, năm {tc['year_canchi']}. Nhân sự {candidate.full_name} "
+        f"tuổi {z['con_giap']} ({z['tuoi_am']}, mệnh {z['menh']}), "
+        f"cung hoàng đạo {sign['name']} ({sign['element']})."
+    )
+    month_facts = (
+        f"Tháng {today.month}/{today.year} dương lịch. Nhân sự {candidate.full_name} "
+        f"tuổi {z['con_giap']} (mệnh {z['menh']}), cung hoàng đạo {sign['name']} ({sign['element']})."
+    )
+    return success(
+        {
+            "candidate_id": str(candidate.id),
+            "full_name": candidate.full_name,
+            "birth": {"day": bd.day, "month": bd.month, "year": bd.year},
+            "day": {"canchi": tc, "narrative": await fortune.fortune_narrative("day", day_facts)},
+            "month": {
+                "month": today.month,
+                "year": today.year,
+                "narrative": await fortune.fortune_narrative("month", month_facts),
+            },
+            "ai_generated": bool(fortune.settings.ANTHROPIC_API_KEY),
+            "disclaimer": DISCLAIMER,
+        }
+    )
+
+
+@router.get("/fortune/lichngaytot")
+async def fortune_lichngaytot(
+    day: int = Query(..., ge=1, le=31),
+    month: int = Query(..., ge=1, le=12),
+    year: int = Query(..., ge=1900, le=2100),
+    _: User = Depends(require_hr_manager),
+):
+    """Cào lichngaytot.com theo ngày — best-effort, chỉ gọi khi người dùng bấm nút."""
+    try:
+        data = await fortune.scrape_lichngaytot(day, month, year)
+    except Exception as exc:  # noqa: BLE001
+        raise BusinessRuleError(
+            "Không lấy được dữ liệu từ lichngaytot.com (trang ngoài có thể đã đổi), thử lại sau"
+        ) from exc
+    return success({**data, "disclaimer": DISCLAIMER})
 
 
 @router.get("/candidates/{candidate_id}/biorhythm")

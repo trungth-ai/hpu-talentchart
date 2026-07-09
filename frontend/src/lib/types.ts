@@ -197,6 +197,26 @@ export interface BiorhythmResult {
   disclaimer: string;
 }
 
+// Vận trình ngày/tháng (2.1/2.2)
+export interface FortuneResult {
+  candidate_id: string;
+  full_name: string;
+  birth: { day: number; month: number; year: number };
+  day: {
+    canchi: { solar_date: string; lunar_date: string; day_canchi: string; year_canchi: string };
+    narrative: string;
+  };
+  month: { month: number; year: number; narrative: string };
+  ai_generated: boolean;
+  disclaimer: string;
+}
+
+export interface LichngaytotResult {
+  url: string;
+  excerpt: string;
+  disclaimer: string;
+}
+
 // Nội dung tử vi đầy đủ (Xem thêm) — content tùy kind:
 //   zodiac    → { full }
 //   horoscope → { book1, tuvitay }

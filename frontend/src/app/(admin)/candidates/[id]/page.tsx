@@ -13,6 +13,7 @@ import { use, useState } from 'react';
 import { AstrologyDetailModal } from '@/components/features/astrology-detail-modal';
 import { BiorhythmChart } from '@/components/features/biorhythm-chart';
 import { CandidateFormModal } from '@/components/features/candidate-form-modal';
+import { FortuneSection } from '@/components/features/fortune-section';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
 import {
@@ -460,6 +461,9 @@ export default function CandidateDetailPage({
               </p>
             </section>
           )}
+
+          {/* Vận trình ngày/tháng (2.1/2.2) — tự ẩn nếu ứng viên chưa có ngày sinh + consent */}
+          <FortuneSection candidateId={id} />
 
           {/* ─── EPA Eastern Layer: chỉ hiện khi tổ chức bật eastern_layer_enabled ─── */}
           {easternEnabled && (
