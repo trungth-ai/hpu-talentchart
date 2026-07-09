@@ -26,3 +26,11 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.tsbuildinfo
+
+# Dữ liệu nhạy cảm (lương/danh bạ/PII) — TUYỆT ĐỐI KHÔNG commit.
+# Đưa lên server bằng scp + docker cp, KHÔNG qua git (commit sẽ nằm vĩnh viễn
+# trong history dù xóa sau). Xem docs/DEPLOY.md bước 5.
+*.xlsx
+*.xls
+contacts.csv
+/docs/*.csv
