@@ -7,6 +7,7 @@
 # - Kết quả EPA CHỈ là tín hiệu tham khảo, không phải yếu tố quyết định tuyển dụng
 
 import random
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -26,7 +27,14 @@ from app.models.candidate import Candidate
 from app.models.organization import Organization
 from app.models.test_session import TestSession
 from app.models.user import User
-from app.services.epa import archetype, canchi, compatibility, narrative, team_suggest
+from app.services.epa import (
+    archetype,
+    biorhythm,
+    canchi,
+    compatibility,
+    narrative,
+    team_suggest,
+)
 
 router = APIRouter(prefix="/epa", tags=["epa"])
 
@@ -231,6 +239,32 @@ async def candidate_personality(
             },
             # Tính cách theo con giáp (địa chi) — từ tài liệu "12 con giáp theo lịch vạn niên"
             "zodiac_personality": zodiac_personality,
+            "disclaimer": DISCLAIMER,
+        }
+    )
+
+
+@router.get("/candidates/{candidate_id}/biorhythm")
+async def candidate_biorhythm(
+    candidate_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """Nhịp sinh học (Biorhythm) quanh hôm nay — cần epa_consent + birth_date.
+
+    Trả giá trị 3 nhịp (thể chất/cảm xúc/trí tuệ) hôm nay + chuỗi ±14 ngày để vẽ biểu đồ.
+    """
+    candidate = await _get_candidate_with_birth(candidate_id, db)
+    today = datetime.now(UTC).date()
+    now = biorhythm.biorhythm_today(candidate.birth_date, today)
+    return success(
+        {
+            "candidate_id": str(candidate.id),
+            "full_name": candidate.full_name,
+            "date": today.isoformat(),
+            "days_alive": now["days_alive"],
+            "today": {k: now[k] for k in ("physical", "emotional", "intellectual")},
+            "series": biorhythm.biorhythm_series(candidate.birth_date, today, span=14),
             "disclaimer": DISCLAIMER,
         }
     )

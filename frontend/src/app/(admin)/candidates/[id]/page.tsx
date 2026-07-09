@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 
 import { AstrologyDetailModal } from '@/components/features/astrology-detail-modal';
+import { BiorhythmChart } from '@/components/features/biorhythm-chart';
 import { CandidateFormModal } from '@/components/features/candidate-form-modal';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
@@ -21,6 +22,7 @@ import {
   nextStages,
   type AdminTestResult,
   type ArchetypeResult,
+  type BiorhythmResult,
   type Candidate,
   type CompatibilityResult,
   type PersonalityResult,
@@ -81,6 +83,15 @@ export default function CandidateDetailPage({
     retry: false,
   });
   const personality = personalityRes?.data;
+
+  // Nhịp sinh học — cần consent + birth_date (không cần Eastern Layer)
+  const { data: bioRes } = useQuery({
+    queryKey: ['candidate', id, 'biorhythm'],
+    queryFn: () => api.get<BiorhythmResult>(`/api/v1/epa/candidates/${id}/biorhythm`),
+    enabled: Boolean(candidate),
+    retry: false,
+  });
+  const biorhythm = bioRes?.data;
 
   // Dò Eastern Layer: /epa/today lỗi (422/400) → org chưa bật → ẩn toàn bộ mục Đông phương
   const { data: easternProbe } = useQuery({
@@ -436,6 +447,17 @@ export default function CandidateDetailPage({
                 </div>
               </div>
               <p className="mt-4 text-xs text-gray-400">{archetype.disclaimer}</p>
+            </section>
+          )}
+
+          {/* Nhịp sinh học (2.3) — cần ngày sinh + consent, không phụ thuộc Eastern Layer */}
+          {biorhythm && (
+            <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+              <h2 className="mb-3 font-semibold text-gray-900">Nhịp sinh học (Biorhythm)</h2>
+              <BiorhythmChart series={biorhythm.series} today={biorhythm.today} />
+              <p className="mt-2 text-xs text-gray-400">
+                Đã sống {biorhythm.days_alive.toLocaleString('vi-VN')} ngày · {biorhythm.disclaimer}
+              </p>
             </section>
           )}
 

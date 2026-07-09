@@ -178,6 +178,25 @@ export interface PersonalityResult {
   disclaimer: string;
 }
 
+// Nhịp sinh học (Biorhythm)
+export interface BiorhythmPoint {
+  offset: number;
+  date: string;
+  physical: number;
+  emotional: number;
+  intellectual: number;
+}
+
+export interface BiorhythmResult {
+  candidate_id: string;
+  full_name: string;
+  date: string;
+  days_alive: number;
+  today: { physical: number; emotional: number; intellectual: number };
+  series: BiorhythmPoint[];
+  disclaimer: string;
+}
+
 // Nội dung tử vi đầy đủ (Xem thêm) — content tùy kind:
 //   zodiac    → { full }
 //   horoscope → { book1, tuvitay }
