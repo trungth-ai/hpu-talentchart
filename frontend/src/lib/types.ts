@@ -178,6 +178,17 @@ export interface PersonalityResult {
   disclaimer: string;
 }
 
+// Nội dung tử vi đầy đủ (Xem thêm) — content tùy kind:
+//   zodiac    → { full }
+//   horoscope → { book1, tuvitay }
+export interface AstrologyRef {
+  kind: 'zodiac' | 'horoscope';
+  key: string;
+  title: string;
+  content: Record<string, string>;
+  disclaimer: string;
+}
+
 // Can Chi hôm nay (dashboard) — dùng để dò Eastern Layer có bật không
 export interface TodayCanChi {
   lunar_date: string;

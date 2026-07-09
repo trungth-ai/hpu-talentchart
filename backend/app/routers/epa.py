@@ -21,6 +21,7 @@ from app.data.horoscope import get_sign_by_date
 from app.data.zodiac_animals import get_animal_by_dia_chi
 from app.database import get_db
 from app.exceptions import BusinessRuleError, ResourceNotFound
+from app.models.astrology import AstrologyReference
 from app.models.candidate import Candidate
 from app.models.organization import Organization
 from app.models.test_session import TestSession
@@ -230,6 +231,35 @@ async def candidate_personality(
             },
             # Tính cách theo con giáp (địa chi) — từ tài liệu "12 con giáp theo lịch vạn niên"
             "zodiac_personality": zodiac_personality,
+            "disclaimer": DISCLAIMER,
+        }
+    )
+
+
+@router.get("/reference/{kind}/{key}")
+async def astrology_reference(
+    kind: str,
+    key: str,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """Nội dung tử vi ĐẦY ĐỦ (toàn diện) — dùng cho nút "Xem thêm".
+
+    - kind=zodiac, key=địa chi (Tý, Sửu, ...): toàn bộ nội dung con giáp.
+    - kind=horoscope, key=code cung (ARIES, ...): toàn bộ nội dung cung hoàng đạo (2 nguồn).
+    Dữ liệu nạp từ tài liệu nguồn qua scripts/seed_astrology.py (bảng astrology_reference).
+    """
+    if kind not in ("zodiac", "horoscope"):
+        raise BusinessRuleError("Loại tra cứu không hợp lệ")
+    obj = await db.get(AstrologyReference, (kind, key))
+    if obj is None:
+        raise ResourceNotFound("nội dung tử vi (chưa nạp dữ liệu?)")
+    return success(
+        {
+            "kind": obj.kind,
+            "key": obj.key,
+            "title": obj.title,
+            "content": obj.content,
             "disclaimer": DISCLAIMER,
         }
     )

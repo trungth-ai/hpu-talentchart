@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 
+import { AstrologyDetailModal } from '@/components/features/astrology-detail-modal';
 import { CandidateFormModal } from '@/components/features/candidate-form-modal';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
@@ -48,6 +49,7 @@ export default function CandidateDetailPage({
   const [testUrl, setTestUrl] = useState<string | null>(null);
   const [otherId, setOtherId] = useState('');
   const [showEdit, setShowEdit] = useState(false);
+  const [showAstrology, setShowAstrology] = useState(false);
 
   const { data: candidateRes, isLoading } = useQuery({
     queryKey: ['candidate', id],
@@ -284,7 +286,14 @@ export default function CandidateDetailPage({
                   ))}
                 </div>
               </div>
-              <p className="mt-3 text-xs text-gray-400">{personality.disclaimer}</p>
+              <button
+                type="button"
+                onClick={() => setShowAstrology(true)}
+                className="mt-3 text-sm font-medium text-primary-600 hover:underline"
+              >
+                Xem thêm — toàn diện về tuổi &amp; cung →
+              </button>
+              <p className="mt-2 text-xs text-gray-400">{personality.disclaimer}</p>
             </section>
           )}
 
@@ -543,6 +552,20 @@ export default function CandidateDetailPage({
 
       {showEdit && (
         <CandidateFormModal mode="edit" initial={candidate} onClose={() => setShowEdit(false)} />
+      )}
+
+      {showAstrology && personality && (
+        <AstrologyDetailModal
+          diaChi={personality.zodiac_personality?.dia_chi}
+          animalLabel={
+            personality.zodiac_personality
+              ? `Tuổi ${personality.zodiac_personality.animal}`
+              : undefined
+          }
+          horoscopeCode={personality.horoscope.code}
+          horoscopeName={personality.horoscope.name}
+          onClose={() => setShowAstrology(false)}
+        />
       )}
     </div>
   );

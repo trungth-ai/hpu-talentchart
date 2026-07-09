@@ -1,4 +1,5 @@
 # Models package — import tất cả model để Alembic autogenerate và Base.metadata thấy đủ bảng
+from app.models.astrology import AstrologyReference
 from app.models.base import Base, TenantScopedBase
 from app.models.campaign import Campaign
 from app.models.candidate import Candidate
@@ -10,6 +11,7 @@ from app.models.user import User
 __all__ = [
     "Base",
     "TenantScopedBase",
+    "AstrologyReference",
     "Organization",
     "User",
     "Campaign",
