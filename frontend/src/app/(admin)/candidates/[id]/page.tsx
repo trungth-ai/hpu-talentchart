@@ -3,11 +3,14 @@
 // Chi tiết ứng viên (Sprint 7): thông tin + chuyển pipeline tuần tự + gửi bài test
 // + kết quả DISC + 12 Personality Archetype
 // + EPA Eastern Layer (Tử vi phương Đông + So sánh tương hợp) — chỉ hiện khi org bật
-//   eastern_layer_enabled (ADR-006 hạ tầng; quy tắc hiển thị Critical Business Rules)
+//   eastern_layer_enabled (quy tắc hiển thị Critical Business Rules)
+// + Sửa / Xóa (soft-delete) hồ sơ
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { use, useState } from 'react';
 
+import { CandidateFormModal } from '@/components/features/candidate-form-modal';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
 import {
@@ -38,10 +41,12 @@ export default function CandidateDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
   const [testUrl, setTestUrl] = useState<string | null>(null);
   const [otherId, setOtherId] = useState('');
+  const [showEdit, setShowEdit] = useState(false);
 
   const { data: candidateRes, isLoading } = useQuery({
     queryKey: ['candidate', id],
@@ -123,6 +128,15 @@ export default function CandidateDetailPage({
     onError: (e) => setActionError(e instanceof ApiError ? e.message : 'Có lỗi xảy ra'),
   });
 
+  const del = useMutation({
+    mutationFn: () => api.delete(`/api/v1/candidates/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      router.push('/candidates');
+    },
+    onError: (e) => setActionError(e instanceof ApiError ? e.message : 'Có lỗi xảy ra'),
+  });
+
   if (isLoading || !candidate) {
     return <div className="py-16 text-center text-gray-400">Đang tải…</div>;
   }
@@ -142,11 +156,28 @@ export default function CandidateDetailPage({
             {candidate.position ? ` · ${candidate.position}` : ''}
           </p>
         </div>
-        <span
-          className={`rounded-full px-3 py-1 text-sm font-medium ${STAGE_COLORS[candidate.pipeline_stage]}`}
-        >
-          {STAGE_LABELS[candidate.pipeline_stage]}
-        </span>
+        <div className="flex flex-col items-end gap-2">
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-medium ${STAGE_COLORS[candidate.pipeline_stage]}`}
+          >
+            {STAGE_LABELS[candidate.pipeline_stage]}
+          </span>
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => setShowEdit(true)}>
+              Sửa
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              disabled={del.isPending}
+              onClick={() => {
+                if (window.confirm(`Ẩn (xóa mềm) hồ sơ ${candidate.full_name}?`)) del.mutate();
+              }}
+            >
+              Xóa
+            </Button>
+          </div>
+        </div>
       </header>
 
       {actionError && (
@@ -441,6 +472,10 @@ export default function CandidateDetailPage({
           )}
         </div>
       </div>
+
+      {showEdit && (
+        <CandidateFormModal mode="edit" initial={candidate} onClose={() => setShowEdit(false)} />
+      )}
     </div>
   );
 }

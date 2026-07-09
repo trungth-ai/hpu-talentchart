@@ -1,12 +1,14 @@
 'use client';
 
 // Danh sách ứng viên & nhân sự (Sprint 7) — search, filter stage/type, pagination
+// + Thêm nhân sự (mở modal CRUD)
 
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
+import { CandidateFormModal } from '@/components/features/candidate-form-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api-client';
@@ -26,6 +28,7 @@ function CandidatesContent() {
   const [searchInput, setSearchInput] = useState('');
   const [stage, setStage] = useState(searchParams.get('stage') ?? '');
   const [type, setType] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
 
   const params = new URLSearchParams({ page: String(page), per_page: '15' });
   if (search) params.set('search', search);
@@ -46,6 +49,7 @@ function CandidatesContent() {
           <h1 className="text-2xl font-bold text-gray-900">Ứng viên & Nhân sự</h1>
           <p className="text-sm text-gray-500">{data?.meta?.total ?? 0} hồ sơ</p>
         </div>
+        <Button onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</Button>
       </header>
 
       {/* Bộ lọc */}
@@ -183,6 +187,8 @@ function CandidatesContent() {
           </Button>
         </div>
       )}
+
+      {showCreate && <CandidateFormModal mode="create" onClose={() => setShowCreate(false)} />}
     </div>
   );
 }
