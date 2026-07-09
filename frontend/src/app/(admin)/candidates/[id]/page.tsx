@@ -231,63 +231,57 @@ export default function CandidateDetailPage({
             </dl>
           </section>
 
-          {/* Tính cách đặc trưng theo ngày sinh (cung hoàng đạo) — 2.4, đặt trên Hành động */}
+          {/* Tính cách đặc trưng theo ngày sinh (con giáp + cung hoàng đạo) — 2.4, trên Hành động */}
           {personality && (
             <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
-              <div className="mb-3 flex items-center gap-2">
+              <h2 className="mb-3 font-semibold text-gray-900">Tính cách đặc trưng</h2>
+
+              {/* Theo con giáp (tuổi) */}
+              {personality.zodiac_personality && (
+                <div className="mb-4 border-b border-gray-100 pb-4">
+                  <p className="mb-1 text-sm font-semibold text-primary-700">
+                    Tuổi {personality.zodiac_personality.animal} · {personality.zodiac_summary.tuoi_am} ·
+                    Mệnh {personality.zodiac_summary.menh}
+                  </p>
+                  <p className="mb-1 text-sm leading-relaxed text-gray-700">
+                    {personality.zodiac_personality.personality}
+                  </p>
+                  <TraitList label="Điểm mạnh" color="text-green-600" items={personality.zodiac_personality.strengths} />
+                  <TraitList label="Điểm yếu" color="text-amber-600" items={personality.zodiac_personality.weaknesses} />
+                  <TraitList label="Nghề phù hợp" color="text-primary-600" items={personality.zodiac_personality.careers} />
+                </div>
+              )}
+
+              {/* Theo cung hoàng đạo (chiêm tinh phương Tây) */}
+              <div className="mb-2 flex items-center gap-2">
                 <span className="text-2xl">{personality.horoscope.emoji}</span>
                 <div>
-                  <h2 className="font-semibold text-gray-900">
-                    Tính cách đặc trưng · {personality.horoscope.name}
-                  </h2>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {personality.horoscope.name} · cung hoàng đạo
+                  </p>
                   <p className="text-xs text-gray-500">
-                    {personality.horoscope.date_range} · {personality.horoscope.element} · Tuổi{' '}
-                    {personality.zodiac_summary.con_giap} ({personality.zodiac_summary.menh})
+                    {personality.horoscope.date_range} · {personality.horoscope.element} ·{' '}
+                    {personality.horoscope.ruling_planet}
                   </p>
                 </div>
               </div>
-              <p className="mb-3 text-sm leading-relaxed text-gray-700">
+              <p className="mb-1 text-sm leading-relaxed text-gray-700">
                 {personality.horoscope.personality}
               </p>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-green-600">Điểm mạnh</h3>
-                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
-                    {personality.horoscope.strengths.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-amber-600">Điểm yếu</h3>
-                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
-                    {personality.horoscope.weaknesses.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-primary-600">
-                    Nghề phù hợp
-                  </h3>
-                  <ul className="list-disc space-y-0.5 pl-4 text-gray-600">
-                    {personality.horoscope.careers.map((s) => (
-                      <li key={s}>{s}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-xs font-semibold uppercase text-gray-500">Màu sắc hợp</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {personality.horoscope.lucky_colors.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700"
-                      >
-                        {c}
-                      </span>
-                    ))}
-                  </div>
+              <TraitList label="Điểm mạnh" color="text-green-600" items={personality.horoscope.strengths} />
+              <TraitList label="Điểm yếu" color="text-amber-600" items={personality.horoscope.weaknesses} />
+              <TraitList label="Nghề phù hợp" color="text-primary-600" items={personality.horoscope.careers} />
+              <div className="mt-2">
+                <h3 className="mb-1 text-xs font-semibold uppercase text-gray-500">Màu sắc hợp</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {personality.horoscope.lucky_colors.map((c) => (
+                    <span
+                      key={c}
+                      className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700"
+                    >
+                      {c}
+                    </span>
+                  ))}
                 </div>
               </div>
               <p className="mt-3 text-xs text-gray-400">{personality.disclaimer}</p>
@@ -550,6 +544,28 @@ export default function CandidateDetailPage({
       {showEdit && (
         <CandidateFormModal mode="edit" initial={candidate} onClose={() => setShowEdit(false)} />
       )}
+    </div>
+  );
+}
+
+function TraitList({
+  label,
+  color,
+  items,
+}: {
+  label: string;
+  color: string;
+  items: string[];
+}) {
+  if (!items?.length) return null;
+  return (
+    <div className="mt-2">
+      <h3 className={`mb-1 text-xs font-semibold uppercase ${color}`}>{label}</h3>
+      <ul className="list-disc space-y-0.5 pl-4 text-sm text-gray-600">
+        {items.map((s) => (
+          <li key={s}>{s}</li>
+        ))}
+      </ul>
     </div>
   );
 }

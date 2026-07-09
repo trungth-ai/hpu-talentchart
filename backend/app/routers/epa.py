@@ -18,6 +18,7 @@ from app.core.permissions import require_hr_manager
 from app.core.responses import success
 from app.core.tenant_context import get_current_org_id
 from app.data.horoscope import get_sign_by_date
+from app.data.zodiac_animals import get_animal_by_dia_chi
 from app.database import get_db
 from app.exceptions import BusinessRuleError, ResourceNotFound
 from app.models.candidate import Candidate
@@ -214,6 +215,7 @@ async def candidate_personality(
     bd = candidate.birth_date
     horoscope = get_sign_by_date(bd)
     zodiac = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
+    zodiac_personality = get_animal_by_dia_chi(zodiac["dia_chi"])
 
     return success(
         {
@@ -226,6 +228,8 @@ async def candidate_personality(
                 "tuoi_am": zodiac["tuoi_am"],
                 "menh": zodiac["menh"],
             },
+            # Tính cách theo con giáp (địa chi) — từ tài liệu "12 con giáp theo lịch vạn niên"
+            "zodiac_personality": zodiac_personality,
             "disclaimer": DISCLAIMER,
         }
     )

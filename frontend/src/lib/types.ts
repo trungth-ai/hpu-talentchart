@@ -160,11 +160,21 @@ export interface HoroscopeSign {
   careers: string[];
 }
 
+export interface ZodiacAnimal {
+  dia_chi: string;
+  animal: string;
+  personality: string;
+  strengths: string[];
+  weaknesses: string[];
+  careers: string[];
+}
+
 export interface PersonalityResult {
   candidate_id: string;
   full_name: string;
   horoscope: HoroscopeSign;
   zodiac_summary: { con_giap: string; emoji: string; tuoi_am: string; menh: string };
+  zodiac_personality: ZodiacAnimal | null;
   disclaimer: string;
 }
 
