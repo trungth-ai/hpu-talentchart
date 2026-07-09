@@ -115,6 +115,42 @@ export interface ArchetypeResult {
   disclaimer: string;
 }
 
+// ─── EPA Eastern Layer (Can Chi/Nạp Âm/Mệnh) — chỉ khi org bật eastern_layer_enabled ───
+export interface ZodiacInfo {
+  thien_can: string;
+  dia_chi: string;
+  con_giap: string;
+  emoji: string;
+  tuoi_am: string;
+  nap_am: string;
+  menh: string;
+  lunar_year: number;
+  lunar_month: number;
+  lunar_day: number;
+}
+
+export interface ZodiacResult {
+  candidate_id: string;
+  full_name: string;
+  zodiac: ZodiacInfo;
+  disclaimer: string;
+}
+
+export interface CompatibilityResult {
+  person1: { id: string; full_name: string; zodiac: ZodiacInfo };
+  person2: { id: string; full_name: string; zodiac: ZodiacInfo };
+  score: number;
+  notes: string[];
+  disclaimer: string;
+}
+
+// Can Chi hôm nay (dashboard) — dùng để dò Eastern Layer có bật không
+export interface TodayCanChi {
+  lunar_date: string;
+  year_canchi: string;
+  day_canchi: string;
+}
+
 // Pipeline — khớp Critical Business Rules (7 trạng thái tuần tự)
 export const PIPELINE_STAGES = [
   'NEW',

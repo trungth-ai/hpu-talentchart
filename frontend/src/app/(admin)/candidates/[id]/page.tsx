@@ -2,6 +2,8 @@
 
 // Chi tiết ứng viên (Sprint 7): thông tin + chuyển pipeline tuần tự + gửi bài test
 // + kết quả DISC + 12 Personality Archetype
+// + EPA Eastern Layer (Tử vi phương Đông + So sánh tương hợp) — chỉ hiện khi org bật
+//   eastern_layer_enabled (ADR-006 hạ tầng; quy tắc hiển thị Critical Business Rules)
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { use, useState } from 'react';
@@ -16,7 +18,10 @@ import {
   type AdminTestResult,
   type ArchetypeResult,
   type Candidate,
+  type CompatibilityResult,
   type TestLink,
+  type TodayCanChi,
+  type ZodiacResult,
 } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 
@@ -36,6 +41,7 @@ export default function CandidateDetailPage({
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
   const [testUrl, setTestUrl] = useState<string | null>(null);
+  const [otherId, setOtherId] = useState('');
 
   const { data: candidateRes, isLoading } = useQuery({
     queryKey: ['candidate', id],
@@ -57,6 +63,44 @@ export default function CandidateDetailPage({
     retry: false,
   });
   const archetype = archetypeRes?.data;
+
+  // Dò Eastern Layer: /epa/today lỗi (422/400) → org chưa bật → ẩn toàn bộ mục Đông phương
+  const { data: easternProbe } = useQuery({
+    queryKey: ['epa', 'today'],
+    queryFn: () => api.get<TodayCanChi>('/api/v1/epa/today'),
+    retry: false,
+  });
+  const easternEnabled = Boolean(easternProbe?.data);
+
+  // Tử vi của chính ứng viên (cần epa_consent + birth_date)
+  const { data: zodiacRes, error: zodiacError } = useQuery({
+    queryKey: ['candidate', id, 'zodiac'],
+    queryFn: () => api.get<ZodiacResult>(`/api/v1/epa/candidates/${id}/zodiac`),
+    enabled: Boolean(candidate) && easternEnabled,
+    retry: false,
+  });
+
+  // Danh sách người để so sánh tương hợp
+  const { data: peopleRes } = useQuery({
+    queryKey: ['candidates', 'compat-picker'],
+    queryFn: () => api.get<Candidate[]>('/api/v1/candidates?per_page=100'),
+    enabled: easternEnabled,
+  });
+  const people = (peopleRes?.data ?? []).filter((p) => p.id !== id);
+
+  const {
+    data: compatRes,
+    error: compatError,
+    isFetching: compatLoading,
+  } = useQuery({
+    queryKey: ['epa', 'compat', id, otherId],
+    queryFn: () =>
+      api.get<CompatibilityResult>(
+        `/api/v1/epa/compatibility?candidate1_id=${id}&candidate2_id=${otherId}`
+      ),
+    enabled: easternEnabled && Boolean(otherId),
+    retry: false,
+  });
 
   const transition = useMutation({
     mutationFn: (target: string) =>
@@ -183,7 +227,7 @@ export default function CandidateDetailPage({
           </section>
         </div>
 
-        {/* Cột phải: kết quả test + archetype */}
+        {/* Cột phải: kết quả test + archetype + Đông phương */}
         <div className="space-y-6 lg:col-span-2">
           <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
             <h2 className="mb-3 font-semibold text-gray-900">Kết quả bài test DISC</h2>
@@ -244,11 +288,18 @@ export default function CandidateDetailPage({
 
           {archetype && (
             <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-semibold text-gray-900">Personality Archetype</h2>
-                <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-semibold text-primary-700">
-                  {archetype.archetype.name_vi}
-                </span>
+                <div className="flex items-center gap-2">
+                  {archetype.used_eastern_data && (
+                    <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700">
+                      ☯ Có dùng dữ liệu Đông phương
+                    </span>
+                  )}
+                  <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-semibold text-primary-700">
+                    {archetype.archetype.name_vi}
+                  </span>
+                </div>
               </div>
               <p className="mb-3 text-sm italic text-gray-500">
                 “{archetype.archetype.tagline}”
@@ -277,6 +328,115 @@ export default function CandidateDetailPage({
                 </div>
               </div>
               <p className="mt-4 text-xs text-gray-400">{archetype.disclaimer}</p>
+            </section>
+          )}
+
+          {/* ─── EPA Eastern Layer: chỉ hiện khi tổ chức bật eastern_layer_enabled ─── */}
+          {easternEnabled && (
+            <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+              <h2 className="mb-3 font-semibold text-gray-900">Tử vi phương Đông</h2>
+              {zodiacRes?.data ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{zodiacRes.data.zodiac.emoji}</span>
+                    <div>
+                      <p className="text-lg font-bold text-gray-900">
+                        {zodiacRes.data.zodiac.tuoi_am}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Tuổi {zodiacRes.data.zodiac.con_giap}
+                      </p>
+                    </div>
+                  </div>
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div>
+                      <dt className="text-gray-500">Mệnh</dt>
+                      <dd className="font-medium text-gray-900">{zodiacRes.data.zodiac.menh}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-gray-500">Nạp Âm</dt>
+                      <dd className="font-medium text-gray-900">{zodiacRes.data.zodiac.nap_am}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-gray-500">Thiên Can</dt>
+                      <dd className="text-gray-700">{zodiacRes.data.zodiac.thien_can}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-gray-500">Địa Chi</dt>
+                      <dd className="text-gray-700">{zodiacRes.data.zodiac.dia_chi}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-gray-500">Năm âm lịch</dt>
+                      <dd className="text-gray-700">{zodiacRes.data.zodiac.lunar_year}</dd>
+                    </div>
+                  </dl>
+                  <p className="text-xs text-gray-400">{zodiacRes.data.disclaimer}</p>
+                </div>
+              ) : (
+                <p className="py-3 text-sm text-gray-400">
+                  {zodiacError instanceof ApiError
+                    ? zodiacError.message
+                    : 'Chưa có dữ liệu tử vi (cần ngày sinh + đồng ý dùng dữ liệu EPA).'}
+                </p>
+              )}
+            </section>
+          )}
+
+          {easternEnabled && (
+            <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+              <h2 className="mb-1 font-semibold text-gray-900">So sánh tương hợp</h2>
+              <p className="mb-3 text-sm text-gray-500">
+                Chọn người khác để xem độ tương hợp với {candidate.full_name} (theo tam hợp/xung).
+              </p>
+              <select
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-primary-400 focus:outline-none"
+                value={otherId}
+                onChange={(e) => setOtherId(e.target.value)}
+              >
+                <option value="">— Chọn người để so sánh —</option>
+                {people.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.full_name}
+                    {p.department ? ` · ${p.department}` : ''}
+                  </option>
+                ))}
+              </select>
+
+              {otherId && compatLoading && (
+                <p className="mt-3 text-sm text-gray-400">Đang tính…</p>
+              )}
+              {otherId && !compatLoading && compatError instanceof ApiError && (
+                <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  {compatError.message}
+                </p>
+              )}
+              {compatRes?.data && (
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-2xl font-bold text-primary-700">
+                      {compatRes.data.score}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <p>
+                        <b>{compatRes.data.person1.full_name}</b> ·{' '}
+                        {compatRes.data.person1.zodiac.con_giap}
+                      </p>
+                      <p>
+                        <b>{compatRes.data.person2.full_name}</b> ·{' '}
+                        {compatRes.data.person2.zodiac.con_giap}
+                      </p>
+                    </div>
+                  </div>
+                  {compatRes.data.notes.length > 0 && (
+                    <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
+                      {compatRes.data.notes.map((n) => (
+                        <li key={n}>{n}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="text-xs text-gray-400">{compatRes.data.disclaimer}</p>
+                </div>
+              )}
             </section>
           )}
         </div>
