@@ -27,10 +27,9 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
   const fetchLichngaytot = async () => {
     setLntLoading(true);
     setLntErr(null);
-    const now = new Date();
     try {
       const r = await api.get<LichngaytotResult>(
-        `/api/v1/epa/fortune/lichngaytot?day=${now.getDate()}&month=${now.getMonth() + 1}&year=${now.getFullYear()}`
+        `/api/v1/epa/candidates/${candidateId}/lichngaytot`
       );
       setLnt(r.data);
     } catch (e) {
@@ -81,18 +80,31 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
         </Button>
         {lntErr && <p className="mt-2 text-sm text-amber-700">{lntErr}</p>}
         {lnt && (
-          <div className="mt-2">
-            <a
-              href={lnt.url}
-              target="_blank"
-              rel="noreferrer"
-              className="break-all text-xs text-primary-600 hover:underline"
-            >
-              Nguồn: {lnt.url}
-            </a>
-            <p className="mt-1 max-h-56 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
-              {lnt.excerpt}
-            </p>
+          <div className="mt-3 space-y-3">
+            {(
+              [
+                ['Ngày tốt/xấu · sao · giờ hoàng đạo', lnt.day],
+                ['Tử vi hôm nay theo tuổi', lnt.zodiac_day],
+                ['Tử vi hôm nay theo cung', lnt.horoscope_day],
+              ] as const
+            ).map(([label, blk]) =>
+              blk ? (
+                <div key={label}>
+                  <p className="text-xs font-semibold text-primary-700">{label}</p>
+                  <a
+                    href={blk.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="break-all text-[11px] text-primary-500 hover:underline"
+                  >
+                    {blk.url}
+                  </a>
+                  <p className="mt-1 max-h-52 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
+                    {blk.excerpt}
+                  </p>
+                </div>
+              ) : null
+            )}
           </div>
         )}
       </div>

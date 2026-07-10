@@ -213,9 +213,14 @@ export interface FortuneResult {
   disclaimer: string;
 }
 
-export interface LichngaytotResult {
+export interface LichngaytotBlock {
   url: string;
   excerpt: string;
+}
+export interface LichngaytotResult {
+  day: LichngaytotBlock | null; // ngày tốt/xấu, sao, giờ hoàng đạo
+  zodiac_day: LichngaytotBlock | null; // tử vi hôm nay theo tuổi
+  horoscope_day: LichngaytotBlock | null; // tử vi hôm nay theo cung
   disclaimer: string;
 }
 

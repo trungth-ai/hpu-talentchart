@@ -314,20 +314,24 @@ async def candidate_fortune(
     )
 
 
-@router.get("/fortune/lichngaytot")
-async def fortune_lichngaytot(
-    day: int = Query(..., ge=1, le=31),
-    month: int = Query(..., ge=1, le=12),
-    year: int = Query(..., ge=1900, le=2100),
+@router.get("/candidates/{candidate_id}/lichngaytot")
+async def candidate_lichngaytot(
+    candidate_id: UUID,
+    db: AsyncSession = Depends(get_db),
     _: User = Depends(require_hr_manager),
 ):
-    """Cào lichngaytot.com theo ngày — best-effort, chỉ gọi khi người dùng bấm nút."""
-    try:
-        data = await fortune.scrape_lichngaytot(day, month, year)
-    except Exception as exc:  # noqa: BLE001
-        raise BusinessRuleError(
-            "Không lấy được dữ liệu từ lichngaytot.com (trang ngoài có thể đã đổi), thử lại sau"
-        ) from exc
+    """Cào lichngaytot.com cho ứng viên — ngày tốt/xấu + tử vi ngày theo tuổi + theo cung.
+
+    Best-effort, chỉ gọi khi người dùng bấm nút. Cần epa_consent + birth_date.
+    """
+    candidate = await _get_candidate_with_birth(candidate_id, db)
+    bd = candidate.birth_date
+    z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
+    sign = get_sign_by_date(bd)
+    today = datetime.now(UTC).date()
+    data = await fortune.scrape_lichngaytot(z["dia_chi"], sign["code"], today)
+    if not any(data.values()):
+        raise BusinessRuleError("Không lấy được dữ liệu từ lichngaytot.com, thử lại sau")
     return success({**data, "disclaimer": DISCLAIMER})
 
 
