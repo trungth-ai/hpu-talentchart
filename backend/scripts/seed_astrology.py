@@ -43,10 +43,11 @@ async def seed() -> None:
             )
         )
     # Tương hợp/tương xung 12 con giáp (EPA) — ma trận theo từng tuổi (địa chi X)
-    for dia_chi, pairs in data.get("compat", {}).items():
-        if pairs:
+    for dia_chi, blocks in data.get("compat", {}).items():
+        # blocks = {"male": {Y: text}, "female": {Y: text}} — mô tả hôn nhân theo giới
+        if blocks.get("male") or blocks.get("female"):
             animal = ZODIAC_ANIMALS.get(dia_chi, {}).get("animal", dia_chi)
-            rows.append(("compat", dia_chi, f"Tương hợp tuổi {animal}", pairs))
+            rows.append(("compat", dia_chi, f"Tương hợp tuổi {animal}", blocks))
     # Chỉ nam vận trình mỗi tháng theo cung (12 tháng) — dùng cho vận trình THÁNG
     for code, months in data.get("monthly", {}).items():
         if months:

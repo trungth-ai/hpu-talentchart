@@ -24,6 +24,16 @@ class CandidateBase(BaseModel):
     employee_code: str | None = None
     department: str | None = None
 
+    # Giới tính ('male'|'female') — dùng cho so sánh tương hợp cho tinh tế; KHÔNG nhạy cảm
+    gender: str | None = None
+
+    @field_validator("gender")
+    @classmethod
+    def gender_valid(cls, v: str | None) -> str | None:
+        if v not in (None, "", "male", "female"):
+            raise ValueError("Giới tính chỉ nhận 'male' hoặc 'female'")
+        return v or None
+
     # EPA opt-in
     epa_consent: bool = False
     birth_date: date | None = None
@@ -121,6 +131,7 @@ class CandidateResponse(BaseModel):
     campaign_id: UUID | None
     employee_code: str | None
     department: str | None
+    gender: str | None
     epa_consent: bool
     # birth_date/birth_time/birth_place KHÔNG trả trong list/detail mặc định
     # (dữ liệu nhạy cảm — chỉ EPA Engine dùng nội bộ, Sprint 5)

@@ -29,6 +29,7 @@ export function CandidateFormModal({ mode, initial, onClose }: Props) {
     candidate_type: initial?.candidate_type ?? (mode === 'create' ? 'employee' : 'applicant'),
     employee_code: initial?.employee_code ?? '',
     department: initial?.department ?? '',
+    gender: (initial?.gender ?? '') as string,
     position: initial?.position ?? '',
     phone: initial?.phone ?? '',
     source: initial?.source ?? '',
@@ -50,6 +51,7 @@ export function CandidateFormModal({ mode, initial, onClose }: Props) {
         candidate_type: form.candidate_type,
         employee_code: form.employee_code.trim() || null,
         department: form.department.trim() || null,
+        gender: form.gender || null,
         position: form.position.trim() || null,
         phone: form.phone.trim() || null,
         source: form.source.trim() || null,
@@ -140,6 +142,17 @@ export function CandidateFormModal({ mode, initial, onClose }: Props) {
             </Field>
             <Field label="Điện thoại">
               <Input value={form.phone} onChange={(e) => set('phone', e.target.value)} />
+            </Field>
+            <Field label="Giới tính">
+              <select
+                value={form.gender}
+                onChange={(e) => set('gender', e.target.value)}
+                className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm"
+              >
+                <option value="">—</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+              </select>
             </Field>
             <Field label="Mã nhân sự">
               <Input

@@ -48,6 +48,9 @@ class Candidate(TenantScopedBase):
     employee_code: Mapped[str | None] = mapped_column(String(20), nullable=True)
     department: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
 
+    # Giới tính: 'male' | 'female' | None — dùng so sánh tương hợp cho tinh tế
+    gender: Mapped[str | None] = mapped_column(String(10), nullable=True)
+
     # Pipeline tuyển dụng — chuyển trạng thái qua service, KHÔNG set trực tiếp từ API
     pipeline_stage: Mapped[str] = mapped_column(String(20), default="NEW", nullable=False)
 

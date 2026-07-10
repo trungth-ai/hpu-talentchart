@@ -229,6 +229,16 @@ export default function CandidateDetailPage({
                 <dd className="font-medium text-gray-900">{candidate.phone ?? '—'}</dd>
               </div>
               <div>
+                <dt className="text-gray-500">Giới tính</dt>
+                <dd className="text-gray-700">
+                  {candidate.gender === 'male'
+                    ? 'Nam'
+                    : candidate.gender === 'female'
+                      ? 'Nữ'
+                      : '—'}
+                </dd>
+              </div>
+              <div>
                 <dt className="text-gray-500">Nguồn</dt>
                 <dd className="text-gray-700">{candidate.source ?? '—'}</dd>
               </div>
@@ -546,6 +556,14 @@ export default function CandidateDetailPage({
               )}
               {compatRes?.data && (
                 <div className="mt-4 space-y-3">
+                  <div className="rounded-lg bg-primary-50 px-3 py-2">
+                    <p className="text-sm font-semibold text-primary-700">
+                      {compatRes.data.relationship.name}
+                    </p>
+                    <p className="text-sm text-gray-700">
+                      {compatRes.data.relationship.description}
+                    </p>
+                  </div>
                   <div className="flex items-center gap-4">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-2xl font-bold text-primary-700">
                       {compatRes.data.score}
@@ -569,14 +587,17 @@ export default function CandidateDetailPage({
                     </ul>
                   )}
                   {compatRes.data.detail && (
-                    <div className="rounded-lg bg-primary-50/60 p-3 text-sm leading-relaxed text-gray-700">
-                      {compatRes.data.detail}
-                      {compatRes.data.detail_from && (
-                        <span className="mt-1 block text-xs text-gray-400">
-                          (Nhận định theo góc nhìn tuổi của {compatRes.data.detail_from})
-                        </span>
+                    <div className="rounded-lg bg-amber-50 p-3 text-sm leading-relaxed text-gray-700">
+                      {compatRes.data.detail_note && (
+                        <p className="mb-1 text-xs font-semibold text-amber-700">
+                          {compatRes.data.detail_note}
+                        </p>
                       )}
+                      {compatRes.data.detail}
                     </div>
+                  )}
+                  {!compatRes.data.detail && compatRes.data.detail_note && (
+                    <p className="text-xs italic text-gray-400">{compatRes.data.detail_note}</p>
                   )}
                   <p className="text-xs text-gray-400">{compatRes.data.disclaimer}</p>
                 </div>

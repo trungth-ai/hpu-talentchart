@@ -124,30 +124,42 @@ async def epa_compatibility(
     c1 = await _get_candidate_with_birth(candidate1_id, db)
     c2 = await _get_candidate_with_birth(candidate2_id, db)
     z1, z2 = _zodiac_of(c1), _zodiac_of(c2)
-    result = compatibility.compatibility_score(z1, z2)
+    result = compatibility.compatibility_score(z1, z2)  # điểm + notes gốc (parity)
+    rel = compatibility.relationship(z1["dia_chi"], z2["dia_chi"])  # quan hệ trung tính giới
+    notes = [*result["notes"], rel["description"]]
+    fe = compatibility.five_elements_note(z1.get("menh"), z2.get("menh"))
+    if fe:
+        notes.append(fe)
 
-    # Mô tả tương hợp/tương xung chi tiết từ sách con giáp (ma trận theo địa chi).
-    # Ưu tiên X→Y; không có thì tra ngược Y→X (kèm ghi chú góc nhìn).
+    # Mô tả HÔN NHÂN theo sách con giáp — CHỈ áp dụng cho cặp NAM–NỮ (tránh khung vợ chồng
+    # khi so 2 người cùng giới). Lấy theo góc nhìn người NAM: "nam tuổi X và cô ấy (nữ) tuổi Y".
     detail = None
-    detail_from = None
-    row = await db.get(AstrologyReference, ("compat", z1["dia_chi"]))
-    if row and z2["dia_chi"] in row.content:
-        detail = row.content[z2["dia_chi"]]
-        detail_from = c1.full_name
+    detail_note = None
+    g1, g2 = c1.gender, c2.gender
+    if g1 and g2 and g1 != g2:
+        male_c = c1 if g1 == "male" else c2
+        female_c = c2 if g1 == "male" else c1
+        mz = _zodiac_of(male_c)["dia_chi"]
+        fz = _zodiac_of(female_c)["dia_chi"]
+        row = await db.get(AstrologyReference, ("compat", mz))
+        if row:
+            detail = (row.content.get("male") or {}).get(fz)
+        if detail:
+            detail_note = f"Về hôn nhân/tình duyên (nam {male_c.full_name} – nữ {female_c.full_name})"
+    elif g1 and g2:
+        detail_note = "Hai người cùng giới — chỉ xét tương hợp tuổi (công việc/hợp tác), không luận hôn nhân."
     else:
-        row2 = await db.get(AstrologyReference, ("compat", z2["dia_chi"]))
-        if row2 and z1["dia_chi"] in row2.content:
-            detail = row2.content[z1["dia_chi"]]
-            detail_from = c2.full_name
+        detail_note = "Thiếu thông tin giới tính — hiển thị tương hợp tuổi chung; bổ sung giới tính để xem thêm góc nhìn hôn nhân."
 
     return success(
         {
-            "person1": {"id": str(c1.id), "full_name": c1.full_name, "zodiac": z1},
-            "person2": {"id": str(c2.id), "full_name": c2.full_name, "zodiac": z2},
+            "person1": {"id": str(c1.id), "full_name": c1.full_name, "gender": c1.gender, "zodiac": z1},
+            "person2": {"id": str(c2.id), "full_name": c2.full_name, "gender": c2.gender, "zodiac": z2},
             "score": result["score"],
-            "notes": result["notes"],
-            "detail": detail,           # mô tả chi tiết cặp tuổi (có thể None)
-            "detail_from": detail_from,  # mô tả xét theo góc nhìn của ai
+            "relationship": rel,   # {name, description} — trung tính giới, mọi cặp
+            "notes": notes,
+            "detail": detail,          # mô tả hôn nhân (chỉ cặp nam–nữ, có thể None)
+            "detail_note": detail_note,
             "disclaimer": DISCLAIMER,
         }
     )

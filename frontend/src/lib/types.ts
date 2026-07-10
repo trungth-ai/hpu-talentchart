@@ -13,6 +13,7 @@ export interface Candidate {
   campaign_id: string | null;
   employee_code: string | null;
   department: string | null;
+  gender: 'male' | 'female' | null;
   epa_consent: boolean;
   status: string;
   created_at: string;
@@ -137,12 +138,13 @@ export interface ZodiacResult {
 }
 
 export interface CompatibilityResult {
-  person1: { id: string; full_name: string; zodiac: ZodiacInfo };
-  person2: { id: string; full_name: string; zodiac: ZodiacInfo };
+  person1: { id: string; full_name: string; gender: string | null; zodiac: ZodiacInfo };
+  person2: { id: string; full_name: string; gender: string | null; zodiac: ZodiacInfo };
   score: number;
+  relationship: { name: string; description: string }; // quan hệ tuổi trung tính giới
   notes: string[];
-  detail: string | null; // mô tả chi tiết cặp tuổi (từ sách con giáp)
-  detail_from: string | null;
+  detail: string | null; // mô tả hôn nhân từ sách (chỉ cặp nam–nữ)
+  detail_note: string | null;
   disclaimer: string;
 }
 
