@@ -7,7 +7,6 @@
 
 from datetime import date
 
-
 # (start_month, start_day) — mốc BẮT ĐẦU cung; cung cuối (Ma Kết) vắt qua năm.
 # name = tên phổ thông hiện nay; name_book = tên trong sách nguồn.
 HOROSCOPE_SIGNS: list[dict] = [

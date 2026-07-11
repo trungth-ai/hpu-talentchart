@@ -55,7 +55,7 @@ select = ["E", "F", "I", "N", "UP", "B"]
 # E402: conftest.py bắt buộc set env trước khi import app
 # N818: tên exception theo .claude/rules (ResourceNotFound, DuplicateResource...)
 # E501 disc_questions: copy NGUYÊN VĂN từ SmartHire — cấm reformat (test parity)
-per-file-ignores = { "tests/conftest.py" = ["E402"], "app/exceptions.py" = ["N818"], "app/data/disc_questions.py" = ["E501"] }
+per-file-ignores = { "tests/conftest.py" = ["E402"], "app/exceptions.py" = ["N818"], "app/data/disc_questions.py" = ["E501"], "app/data/horoscope.py" = ["E501"], "app/data/zodiac_animals.py" = ["E501"] }
 
 [tool.ruff.lint.flake8-bugbear]
 # Depends/Query trong default argument là pattern chuẩn của FastAPI

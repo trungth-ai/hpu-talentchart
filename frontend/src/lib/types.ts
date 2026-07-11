@@ -237,6 +237,12 @@ export interface AstrologyRef {
   disclaimer: string;
 }
 
+// Thống kê nhân sự theo 12 con giáp (dashboard)
+export interface ZodiacStatsResult {
+  total: number;
+  by_zodiac: { dia_chi: string; animal: string; count: number }[];
+}
+
 // Can Chi hôm nay (dashboard) — dùng để dò Eastern Layer có bật không
 export interface TodayCanChi {
   lunar_date: string;

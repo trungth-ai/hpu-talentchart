@@ -56,13 +56,19 @@ def relationship(dia_chi_1: str, dia_chi_2: str) -> dict:
     if dia_chi_1 == dia_chi_2:
         return {
             "name": "Cùng tuổi",
-            "description": "Cùng con giáp — dễ đồng cảm, hiểu ý nhau; nhưng có thể cùng điểm yếu nên cần bổ khuyết cho nhau.",
+            "description": (
+                "Cùng con giáp — dễ đồng cảm, hiểu ý nhau; nhưng dễ cùng "
+                "điểm yếu, cần bổ khuyết cho nhau."
+            ),
         }
     for g in _TAM_HOP_SETS:
         if pair <= g:
             return {
                 "name": "Tam hợp",
-                "description": "Rất hợp: dễ đồng lòng, tin tưởng và hỗ trợ nhau tốt trong công việc, hợp tác.",
+                "description": (
+                    "Rất hợp: dễ đồng lòng, tin tưởng và hỗ trợ nhau tốt "
+                    "trong công việc, hợp tác."
+                ),
             }
     if pair in _LUC_HOP:
         return {
@@ -72,16 +78,25 @@ def relationship(dia_chi_1: str, dia_chi_2: str) -> dict:
     if pair in _LUC_XUNG:
         return {
             "name": "Lục xung",
-            "description": "Dễ va chạm quan điểm, tính cách trái ngược — cần lắng nghe và nhường nhịn khi phối hợp.",
+            "description": (
+                "Dễ va chạm quan điểm, tính cách trái ngược — cần lắng nghe "
+                "và nhường nhịn khi phối hợp."
+            ),
         }
     if pair in _LUC_HAI:
         return {
             "name": "Lục hại",
-            "description": "Dễ hiểu lầm, kỳ vọng lệch nhau — nên trao đổi rõ ràng khi làm việc cùng.",
+            "description": (
+                "Dễ hiểu lầm, kỳ vọng lệch nhau — nên trao đổi rõ ràng "
+                "khi làm việc cùng."
+            ),
         }
     return {
         "name": "Bình hòa",
-        "description": "Không xung không hợp đặc biệt — phối hợp ở mức bình thường, tùy nỗ lực hai bên.",
+        "description": (
+            "Không xung không hợp đặc biệt — phối hợp ở mức bình thường, "
+            "tùy nỗ lực hai bên."
+        ),
     }
 
 

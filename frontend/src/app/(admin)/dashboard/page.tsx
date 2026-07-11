@@ -12,6 +12,7 @@ import {
   TYPE_LABELS,
   type Campaign,
   type Candidate,
+  type ZodiacStatsResult,
 } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 
@@ -39,6 +40,14 @@ export default function DashboardPage() {
     ),
     retry: false,
   });
+
+  // Thống kê theo 12 con giáp (chỉ hiện khi có người đủ ngày sinh + consent)
+  const { data: zStats } = useQuery({
+    queryKey: ['epa', 'stats', 'zodiac'],
+    queryFn: () => api.get<ZodiacStatsResult>('/api/v1/epa/stats/zodiac'),
+    retry: false,
+  });
+  const zMax = Math.max(1, ...(zStats?.data?.by_zodiac ?? []).map((x) => x.count));
 
   const total = Object.values(stats?.data ?? {}).reduce((a, b) => a + b, 0);
 
@@ -83,6 +92,35 @@ export default function DashboardPage() {
           ))}
         </div>
       </section>
+
+      {/* Phân bố theo 12 con giáp (EPA) */}
+      {zStats?.data && zStats.data.total > 0 && (
+        <section>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Phân bố theo con giáp · {zStats.data.total} nhân sự có ngày sinh
+          </h2>
+          <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+            <div className="space-y-2">
+              {zStats.data.by_zodiac.map((z) => (
+                <div key={z.dia_chi} className="flex items-center gap-3 text-sm">
+                  <span className="w-28 shrink-0 text-gray-600">
+                    {z.dia_chi} · {z.animal}
+                  </span>
+                  <div className="h-4 flex-1 rounded bg-gray-100">
+                    <div
+                      className="h-4 rounded bg-primary-500"
+                      style={{ width: `${(z.count / zMax) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-8 shrink-0 text-right font-medium text-gray-700">
+                    {z.count}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="grid gap-6 lg:grid--cols-2 lg:grid-cols-2">
         {/* Đợt tuyển đang mở */}

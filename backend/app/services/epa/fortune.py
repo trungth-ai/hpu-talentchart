@@ -56,7 +56,8 @@ async def fortune_narrative(kind: str, facts: str) -> str:
             "công việc, sức khỏe/tinh thần và 1-2 lời khuyên hành động. Không bịa số liệu, "
             "kết đoạn nhắc đây chỉ là thông tin tham khảo.\n\nDỮ KIỆN:\n" + facts
         )
-        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        # timeout + max_retries ngắn: nếu Claude chậm/không tới được thì fail-fast → template
+        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY, timeout=18.0, max_retries=1)
         resp = await client.messages.create(
             model="claude-sonnet-5",
             max_tokens=800,
@@ -83,7 +84,8 @@ async def scrape_lichngaytot(dia_chi: str, sign_code: str, today: date) -> dict:
     """Cào 3 nội dung từ lichngaytot.com (gọi theo yêu cầu người dùng — best-effort).
 
     1. Ngày tốt/xấu, sao, giờ hoàng đạo: /xem-ngay-tot-xau-DD-MM-YYYY
-    2. Tử vi ngày theo tuổi: tìm bài "tu-vi-hang-ngay-D-M-YYYY-..." trên /tu-vi.html rồi cắt đoạn con giáp
+    2. Tử vi ngày theo tuổi: tìm bài "tu-vi-hang-ngay-D-M-YYYY" trên /tu-vi.html,
+       cắt đoạn của con giáp
     3. Tử vi ngày theo cung: /cung-hoang-dao/{slug}.html
     Mỗi phần độc lập, lỗi phần nào thì phần đó = None (trang ngoài có thể đổi bất kỳ lúc nào).
     """

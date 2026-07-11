@@ -6,9 +6,11 @@
 # - Dữ liệu ngày sinh chỉ dùng khi candidate đã epa_consent (NĐ 13/2023)
 # - Kết quả EPA CHỈ là tín hiệu tham khảo, không phải yếu tố quyết định tuyển dụng
 
+import asyncio
 import random
-from datetime import UTC, datetime
+from datetime import datetime
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, field_validator
@@ -19,7 +21,7 @@ from app.core.permissions import require_hr_manager
 from app.core.responses import success
 from app.core.tenant_context import get_current_org_id
 from app.data.horoscope import get_sign_by_date
-from app.data.zodiac_animals import get_animal_by_dia_chi
+from app.data.zodiac_animals import ZODIAC_ANIMALS, get_animal_by_dia_chi
 from app.database import get_db
 from app.exceptions import BusinessRuleError, ResourceNotFound
 from app.models.astrology import AstrologyReference
@@ -75,6 +77,14 @@ async def _get_candidate_with_birth(candidate_id: UUID, db: AsyncSession) -> Can
     return candidate
 
 
+VN_TZ = ZoneInfo("Asia/Ho_Chi_Minh")
+
+
+def _today_vn():
+    """Ngày hiện tại theo giờ Việt Nam (Asia/Ho_Chi_Minh) — tránh lệch ngày do server UTC."""
+    return datetime.now(VN_TZ).date()
+
+
 def _zodiac_of(candidate: Candidate) -> dict:
     bd = candidate.birth_date
     return canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
@@ -87,7 +97,7 @@ async def epa_today(
 ):
     """Can Chi hôm nay (dashboard) — port getTodayCanChi từ Fortune HR."""
     await _require_eastern_layer(db)
-    return success(canchi.get_today_canchi())
+    return success(canchi.get_today_canchi(_today_vn()))
 
 
 @router.get("/candidates/{candidate_id}/zodiac")
@@ -144,17 +154,41 @@ async def epa_compatibility(
         row = await db.get(AstrologyReference, ("compat", mz))
         if row:
             detail = (row.content.get("male") or {}).get(fz)
+        if not detail:
+            # Tra ngược: góc nhìn người NỮ ("nữ tuổi F và anh ấy tuổi M") — cùng cặp,
+            # giúp phủ các tuổi mà vai nam không có trong sách (Dần/Tỵ/Ngọ...).
+            frow = await db.get(AstrologyReference, ("compat", fz))
+            if frow:
+                detail = (frow.content.get("female") or {}).get(mz)
         if detail:
-            detail_note = f"Về hôn nhân/tình duyên (nam {male_c.full_name} – nữ {female_c.full_name})"
+            detail_note = (
+                f"Về hôn nhân/tình duyên (nam {male_c.full_name} – nữ {female_c.full_name})"
+            )
     elif g1 and g2:
-        detail_note = "Hai người cùng giới — chỉ xét tương hợp tuổi (công việc/hợp tác), không luận hôn nhân."
+        detail_note = (
+            "Hai người cùng giới — chỉ xét tương hợp tuổi (công việc/hợp tác), "
+            "không luận hôn nhân."
+        )
     else:
-        detail_note = "Thiếu thông tin giới tính — hiển thị tương hợp tuổi chung; bổ sung giới tính để xem thêm góc nhìn hôn nhân."
+        detail_note = (
+            "Thiếu thông tin giới tính — hiển thị tương hợp tuổi chung; "
+            "bổ sung giới tính để xem thêm góc nhìn hôn nhân."
+        )
 
     return success(
         {
-            "person1": {"id": str(c1.id), "full_name": c1.full_name, "gender": c1.gender, "zodiac": z1},
-            "person2": {"id": str(c2.id), "full_name": c2.full_name, "gender": c2.gender, "zodiac": z2},
+            "person1": {
+                "id": str(c1.id),
+                "full_name": c1.full_name,
+                "gender": c1.gender,
+                "zodiac": z1,
+            },
+            "person2": {
+                "id": str(c2.id),
+                "full_name": c2.full_name,
+                "gender": c2.gender,
+                "zodiac": z2,
+            },
             "score": result["score"],
             "relationship": rel,   # {name, description} — trung tính giới, mọi cặp
             "notes": notes,
@@ -287,8 +321,8 @@ async def candidate_fortune(
     bd = candidate.birth_date
     z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
     sign = get_sign_by_date(bd)
-    tc = canchi.get_today_canchi()
-    today = datetime.now(UTC).date()
+    tc = canchi.get_today_canchi(_today_vn())
+    today = _today_vn()
 
     day_facts = (
         f"Hôm nay dương lịch {tc['solar_date']}, âm lịch {tc['lunar_date']}, "
@@ -301,23 +335,29 @@ async def candidate_fortune(
     month_guidance = month_row.content.get(str(today.month)) if month_row else None
     month_facts = (
         f"Tháng {today.month}/{today.year} dương lịch. Nhân sự {candidate.full_name} "
-        f"tuổi {z['con_giap']} (mệnh {z['menh']}), cung hoàng đạo {sign['name']} ({sign['element']})."
+        f"tuổi {z['con_giap']} (mệnh {z['menh']}), cung hoàng đạo "
+        f"{sign['name']} ({sign['element']})."
     )
     if month_guidance:
         month_facts += (
             f" Chỉ nam vận trình tháng {today.month} (theo sách) cho cung "
             f"{sign['name']}: {month_guidance}"
         )
+    # Gọi Claude cho ngày + tháng SONG SONG (mỗi lời gọi đã timeout 18s → không treo)
+    day_narr, month_narr = await asyncio.gather(
+        fortune.fortune_narrative("day", day_facts),
+        fortune.fortune_narrative("month", month_facts),
+    )
     return success(
         {
             "candidate_id": str(candidate.id),
             "full_name": candidate.full_name,
             "birth": {"day": bd.day, "month": bd.month, "year": bd.year},
-            "day": {"canchi": tc, "narrative": await fortune.fortune_narrative("day", day_facts)},
+            "day": {"canchi": tc, "narrative": day_narr},
             "month": {
                 "month": today.month,
                 "year": today.year,
-                "narrative": await fortune.fortune_narrative("month", month_facts),
+                "narrative": month_narr,
                 "book_guidance": month_guidance,
             },
             "ai_generated": bool(fortune.settings.ANTHROPIC_API_KEY),
@@ -340,7 +380,7 @@ async def candidate_lichngaytot(
     bd = candidate.birth_date
     z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
     sign = get_sign_by_date(bd)
-    today = datetime.now(UTC).date()
+    today = _today_vn()
     data = await fortune.scrape_lichngaytot(z["dia_chi"], sign["code"], today)
     if not any(data.values()):
         raise BusinessRuleError("Không lấy được dữ liệu từ lichngaytot.com, thử lại sau")
@@ -358,7 +398,7 @@ async def candidate_biorhythm(
     Trả giá trị 3 nhịp (thể chất/cảm xúc/trí tuệ) hôm nay + chuỗi ±14 ngày để vẽ biểu đồ.
     """
     candidate = await _get_candidate_with_birth(candidate_id, db)
-    today = datetime.now(UTC).date()
+    today = _today_vn()
     now = biorhythm.biorhythm_today(candidate.birth_date, today)
     return success(
         {
@@ -371,6 +411,35 @@ async def candidate_biorhythm(
             "disclaimer": DISCLAIMER,
         }
     )
+
+
+@router.get("/stats/zodiac")
+async def zodiac_stats(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_hr_manager),
+):
+    """Thống kê số nhân sự theo 12 CON GIÁP trong đơn vị (dashboard).
+
+    Chỉ tính người active có epa_consent + birth_date. Trả theo thứ tự Tý→Hợi.
+    """
+    org_id = get_current_org_id()
+    result = await db.execute(
+        select(Candidate)
+        .where(Candidate.organization_id == org_id)
+        .where(Candidate.status == "active")
+        .where(Candidate.epa_consent.is_(True))
+        .where(Candidate.birth_date.is_not(None))
+    )
+    counts = {dc: 0 for dc in ZODIAC_ANIMALS}
+    for c in result.scalars().all():
+        dc = _zodiac_of(c)["dia_chi"]
+        if dc in counts:
+            counts[dc] += 1
+    by_zodiac = [
+        {"dia_chi": dc, "animal": ZODIAC_ANIMALS[dc]["animal"], "count": counts[dc]}
+        for dc in ZODIAC_ANIMALS
+    ]
+    return success({"total": sum(counts.values()), "by_zodiac": by_zodiac})
 
 
 @router.get("/reference/{kind}/{key}")

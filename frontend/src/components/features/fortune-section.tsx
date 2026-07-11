@@ -11,7 +11,7 @@ import { api, ApiError } from '@/lib/api-client';
 import type { FortuneResult, LichngaytotResult } from '@/lib/types';
 
 export function FortuneSection({ candidateId }: { candidateId: string }) {
-  const { data: res } = useQuery({
+  const { data: res, isLoading, isError } = useQuery({
     queryKey: ['candidate', candidateId, 'fortune'],
     queryFn: () => api.get<FortuneResult>(`/api/v1/epa/candidates/${candidateId}/fortune`),
     retry: false,
@@ -22,7 +22,14 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
   const [lntErr, setLntErr] = useState<string | null>(null);
   const [lntLoading, setLntLoading] = useState(false);
 
-  if (!f) return null;
+  if (isError) return null; // ứng viên chưa đủ điều kiện (consent + ngày sinh) → ẩn
+  if (!f || isLoading)
+    return (
+      <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
+        <h2 className="mb-2 font-semibold text-gray-900">Vận trình</h2>
+        <p className="text-sm text-gray-400">Đang tải vận trình (có thể mất vài giây khi gọi AI)…</p>
+      </section>
+    );
 
   const fetchLichngaytot = async () => {
     setLntLoading(true);
