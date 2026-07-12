@@ -17,16 +17,25 @@ interface Props {
   mode: 'create' | 'edit';
   initial?: Candidate; // prefill khi edit
   onClose: () => void;
+  campaignId?: string; // gắn ứng viên vào đợt tuyển (khi tạo trong 1 đợt)
+  defaultType?: Candidate['candidate_type']; // loại mặc định khi tạo (applicant/employee)
 }
 
-export function CandidateFormModal({ mode, initial, onClose }: Props) {
+export function CandidateFormModal({
+  mode,
+  initial,
+  onClose,
+  campaignId,
+  defaultType,
+}: Props) {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     full_name: initial?.full_name ?? '',
     email: initial?.email ?? '',
-    candidate_type: initial?.candidate_type ?? (mode === 'create' ? 'employee' : 'applicant'),
+    candidate_type:
+      initial?.candidate_type ?? defaultType ?? (mode === 'create' ? 'employee' : 'applicant'),
     employee_code: initial?.employee_code ?? '',
     department: initial?.department ?? '',
     gender: (initial?.gender ?? '') as string,
@@ -58,6 +67,7 @@ export function CandidateFormModal({ mode, initial, onClose }: Props) {
         notes: form.notes.trim() || null,
         epa_consent: form.epa_consent,
       };
+      if (campaignId) payload.campaign_id = campaignId; // gắn vào đợt tuyển khi tạo trong đợt
       // Ngày sinh chỉ gửi khi có consent + người dùng thực sự nhập (giữ nguyên nếu để trống)
       if (form.epa_consent) {
         if (form.birth_date) payload.birth_date = form.birth_date;

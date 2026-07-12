@@ -20,6 +20,7 @@ from app.routers import (
     candidates,
     epa,
     job_posts,
+    organization,
     public_candidates,
     public_careers,
     public_tests,
@@ -54,6 +55,7 @@ app.add_middleware(
 # Routers
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
+app.include_router(organization.router, prefix="/api/v1")
 app.include_router(campaigns.router, prefix="/api/v1")
 app.include_router(candidates.router, prefix="/api/v1")
 app.include_router(job_posts.router, prefix="/api/v1")

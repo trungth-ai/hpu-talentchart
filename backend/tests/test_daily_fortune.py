@@ -89,7 +89,7 @@ class TestDailyFortuneEndpoint:
             full_name="Có Ngày Sinh",
             email="cons@mail.com",
             candidate_type="applicant",
-            pipeline_stage="NEW",
+            pipeline_stage="RECEIVED",
             epa_consent=True,
             epa_consent_at=datetime.now(UTC),
             birth_date=date(1990, 5, 20),

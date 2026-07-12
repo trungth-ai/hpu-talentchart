@@ -4,11 +4,12 @@
 // Mọi trang trong (admin) đều yêu cầu đăng nhập; chưa có token → về /login
 
 import {
-  Briefcase,
   ClipboardCheck,
   LayoutDashboard,
   LogOut,
+  type LucideIcon,
   Megaphone,
+  Shield,
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -18,18 +19,19 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/stores/auth';
 
-const NAV_ITEMS = [
+const NAV_ITEMS: { href: string; label: string; icon: LucideIcon; adminOnly?: boolean }[] = [
   { href: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
-  { href: '/candidates', label: 'Ứng viên & Nhân sự', icon: Users },
+  { href: '/recruitment', label: 'Tuyển dụng', icon: Megaphone },
+  { href: '/employees', label: 'Nhân sự', icon: Users },
   { href: '/assessments', label: 'Trắc nghiệm DISC', icon: ClipboardCheck },
-  { href: '/campaigns', label: 'Đợt tuyển dụng', icon: Megaphone },
-  { href: '/job-posts', label: 'Tin tuyển dụng', icon: Briefcase },
+  { href: '/admin/users', label: 'Quản trị', icon: Shield, adminOnly: true },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { accessToken, user, logout } = useAuthStore();
+  const isAdmin = ['owner', 'admin'].includes(user?.org_role ?? '');
   // Tránh lỗi hydration: store persist chỉ có sau khi mount
   const [mounted, setMounted] = useState(false);
 
@@ -56,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </div>
         <nav className="flex-1 space-y-1 p-3">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
+          {NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin).map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}

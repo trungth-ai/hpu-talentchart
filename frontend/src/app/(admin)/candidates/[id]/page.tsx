@@ -333,14 +333,14 @@ export default function CandidateDetailPage({
                   Chuyển sang: {STAGE_LABELS[stage]}
                 </Button>
               ))}
-              {['SCREENING', 'TEST_SENT'].includes(candidate.pipeline_stage) && (
+              {['RECEIVED', 'ASSESSMENT'].includes(candidate.pipeline_stage) && (
                 <Button
                   variant="secondary"
                   className="w-full"
                   disabled={sendTest.isPending}
                   onClick={() => sendTest.mutate()}
                 >
-                  {candidate.pipeline_stage === 'TEST_SENT'
+                  {candidate.pipeline_stage === 'ASSESSMENT'
                     ? 'Gửi lại link bài test'
                     : 'Gửi bài test DISC'}
                 </Button>

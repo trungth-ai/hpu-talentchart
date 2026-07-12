@@ -156,7 +156,7 @@ class TestPublicCareerPage:
             select(Candidate).where(Candidate.email == "apply@mail.com")
         )
         candidate = result.scalar_one()
-        assert candidate.pipeline_stage == "NEW"
+        assert candidate.pipeline_stage == "RECEIVED"
         assert candidate.source == "career_page"
         assert candidate.organization_id == org_a.id  # đúng tenant theo subdomain
         assert candidate.position == published_job_org_a.title

@@ -6,6 +6,51 @@
 
 ---
 
+## ADR-008: Gộp pipeline 8→5 trạng thái (Tiếp nhận / Đánh giá / Phỏng vấn)
+
+**Status:** Accepted
+**Date:** 2026-07-12
+**Decided by:** Trung (quyết định) — Claude Code (triển khai)
+
+### Context
+
+Pipeline 8 trạng thái (ADR-001; nới REJECTED ở ADR-007) bị đánh giá quá dài. Trung yêu cầu
+"quy trình gọn hơn": gộp Mới+Sàng lọc, Đã gửi test+Xong test, Phỏng vấn+Quyết định.
+
+### Decision
+
+1. PIPELINE_STAGES còn 5: `RECEIVED (Tiếp nhận)`, `ASSESSMENT (Đánh giá)`, `INTERVIEW (Phỏng vấn)`,
+   `HIRED (Đã tuyển)`, `REJECTED (Từ chối)`. Ánh xạ gộp:
+   - RECEIVED = NEW + SCREENING
+   - ASSESSMENT = TEST_SENT + TEST_DONE
+   - INTERVIEW = INTERVIEW + DECISION
+2. Luồng TIẾN tuần tự `RECEIVED → ASSESSMENT → INTERVIEW`; từ INTERVIEW rẽ HIRED/REJECTED.
+   Giữ ADR-007: REJECTED chuyển tới được từ mọi bước chưa kết thúc. HIRED chỉ vào từ INTERVIEW.
+3. Gửi bài test DISC cho phép ở RECEIVED (tự chuyển ASSESSMENT) hoặc ASSESSMENT (gửi lại).
+   Nộp bài KHÔNG còn tự đổi trạng thái (trước: TEST_SENT→TEST_DONE) — "đã làm test" tra theo
+   `TestSession.completed_at`, không theo bước pipeline nữa (vì đã gộp).
+4. Migration 0009 remap hồ sơ cũ theo bảng ánh xạ (chỉ UPDATE — `pipeline_stage` là String
+   validate ở tầng app, không phải enum DB nên không đổi schema).
+
+### Consequences
+
+- (+) Ít bước, thao tác gọn; "từ chối mọi bước" vẫn giữ.
+- (−) Mất phân biệt "đã gửi test" vs "đã nộp" ở tầng pipeline; nay tra theo TestSession (màn
+  chi tiết vẫn hiện đủ kết quả; danh sách hiển thị trạng thái DISC ở mức gộp "Đánh giá").
+- (−) Thay đổi phá vỡ dữ liệu → BẮT BUỘC chạy migration 0009 khi deploy.
+
+### Alternatives considered
+
+1. Giữ 8 bước (ADR-007): Trung thấy còn rườm rà — loại.
+2. Chỉ gộp bước test: không đúng yêu cầu gộp cả 3 cặp.
+
+### References
+
+- ADR-001, ADR-007; `models/candidate.py`, `services/candidate_service.py`,
+  `routers/test_links.py`, `routers/public_tests.py`, `frontend/src/lib/types.ts`, migration `0009`
+
+---
+
 ## ADR-007: Nới pipeline — cho phép Từ chối (REJECTED) ở bất kỳ bước
 
 **Status:** Accepted

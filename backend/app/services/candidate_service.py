@@ -1,15 +1,14 @@
 # Candidate service — state machine pipeline (Critical Business Rules, xem ADR-007)
 #
-# Quy tắc: đi TIẾN tuần tự NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION,
-# từ DECISION rẽ HIRED hoặc REJECTED. Riêng REJECTED được phép chuyển tới từ BẤT KỲ bước
-# chưa kết thúc (từ chối sớm). Không nhảy cóc bước tiến, không đi lùi, không rời khỏi
-# trạng thái kết thúc (HIRED/REJECTED).
+# Quy tắc: đi TIẾN tuần tự RECEIVED → ASSESSMENT → INTERVIEW, từ INTERVIEW rẽ HIRED hoặc
+# REJECTED. Riêng REJECTED được phép chuyển tới từ BẤT KỲ bước chưa kết thúc (từ chối sớm).
+# Không nhảy cóc bước tiến, không đi lùi, không rời khỏi trạng thái kết thúc (HIRED/REJECTED).
 
 from app.exceptions import BusinessRuleError
 from app.models.candidate import PIPELINE_STAGES, TERMINAL_STAGES, Candidate
 
-# Chuỗi tuần tự trước nhánh rẽ
-_SEQUENTIAL = ("NEW", "SCREENING", "TEST_SENT", "TEST_DONE", "INTERVIEW", "DECISION")
+# Chuỗi tuần tự trước nhánh rẽ (INTERVIEW là điểm quyết định → HIRED/REJECTED)
+_SEQUENTIAL = ("RECEIVED", "ASSESSMENT", "INTERVIEW")
 
 
 def get_allowed_next_stages(current_stage: str) -> tuple[str, ...]:
@@ -19,8 +18,8 @@ def get_allowed_next_stages(current_stage: str) -> tuple[str, ...]:
     """
     if current_stage in TERMINAL_STAGES:
         return ()
-    if current_stage == "DECISION":
-        return TERMINAL_STAGES  # HIRED hoặc REJECTED
+    if current_stage == "INTERVIEW":
+        return TERMINAL_STAGES  # Phỏng vấn → Đã tuyển hoặc Từ chối
     idx = _SEQUENTIAL.index(current_stage)
     return (_SEQUENTIAL[idx + 1], "REJECTED")  # bước kế HOẶC từ chối sớm
 

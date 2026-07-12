@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.permissions import require_hr_manager
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
+from app.data.horoscope import get_sign_by_date
 from app.database import get_db
 from app.exceptions import ResourceNotFound
 from app.models.candidate import PIPELINE_STAGES, Candidate
@@ -23,6 +24,7 @@ from app.schemas.candidate import (
     PipelineTransition,
 )
 from app.services import candidate_service
+from app.services.epa import canchi
 
 router = APIRouter(prefix="/candidates", tags=["candidates"])
 
@@ -42,6 +44,20 @@ async def _verify_campaign_same_tenant(campaign_id: UUID | None, db: AsyncSessio
     """
     if campaign_id is not None:
         await get_campaign_or_404(campaign_id, db)
+
+
+def _serialize_candidate(c: Candidate) -> dict:
+    """CandidateResponse + bổ sung Can Chi/cung/năm sinh (khi đã opt-in EPA + có ngày sinh)
+    để hiển thị cột ở màn danh sách. KHÔNG lộ ngày/giờ/nơi sinh chi tiết."""
+    data = CandidateResponse.model_validate(c).model_dump(mode="json")
+    if c.epa_consent and c.birth_date:
+        z = canchi.get_canchi_from_birth(c.birth_date.day, c.birth_date.month, c.birth_date.year)
+        data["birth_year"] = c.birth_date.year
+        data["tuoi_am"] = z["tuoi_am"]
+        data["con_giap"] = z["con_giap"]
+        data["menh"] = z["menh"]
+        data["cung_hoang_dao"] = get_sign_by_date(c.birth_date)["name"]
+    return data
 
 
 @router.get("")
@@ -85,7 +101,7 @@ async def list_candidates(
     items = result.scalars().all()
 
     return paginated(
-        [CandidateResponse.model_validate(c).model_dump(mode="json") for c in items],
+        [_serialize_candidate(c) for c in items],
         page=page,
         per_page=per_page,
         total=total,

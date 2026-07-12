@@ -1,4 +1,4 @@
-# Test flow bài test DISC: tạo link → làm bài → chấm điểm → pipeline TEST_DONE
+# Test flow bài test DISC: tạo link (RECEIVED→ASSESSMENT) → làm bài → chấm điểm (không đổi stage)
 
 from datetime import UTC, datetime, timedelta
 
@@ -19,7 +19,7 @@ async def screening_candidate(db_session, org_a) -> Candidate:
         full_name="Ứng Viên Làm Test",
         email="lamtest@mail.com",
         position="Giảng viên CNTT",
-        pipeline_stage="SCREENING",
+        pipeline_stage="RECEIVED",
     )
     db_session.add(candidate)
     await db_session.commit()
@@ -46,20 +46,23 @@ def _full_answers() -> dict:
 
 
 class TestCreateTestLink:
-    async def test_create_link_moves_screening_to_test_sent(
+    async def test_create_link_moves_received_to_assessment(
         self, async_client, db_session, hr_manager_org_a, screening_candidate
     ):
         data = await _create_link(async_client, screening_candidate.id, hr_manager_org_a)
         assert "/test/" in data["test_url"]
         await db_session.refresh(screening_candidate)
-        assert screening_candidate.pipeline_stage == "TEST_SENT"
+        assert screening_candidate.pipeline_stage == "ASSESSMENT"
 
-    async def test_cannot_create_link_for_new_candidate(
+    async def test_cannot_create_link_after_assessment(
         self, async_client, db_session, hr_manager_org_a, org_a
     ):
-        # Pipeline tuần tự: NEW chưa qua SCREENING → không gửi test được
+        # Chỉ gửi test khi RECEIVED/ASSESSMENT — ứng viên đã sang Phỏng vấn → 422
         candidate = Candidate(
-            organization_id=org_a.id, full_name="Mới", email="moi@mail.com"
+            organization_id=org_a.id,
+            full_name="Đã phỏng vấn",
+            email="pv@mail.com",
+            pipeline_stage="INTERVIEW",
         )
         db_session.add(candidate)
         await db_session.commit()
@@ -122,7 +125,7 @@ class TestTakeTest:
         )
         assert response.status_code == 404
 
-    async def test_submit_scores_and_moves_to_test_done(
+    async def test_submit_scores_and_keeps_assessment(
         self, async_client, db_session, hr_manager_org_a, screening_candidate
     ):
         link = await _create_link(async_client, screening_candidate.id, hr_manager_org_a)
@@ -141,7 +144,8 @@ class TestTakeTest:
         assert "recommendation" not in data
 
         await db_session.refresh(screening_candidate)
-        assert screening_candidate.pipeline_stage == "TEST_DONE"
+        # Nộp bài KHÔNG đổi trạng thái (đã gộp — ADR-008); vẫn ở ASSESSMENT
+        assert screening_candidate.pipeline_stage == "ASSESSMENT"
 
     async def test_submit_twice_rejected(
         self, async_client, hr_manager_org_a, screening_candidate

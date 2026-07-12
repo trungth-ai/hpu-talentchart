@@ -82,7 +82,7 @@ async def candidate_google_login(
             full_name=claims.get("name") or email.split("@")[0],
             email=email,
             candidate_type="applicant",
-            pipeline_stage="NEW",
+            pipeline_stage="RECEIVED",
             source="google_login",
             # organization_id tự gán từ tenant context (before_flush listener)
         )

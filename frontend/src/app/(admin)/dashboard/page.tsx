@@ -77,7 +77,7 @@ export default function DashboardPage() {
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
           Pipeline tuyển dụng
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {Object.entries(STAGE_LABELS).map(([stage, label]) => (
             <Link
               key={stage}
@@ -122,12 +122,12 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <div className="grid gap-6 lg:grid--cols-2 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Đợt tuyển đang mở */}
         <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">Đợt tuyển đang mở</h2>
-            <Link href="/campaigns" className="text-sm text-primary-600 hover:underline">
+            <Link href="/recruitment" className="text-sm text-primary-600 hover:underline">
               Xem tất cả →
             </Link>
           </div>

@@ -49,6 +49,7 @@ async def list_job_posts(
     per_page: int = Query(10, ge=1, le=100),
     search: str | None = None,
     is_published: bool | None = None,
+    campaign_id: UUID | None = None,
     include_inactive: bool = False,
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_hr_manager),
@@ -63,6 +64,9 @@ async def list_job_posts(
     if is_published is not None:
         query = query.where(JobPost.is_published == is_published)
         count_query = count_query.where(JobPost.is_published == is_published)
+    if campaign_id:
+        query = query.where(JobPost.campaign_id == campaign_id)
+        count_query = count_query.where(JobPost.campaign_id == campaign_id)
     if search:
         pattern = f"%{search}%"
         query = query.where(JobPost.title.ilike(pattern))

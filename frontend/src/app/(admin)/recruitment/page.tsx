@@ -1,8 +1,10 @@
 'use client';
 
-// Đợt tuyển dụng (Sprint 7) — danh sách + tạo/sửa inline form
+// Tuyển dụng — gộp Đợt tuyển dụng + Tin + Ứng viên. Trang này là danh sách ĐỢT;
+// mở 1 đợt (→ /recruitment/[id]) để xem Tin tuyển dụng + Ứng viên của đợt đó.
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -12,28 +14,14 @@ import { api, ApiError } from '@/lib/api-client';
 import type { Campaign } from '@/lib/types';
 import { formatDate, formatVND } from '@/lib/utils';
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: 'Nháp',
-  open: 'Đang mở',
-  closed: 'Đã đóng',
-};
+const STATUS_LABELS: Record<string, string> = { draft: 'Nháp', open: 'Đang mở', closed: 'Đã đóng' };
 const STATUS_COLORS: Record<string, string> = {
   draft: 'bg-gray-100 text-gray-700',
   open: 'bg-green-100 text-green-700',
   closed: 'bg-red-100 text-red-700',
 };
 
-interface FormState {
-  name: string;
-  position: string;
-  department: string;
-  target_headcount: number;
-  salary_min: string;
-  salary_max: string;
-  end_date: string;
-}
-
-const EMPTY_FORM: FormState = {
+const EMPTY_FORM = {
   name: '',
   position: '',
   department: '',
@@ -43,10 +31,10 @@ const EMPTY_FORM: FormState = {
   end_date: '',
 };
 
-export default function CampaignsPage() {
+export default function RecruitmentPage() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [formError, setFormError] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
@@ -61,7 +49,6 @@ export default function CampaignsPage() {
         position: form.position,
         department: form.department || null,
         target_headcount: form.target_headcount,
-        // Lương Integer VNĐ — parse từ input text
         salary_min: form.salary_min ? parseInt(form.salary_min, 10) : null,
         salary_max: form.salary_max ? parseInt(form.salary_max, 10) : null,
         end_date: form.end_date || null,
@@ -85,8 +72,10 @@ export default function CampaignsPage() {
     <div className="space-y-5">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Đợt tuyển dụng</h1>
-          <p className="text-sm text-gray-500">{data?.meta?.total ?? 0} đợt tuyển</p>
+          <h1 className="text-2xl font-bold text-gray-900">Tuyển dụng</h1>
+          <p className="text-sm text-gray-500">
+            {data?.meta?.total ?? 0} đợt tuyển · mở 1 đợt để quản lý tin &amp; ứng viên
+          </p>
         </div>
         <Button onClick={() => setShowForm((v) => !v)}>
           {showForm ? 'Đóng form' : '+ Tạo đợt tuyển'}
@@ -151,7 +140,6 @@ export default function CampaignsPage() {
               step={500000}
               value={form.salary_min}
               onChange={(e) => setForm({ ...form, salary_min: e.target.value })}
-              placeholder="15000000"
             />
           </div>
           <div>
@@ -163,7 +151,6 @@ export default function CampaignsPage() {
               step={500000}
               value={form.salary_max}
               onChange={(e) => setForm({ ...form, salary_max: e.target.value })}
-              placeholder="25000000"
             />
           </div>
           <div>
@@ -211,7 +198,12 @@ export default function CampaignsPage() {
               data.data.map((c) => (
                 <tr key={c.id} className="hover:bg-gray-50/60">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">{c.name}</p>
+                    <Link
+                      href={`/recruitment/${c.id}`}
+                      className="font-medium text-gray-900 hover:text-primary-700"
+                    >
+                      {c.name}
+                    </Link>
                     <p className="text-xs text-gray-500">
                       {c.position}
                       {c.department ? ` · ${c.department}` : ''}
@@ -233,10 +225,7 @@ export default function CampaignsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {c.status === 'draft' && (
-                      <Button
-                        size="sm"
-                        onClick={() => updateStatus.mutate({ id: c.id, status: 'open' })}
-                      >
+                      <Button size="sm" onClick={() => updateStatus.mutate({ id: c.id, status: 'open' })}>
                         Mở đợt tuyển
                       </Button>
                     )}

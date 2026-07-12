@@ -1,6 +1,6 @@
 # Test links router — HR gửi bài test DISC cho ứng viên (port flow từ SmartHire)
-# Gắn chặt với pipeline: tạo link khi SCREENING (tự chuyển TEST_SENT),
-# ứng viên nộp bài → TEST_DONE (xử lý ở routers/public_tests.py)
+# Gắn với pipeline: tạo link khi RECEIVED (tự chuyển ASSESSMENT) hoặc ASSESSMENT (gửi lại).
+# Nộp bài KHÔNG đổi trạng thái (đã gộp — ADR-008); "đã làm" tra theo TestSession.completed_at.
 
 import secrets
 from datetime import UTC, datetime, timedelta
@@ -48,13 +48,13 @@ async def create_test_link(
     if candidate is None:
         raise ResourceNotFound("ứng viên")
 
-    # Pipeline tuần tự: chỉ gửi test khi đang SCREENING (tự chuyển TEST_SENT)
-    # hoặc đã TEST_SENT (gửi lại link — link cũ chưa dùng sẽ bị vô hiệu)
-    if candidate.pipeline_stage == "SCREENING":
-        candidate_service.transition_pipeline(candidate, "TEST_SENT")
-    elif candidate.pipeline_stage != "TEST_SENT":
+    # Gửi test khi đang RECEIVED (tự chuyển ASSESSMENT) hoặc đã ASSESSMENT (gửi lại link —
+    # link cũ chưa dùng sẽ bị vô hiệu)
+    if candidate.pipeline_stage == "RECEIVED":
+        candidate_service.transition_pipeline(candidate, "ASSESSMENT")
+    elif candidate.pipeline_stage != "ASSESSMENT":
         raise BusinessRuleError(
-            f"Chỉ gửi được bài test khi ứng viên ở bước SCREENING hoặc TEST_SENT "
+            f"Chỉ gửi được bài test khi ứng viên ở bước Tiếp nhận hoặc Đánh giá "
             f"(hiện tại: {candidate.pipeline_stage})"
         )
 

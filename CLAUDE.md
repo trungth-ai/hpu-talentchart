@@ -150,7 +150,7 @@ docs/
 - `/deploy` — build + deploy
 
 ## Critical Business Rules
-- Pipeline ứng viên gồm các trạng thái `NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION → HIRED/REJECTED`, đi TIẾN tuần tự từng bước (không nhảy cóc, không đi lùi). Riêng `REJECTED` (từ chối) được phép chuyển tới từ BẤT KỲ bước chưa kết thúc — xem ADR-007. Không rời khỏi trạng thái kết thúc (HIRED/REJECTED). `HIRED` chỉ vào được từ `DECISION`.
+- Pipeline ứng viên gồm 5 trạng thái `RECEIVED (Tiếp nhận) → ASSESSMENT (Đánh giá) → INTERVIEW (Phỏng vấn) → HIRED/REJECTED` (gộp từ 8 bước cũ — ADR-008), đi TIẾN tuần tự từng bước (không nhảy cóc, không đi lùi). Riêng `REJECTED` (từ chối) được phép chuyển tới từ BẤT KỲ bước chưa kết thúc — xem ADR-007. Không rời khỏi trạng thái kết thúc (HIRED/REJECTED). `HIRED` chỉ vào được từ `INTERVIEW`. Gửi bài test DISC ở bước RECEIVED/ASSESSMENT; "đã làm test" tra theo `TestSession.completed_at` (không theo bước pipeline).
 - `candidates` hợp nhất applicant/employee/student/alumni qua field `candidate_type` — không tách bảng riêng.
 - EPA Engine phải **port nguyên xi** thuật toán từ Fortune HR (`legacy/fortune-hr/`), tuyệt đối không "cải tiến" công thức Can Chi/Nạp Âm/Mệnh khi port — nếu test lệch kết quả gốc thì đó là bug port, phải sửa code port chứ không sửa thuật toán.
 - Tính Can Chi bắt buộc dùng **năm âm lịch (lunar year)**, không dùng năm dương lịch — đây là bug đã từng xảy ra ở hệ cũ, sinh trước Tết phải tính theo năm âm lịch trước đó.

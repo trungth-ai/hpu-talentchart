@@ -1,8 +1,9 @@
 # Candidate — hợp nhất applicant/employee/student/alumni qua candidate_type
 # (Critical Business Rules — KHÔNG tách bảng riêng)
 #
-# Pipeline 7 trạng thái, CHỈ đi tuần tự (không nhảy cóc từ API):
-#   NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION → HIRED/REJECTED
+# Pipeline 5 trạng thái (gộp từ 8 — ADR-008), đi TIẾN tuần tự:
+#   RECEIVED (Tiếp nhận) → ASSESSMENT (Đánh giá) → INTERVIEW (Phỏng vấn) → HIRED/REJECTED
+# REJECTED chuyển tới được từ mọi bước chưa kết thúc (ADR-007).
 #
 # Dữ liệu ngày/giờ/nơi sinh (phục vụ EPA) là dữ liệu NHẠY CẢM theo NĐ 13/2023/NĐ-CP:
 # chỉ lưu khi epa_consent=True (opt-in), có quyền xóa trong 30 ngày.
@@ -18,14 +19,11 @@ from app.models.base import TenantScopedBase
 # Loại candidate (hợp nhất 1 bảng)
 CANDIDATE_TYPES = ("applicant", "employee", "student", "alumni")
 
-# Pipeline — thứ tự tuần tự bắt buộc
+# Pipeline — gộp còn 5 trạng thái (ADR-008); thứ tự TIẾN bắt buộc
 PIPELINE_STAGES = (
-    "NEW",
-    "SCREENING",
-    "TEST_SENT",
-    "TEST_DONE",
-    "INTERVIEW",
-    "DECISION",
+    "RECEIVED",    # Tiếp nhận (gộp NEW + SCREENING)
+    "ASSESSMENT",  # Đánh giá — làm bài test DISC (gộp TEST_SENT + TEST_DONE)
+    "INTERVIEW",   # Phỏng vấn (gộp INTERVIEW + DECISION)
     "HIRED",
     "REJECTED",
 )
@@ -52,7 +50,7 @@ class Candidate(TenantScopedBase):
     gender: Mapped[str | None] = mapped_column(String(10), nullable=True)
 
     # Pipeline tuyển dụng — chuyển trạng thái qua service, KHÔNG set trực tiếp từ API
-    pipeline_stage: Mapped[str] = mapped_column(String(20), default="NEW", nullable=False)
+    pipeline_stage: Mapped[str] = mapped_column(String(20), default="RECEIVED", nullable=False)
 
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
     # Nguồn ứng viên: career_page, referral, import...

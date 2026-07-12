@@ -1,5 +1,6 @@
 # Public test API — ứng viên làm bài DISC qua link token (không cần đăng nhập)
-# Tenant resolve theo subdomain. Nộp bài → chấm điểm (DISC engine port) → TEST_DONE.
+# Tenant resolve theo subdomain. Nộp bài → chấm điểm (DISC engine port); trạng thái pipeline
+# KHÔNG đổi (đã gộp bước test vào ASSESSMENT — ADR-008), tra "đã làm" qua TestSession.completed_at.
 
 from datetime import UTC, datetime
 
@@ -15,7 +16,7 @@ from app.middleware.rate_limit import limiter
 from app.models.candidate import Candidate
 from app.models.test_session import TestSession
 from app.schemas.test_session import PublicTestResult, TestSubmission
-from app.services import candidate_service, disc_service
+from app.services import disc_service
 
 router = APIRouter(prefix="/public/test", tags=["public"])
 
@@ -107,10 +108,8 @@ async def submit_test(
     session.recommendation = analysis["recommendation"]
     session.is_used = True
     session.completed_at = now
-
-    # Pipeline tuần tự: TEST_SENT → TEST_DONE
-    if candidate.pipeline_stage == "TEST_SENT":
-        candidate_service.transition_pipeline(candidate, "TEST_DONE")
+    # KHÔNG đổi pipeline_stage khi nộp (đã gộp bước test vào ASSESSMENT — ADR-008);
+    # "đã hoàn thành" tra theo TestSession.completed_at.
 
     # Ứng viên chỉ nhận Behavioural Layer — không nhận phân tích/khuyến nghị nội bộ
     return success(

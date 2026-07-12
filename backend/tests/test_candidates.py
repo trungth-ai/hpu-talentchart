@@ -14,7 +14,7 @@ async def candidate_org_a(db_session, org_a) -> Candidate:
         full_name="Nguyễn Văn Ứng",
         email="ungvien@mail.com",
         candidate_type="applicant",
-        pipeline_stage="NEW",
+        pipeline_stage="RECEIVED",
     )
     db_session.add(candidate)
     await db_session.commit()
@@ -49,7 +49,7 @@ class TestPipelineStateMachine:
     async def test_full_sequential_flow_to_hired(
         self, async_client, hr_manager_org_a, candidate_org_a
     ):
-        for stage in ("SCREENING", "TEST_SENT", "TEST_DONE", "INTERVIEW", "DECISION", "HIRED"):
+        for stage in ("ASSESSMENT", "INTERVIEW", "HIRED"):
             response = await _transition(
                 async_client, candidate_org_a.id, stage, hr_manager_org_a
             )
@@ -57,7 +57,7 @@ class TestPipelineStateMachine:
             assert response.json()["data"]["pipeline_stage"] == stage
 
     async def test_cannot_skip_stage(self, async_client, hr_manager_org_a, candidate_org_a):
-        # NEW → INTERVIEW là nhảy cóc → 422
+        # RECEIVED → INTERVIEW là nhảy cóc → 422
         response = await _transition(
             async_client, candidate_org_a.id, "INTERVIEW", hr_manager_org_a
         )
@@ -65,14 +65,14 @@ class TestPipelineStateMachine:
         assert response.json()["code"] == "BUSINESS_RULE_ERROR"
 
     async def test_cannot_go_backward(self, async_client, hr_manager_org_a, candidate_org_a):
-        await _transition(async_client, candidate_org_a.id, "SCREENING", hr_manager_org_a)
+        await _transition(async_client, candidate_org_a.id, "ASSESSMENT", hr_manager_org_a)
         response = await _transition(
-            async_client, candidate_org_a.id, "NEW", hr_manager_org_a
+            async_client, candidate_org_a.id, "RECEIVED", hr_manager_org_a
         )
         assert response.status_code == 422
 
-    async def test_decision_can_reject(self, async_client, hr_manager_org_a, candidate_org_a):
-        for stage in ("SCREENING", "TEST_SENT", "TEST_DONE", "INTERVIEW", "DECISION"):
+    async def test_interview_can_reject(self, async_client, hr_manager_org_a, candidate_org_a):
+        for stage in ("ASSESSMENT", "INTERVIEW"):
             await _transition(async_client, candidate_org_a.id, stage, hr_manager_org_a)
         response = await _transition(
             async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
@@ -83,7 +83,7 @@ class TestPipelineStateMachine:
     async def test_can_reject_from_any_stage(
         self, async_client, hr_manager_org_a, candidate_org_a
     ):
-        # ADR-007: Từ chối ngay từ NEW (không cần đi hết pipeline)
+        # ADR-007: Từ chối ngay từ RECEIVED (không cần đi hết pipeline)
         response = await _transition(
             async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
         )
@@ -91,16 +91,15 @@ class TestPipelineStateMachine:
         assert response.json()["data"]["pipeline_stage"] == "REJECTED"
         # REJECTED là trạng thái kết thúc → không chuyển tiếp được nữa
         after = await _transition(
-            async_client, candidate_org_a.id, "SCREENING", hr_manager_org_a
+            async_client, candidate_org_a.id, "ASSESSMENT", hr_manager_org_a
         )
         assert after.status_code == 422
 
     async def test_can_reject_from_middle_stage(
         self, async_client, hr_manager_org_a, candidate_org_a
     ):
-        # Từ chối từ giữa pipeline (TEST_SENT) — bỏ qua TEST_DONE/INTERVIEW/DECISION
-        for stage in ("SCREENING", "TEST_SENT"):
-            await _transition(async_client, candidate_org_a.id, stage, hr_manager_org_a)
+        # Từ chối từ giữa pipeline (ASSESSMENT) — bỏ qua bước Phỏng vấn
+        await _transition(async_client, candidate_org_a.id, "ASSESSMENT", hr_manager_org_a)
         response = await _transition(
             async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
         )
@@ -110,8 +109,8 @@ class TestPipelineStateMachine:
     async def test_still_cannot_hire_early(
         self, async_client, hr_manager_org_a, candidate_org_a
     ):
-        # HIRED vẫn CHỈ vào được từ DECISION — nới REJECTED KHÔNG mở HIRED sớm
-        await _transition(async_client, candidate_org_a.id, "SCREENING", hr_manager_org_a)
+        # HIRED vẫn CHỈ vào được từ INTERVIEW — không mở HIRED sớm
+        await _transition(async_client, candidate_org_a.id, "ASSESSMENT", hr_manager_org_a)
         response = await _transition(
             async_client, candidate_org_a.id, "HIRED", hr_manager_org_a
         )
@@ -120,7 +119,7 @@ class TestPipelineStateMachine:
     async def test_terminal_stage_cannot_move(
         self, async_client, hr_manager_org_a, candidate_org_a
     ):
-        for stage in ("SCREENING", "TEST_SENT", "TEST_DONE", "INTERVIEW", "DECISION", "HIRED"):
+        for stage in ("ASSESSMENT", "INTERVIEW", "HIRED"):
             await _transition(async_client, candidate_org_a.id, stage, hr_manager_org_a)
         response = await _transition(
             async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
@@ -138,7 +137,7 @@ class TestPipelineStateMachine:
     async def test_create_cannot_set_pipeline_stage(
         self, async_client, hr_manager_org_a
     ):
-        # Client gửi pipeline_stage khi tạo → bị bỏ qua, luôn bắt đầu từ NEW
+        # Client gửi pipeline_stage khi tạo → bị bỏ qua, luôn bắt đầu từ RECEIVED
         response = await async_client.post(
             "/api/v1/candidates",
             json={
@@ -149,7 +148,7 @@ class TestPipelineStateMachine:
             headers=auth_headers(hr_manager_org_a),
         )
         assert response.status_code == 201
-        assert response.json()["data"]["pipeline_stage"] == "NEW"
+        assert response.json()["data"]["pipeline_stage"] == "RECEIVED"
 
 
 class TestEPAConsent:
@@ -229,7 +228,7 @@ class TestCandidateCRUD:
         )
         assert response.status_code == 200
         data = response.json()["data"]
-        assert data["NEW"] == 1
+        assert data["RECEIVED"] == 1
         assert data["HIRED"] == 0
 
     async def test_soft_delete(
@@ -283,4 +282,4 @@ class TestCandidateIsolation:
         response = await async_client.get(
             "/api/v1/candidates/stats", headers=auth_headers(hr_manager_org_a)
         )
-        assert response.json()["data"]["NEW"] == 1  # không đếm org B
+        assert response.json()["data"]["RECEIVED"] == 1  # không đếm org B

@@ -95,7 +95,7 @@ async def apply_to_job(
         phone=data.phone,
         notes=data.notes,
         candidate_type="applicant",
-        pipeline_stage="NEW",
+        pipeline_stage="RECEIVED",
         position=job.title,
         source="career_page",
         campaign_id=job.campaign_id,

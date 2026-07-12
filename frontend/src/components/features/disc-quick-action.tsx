@@ -21,15 +21,8 @@ export function DiscQuickAction({ candidate }: { candidate: Candidate }) {
   const status = discStatusFromStage(candidate.pipeline_stage);
 
   const send = useMutation({
-    // Ứng viên đang NEW: sàng lọc trước rồi mới gửi (backend chỉ cho gửi ở bước SCREENING/TEST_SENT)
-    mutationFn: async () => {
-      if (candidate.pipeline_stage === 'NEW') {
-        await api.post<Candidate>(`/api/v1/candidates/${candidate.id}/transition`, {
-          target_stage: 'SCREENING',
-        });
-      }
-      return api.post<TestLink>('/api/v1/test-links', { candidate_id: candidate.id });
-    },
+    // Backend cho gửi test khi RECEIVED (tự chuyển ASSESSMENT) hoặc ASSESSMENT (gửi lại)
+    mutationFn: () => api.post<TestLink>('/api/v1/test-links', { candidate_id: candidate.id }),
     onSuccess: (res) => {
       setError(null);
       setTestUrl(res.data.test_url);

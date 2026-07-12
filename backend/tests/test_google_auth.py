@@ -158,7 +158,7 @@ class TestCandidateGoogleLogin:
         assert response.status_code == 200, response.text
         data = response.json()["data"]
         assert data["candidate_token"]
-        assert data["candidate"]["pipeline_stage"] == "NEW"
+        assert data["candidate"]["pipeline_stage"] == "RECEIVED"
 
         result = await db_session.execute(
             select(Candidate).where(Candidate.email == "ungvien.moi@gmail.com")
@@ -174,7 +174,7 @@ class TestCandidateGoogleLogin:
             organization_id=org_a.id,
             full_name="Đã Ứng Tuyển",
             email="datungtuyen@gmail.com",
-            pipeline_stage="SCREENING",
+            pipeline_stage="RECEIVED",
         )
         db_session.add(candidate)
         await db_session.commit()
@@ -185,7 +185,7 @@ class TestCandidateGoogleLogin:
         )
         assert response.status_code == 200
         assert response.json()["data"]["candidate"]["id"] == str(candidate.id)
-        assert response.json()["data"]["candidate"]["pipeline_stage"] == "SCREENING"
+        assert response.json()["data"]["candidate"]["pipeline_stage"] == "RECEIVED"
 
     async def test_candidate_me_and_active_test(
         self, async_client, db_session, org_a, hr_manager_org_a, monkeypatch
@@ -213,12 +213,7 @@ class TestCandidateGoogleLogin:
         )
         assert no_test.status_code == 404
 
-        # HR chuyển SCREENING rồi gửi test → ứng viên thấy link
-        await async_client.post(
-            f"/api/v1/candidates/{candidate_id}/transition",
-            json={"target_stage": "SCREENING"},
-            headers=auth_headers(hr_manager_org_a),
-        )
+        # HR gửi test (ứng viên đang RECEIVED → tự chuyển ASSESSMENT) → ứng viên thấy link
         await async_client.post(
             "/api/v1/test-links",
             json={"candidate_id": candidate_id},

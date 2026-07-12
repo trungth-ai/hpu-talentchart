@@ -7,13 +7,13 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permissions import require_hr_manager
+from app.core.permissions import ROLE_LEVEL, require_admin, require_hr_manager
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
 from app.database import get_db
-from app.exceptions import ResourceNotFound
+from app.exceptions import BusinessRuleError, ForbiddenError, ResourceNotFound
 from app.models.user import User
-from app.schemas.user import UserResponse
+from app.schemas.user import UserAdminUpdate, UserResponse
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -73,3 +73,43 @@ async def get_user(
         # User của tenant khác cũng rơi vào nhánh này nhờ auto-filter → 404, KHÔNG 403
         raise ResourceNotFound("người dùng")
     return success(UserResponse.model_validate(user).model_dump(mode="json"))
+
+
+@router.patch("/{user_id}")
+async def update_user_admin(
+    user_id: UUID,
+    data: UserAdminUpdate,
+    db: AsyncSession = Depends(get_db),
+    actor: User = Depends(require_admin),
+):
+    """Đổi vai trò / khóa-mở người dùng — CHỈ owner/admin.
+
+    Chốt an toàn (chống leo thang quyền + tự khóa):
+    - KHÔNG tự sửa vai trò/khóa chính mình.
+    - KHÔNG thao tác trên người có quyền NGANG hoặc CAO hơn mình (chặn admin đụng owner/admin
+      khác, và owner đụng owner khác → không thể hạ/khóa owner cuối).
+    - KHÔNG cấp vai trò NGANG hoặc CAO hơn quyền của mình (không tự nâng cấp bắc cầu).
+    """
+    result = await db.execute(select(User).where(User.id == user_id))
+    target = result.scalar_one_or_none()
+    if target is None:
+        raise ResourceNotFound("người dùng")  # cross-tenant → 404 nhờ auto-filter
+    if target.id == actor.id:
+        raise BusinessRuleError("Không thể tự đổi vai trò hoặc tự khóa tài khoản của mình")
+
+    actor_level = ROLE_LEVEL.get(actor.org_role, 0)
+    if ROLE_LEVEL.get(target.org_role, 0) >= actor_level:
+        raise ForbiddenError("Không thể thao tác trên người có quyền ngang hoặc cao hơn bạn")
+    if data.org_role is not None and ROLE_LEVEL[data.org_role] >= actor_level:
+        raise ForbiddenError("Không thể cấp vai trò ngang hoặc cao hơn quyền của bạn")
+
+    if data.org_role is not None:
+        target.org_role = data.org_role
+    if data.status is not None:
+        target.status = data.status
+    await db.flush()
+    await db.refresh(target)
+    return success(
+        UserResponse.model_validate(target).model_dump(mode="json"),
+        message="Đã cập nhật người dùng",
+    )

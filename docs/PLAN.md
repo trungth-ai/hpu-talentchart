@@ -281,3 +281,26 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   PostgreSQL; (2) worker + beat thật cào lichngaytot (cần Redis + mạng ra ngoài); (3) mảng cào
   (lichngaytot) KHÔNG dùng AI → đã hết chi phí AI cho phần cào. Narrative "Vận trình" vẫn gọi Claude
   như cũ; muốn giảm thêm AI có thể cache narrative theo (ngày + facts) vào DB — để đợt sau.
+
+### 2026-07-12 (Claude Code — đợt 2: gộp pipeline, cột Can Chi, tái cấu trúc IA, quản trị)
+- Phản hồi Trung (ảnh danh sách 107 NS): (1) gộp pipeline (Mới+Sàng lọc / Đã gửi+Test / PV+QĐ);
+  (2) thêm cột Can Chi/cung/năm sinh ở danh sách; (3) gộp Đợt+Tin+Ứng viên (drill-down theo đợt) +
+  tách Nhân sự sang menu riêng; (4) làm phần Quản trị (đang thiếu); (5) push lên main.
+- **Done:**
+  - Pipeline gộp (ADR-008) 8→5: RECEIVED/ASSESSMENT/INTERVIEW/HIRED/REJECTED (giữ "Từ chối mọi
+    bước" — ADR-007). Migration 0009 remap dữ liệu cũ. Gửi test ở RECEIVED/ASSESSMENT; nộp bài
+    KHÔNG đổi stage (tra `TestSession.completed_at`). Đồng bộ FE (labels/colors/nextStages) + dashboard.
+  - Cột Can Chi/cung/năm sinh: enrich API danh sách candidates (chỉ khi opt-in EPA + có ngày sinh);
+    hiện ở trang Nhân sự + ứng viên-theo-đợt. KHÔNG lộ ngày/giờ/nơi sinh chi tiết.
+  - Tái cấu trúc IA: menu Tổng quan / Tuyển dụng / Nhân sự / Trắc nghiệm DISC / Quản trị.
+    `/recruitment` (đợt) → `/recruitment/[id]` (tin + ứng viên của đợt); `/employees` riêng
+    (candidate_type=employee). Thêm campaign_id vào form tin + form ứng viên. Xoá trang
+    campaigns/ + job-posts/ cũ (đã gộp vào drill-down).
+  - Quản trị: `PATCH /users/{id}` đổi vai trò + khóa/mở (require_admin; chốt không tự sửa / không
+    đụng quyền ≥ mình / không cấp quyền ≥ mình / cross-tenant 404). `GET`+`PUT /organization[/settings]`
+    (đọc hr_manager+, sửa admin). Trang `/admin/users` + `/admin/settings`; menu Quản trị chỉ hiện
+    với owner/admin. Module "Cơ cấu tổ chức" (phòng ban cây) — Trung chọn ĐỂ ĐỢT SAU.
+  - Verify: backend **506 test** xanh (+10 test_admin), ruff sạch; frontend build pass (13 route);
+    alembic 1 head (0009). `/security-review`: KHÔNG có Critical/High (tenant/authz/mass-assignment
+    đã chốt + có test; birth_year/Can Chi trả cho hr_manager+ chỉ với hồ sơ opt-in — chủ ý).
+- CHƯA verify tại chỗ (chạy trên SERVER): `alembic upgrade head` (áp 0009) + e2e trên PostgreSQL.
