@@ -10,6 +10,24 @@ import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
 import type { FortuneResult, LichngaytotResult } from '@/lib/types';
 
+// Ngày hôm nay theo giờ máy (người dùng ở VN → trùng ngày VN), định dạng YYYY-MM-DD
+function todayLocal(): string {
+  return new Date().toLocaleDateString('en-CA');
+}
+
+// Dịch chuỗi ngày YYYY-MM-DD đi `days` ngày
+function shiftDate(iso: string, days: number): string {
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString('en-CA');
+}
+
+// Hiển thị DD/MM/YYYY (quy ước hiển thị ngày của dự án)
+function formatViewDate(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
 export function FortuneSection({ candidateId }: { candidateId: string }) {
   const { data: res, isLoading, isError } = useQuery({
     queryKey: ['candidate', candidateId, 'fortune'],
@@ -21,6 +39,8 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
   const [lnt, setLnt] = useState<LichngaytotResult | null>(null);
   const [lntErr, setLntErr] = useState<string | null>(null);
   const [lntLoading, setLntLoading] = useState(false);
+  const todayStr = todayLocal();
+  const [viewDate, setViewDate] = useState<string>(todayStr);
 
   if (isError) return null; // ứng viên chưa đủ điều kiện (consent + ngày sinh) → ẩn
   if (!f || isLoading)
@@ -36,7 +56,7 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
     setLntErr(null);
     try {
       const r = await api.get<LichngaytotResult>(
-        `/api/v1/epa/candidates/${candidateId}/lichngaytot`
+        `/api/v1/epa/candidates/${candidateId}/lichngaytot?date=${viewDate}`
       );
       setLnt(r.data);
     } catch (e) {
@@ -82,30 +102,57 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
       </div>
 
       <div className="mt-4 border-t border-gray-100 pt-3">
-        <Button variant="secondary" size="sm" disabled={lntLoading} onClick={fetchLichngaytot}>
-          {lntLoading ? 'Đang cào…' : '🔮 Cào lichngaytot.com (hôm nay)'}
-        </Button>
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-gray-600">Tử vi ngày:</span>
+          <Button variant="secondary" size="sm" onClick={() => setViewDate((d) => shiftDate(d, -1))}>
+            ‹ Hôm trước
+          </Button>
+          <input
+            type="date"
+            value={viewDate}
+            max={todayStr}
+            onChange={(e) => e.target.value && setViewDate(e.target.value)}
+            className="h-9 rounded-lg border border-gray-300 px-2 text-sm"
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={viewDate >= todayStr}
+            onClick={() => setViewDate((d) => shiftDate(d, 1))}
+          >
+            Hôm sau ›
+          </Button>
+          <Button size="sm" disabled={lntLoading} onClick={fetchLichngaytot}>
+            {lntLoading ? 'Đang tải…' : '🔮 Xem tử vi ngày này'}
+          </Button>
+        </div>
+        <p className="text-[11px] text-gray-400">
+          Dữ liệu được cào tự động hằng ngày và lưu lại — có thể xem các ngày trước.
+        </p>
         {lntErr && <p className="mt-2 text-sm text-amber-700">{lntErr}</p>}
         {lnt && (
           <div className="mt-3 space-y-3">
+            <p className="text-xs text-gray-500">Tử vi ngày {formatViewDate(lnt.date)}</p>
             {(
               [
                 ['Ngày tốt/xấu · sao · giờ hoàng đạo', lnt.day],
-                ['Tử vi hôm nay theo tuổi', lnt.zodiac_day],
-                ['Tử vi hôm nay theo cung', lnt.horoscope_day],
+                ['Tử vi theo tuổi', lnt.zodiac_day],
+                ['Tử vi theo cung', lnt.horoscope_day],
               ] as const
             ).map(([label, blk]) =>
               blk ? (
                 <div key={label}>
                   <p className="text-xs font-semibold text-primary-700">{label}</p>
-                  <a
-                    href={blk.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="break-all text-[11px] text-primary-500 hover:underline"
-                  >
-                    {blk.url}
-                  </a>
+                  {blk.url && (
+                    <a
+                      href={blk.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="break-all text-[11px] text-primary-500 hover:underline"
+                    >
+                      {blk.url}
+                    </a>
+                  )}
                   <p className="mt-1 max-h-52 overflow-y-auto whitespace-pre-wrap rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
                     {blk.excerpt}
                   </p>

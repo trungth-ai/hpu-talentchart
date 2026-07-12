@@ -3,6 +3,7 @@
 # Bổ sung: cào lichngaytot.com theo yêu cầu (best-effort, gọi khi người dùng bấm nút).
 
 import hashlib
+import html
 import re
 from datetime import date
 
@@ -72,12 +73,46 @@ async def fortune_narrative(kind: str, facts: str) -> str:
     return facts
 
 
-def _strip_html(html: str, article_only: bool = True) -> str:
-    m = re.search(r"(?is)<article[^>]*>(.*?)</article>", html)
-    raw = m.group(1) if (article_only and m) else html
+# Thẻ khối -> ngắt dòng (giữ bố cục đoạn, tránh dồn thành 1 khối chữ khó đọc)
+_BLOCK_TAG_RE = re.compile(
+    r"(?is)</(p|div|li|tr|h[1-6]|section|article|blockquote)>|<br\s*/?>|</td>"
+)
+# 12 địa chi — dùng để cắt đúng đoạn của từng con giáp trong bài "tử vi theo tuổi"
+_DIA_CHI = ("Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi")
+
+
+def _strip_html(raw_html: str, article_only: bool = True) -> str:
+    """Bóc HTML về text sạch: giữ ngắt đoạn, decode entity (&#237; -> í), gom khoảng trắng."""
+    m = re.search(r"(?is)<article[^>]*>(.*?)</article>", raw_html)
+    raw = m.group(1) if (article_only and m) else raw_html
+    # Bỏ hẳn khối không phải nội dung
     raw = re.sub(r"(?is)<(script|style|nav|footer|header|form)[^>]*>.*?</\1>", " ", raw)
+    # Thẻ khối -> newline TRƯỚC khi xoá mọi thẻ, để giữ ranh giới đoạn
+    raw = _BLOCK_TAG_RE.sub("\n", raw)
     txt = re.sub(r"<[^>]+>", " ", raw)
-    return re.sub(r"[ \t]*\n[ \t]*", "\n", re.sub(r"[^\S\n]+", " ", txt)).strip()
+    # GỐC LỖI "B&#237;nh": decode HTML entity (&#237; -> í, &amp; -> &, &nbsp; -> \xa0...)
+    txt = html.unescape(txt).replace("\xa0", " ")
+    # Gom khoảng trắng trong dòng; gộp tối đa 1 dòng trống giữa các đoạn
+    txt = re.sub(r"[^\S\n]+", " ", txt)
+    txt = re.sub(r" *\n *", "\n", txt)
+    txt = re.sub(r"\n{3,}", "\n\n", txt)
+    return txt.strip()
+
+
+def _extract_age_segment(full: str, dia_chi: str) -> str:
+    """Cắt đúng đoạn 1 con giáp: từ 'tuổi {chi}' tới 'tuổi {chi kế}' (không cắt cụt giữa chừng)."""
+    lower = full.lower()
+    start = lower.find(f"tuổi {dia_chi.lower()}")
+    if start < 0:
+        return full[:2800]
+    end = len(full)
+    for chi in _DIA_CHI:
+        if chi == dia_chi:
+            continue
+        pos = lower.find(f"tuổi {chi.lower()}", start + 1)
+        if 0 <= pos < end:
+            end = pos
+    return full[start:end].strip()[:4000]
 
 
 async def scrape_lichngaytot(dia_chi: str, sign_code: str, today: date) -> dict:
@@ -98,7 +133,7 @@ async def scrape_lichngaytot(dia_chi: str, sign_code: str, today: date) -> dict:
             url = f"{LNT_BASE}/xem-ngay-tot-xau-{today.day:02d}-{today.month:02d}-{today.year}"
             r = await client.get(url)
             r.raise_for_status()
-            result["day"] = {"url": url, "excerpt": _strip_html(r.text)[:3500]}
+            result["day"] = {"url": url, "excerpt": _strip_html(r.text)[:6000]}
         except Exception:  # noqa: BLE001
             pass
 
@@ -115,8 +150,7 @@ async def scrape_lichngaytot(dia_chi: str, sign_code: str, today: date) -> dict:
                 ra = await client.get(art_url)
                 ra.raise_for_status()
                 full = _strip_html(ra.text)
-                idx = full.find(f"tuổi {dia_chi}")
-                seg = full[idx : idx + 1800] if idx >= 0 else full[:2600]
+                seg = _extract_age_segment(full, dia_chi)
                 result["zodiac_day"] = {"url": art_url, "excerpt": seg}
         except Exception:  # noqa: BLE001
             pass
@@ -128,8 +162,73 @@ async def scrape_lichngaytot(dia_chi: str, sign_code: str, today: date) -> dict:
                 url = f"{LNT_BASE}/cung-hoang-dao/{slug}.html"
                 r = await client.get(url)
                 r.raise_for_status()
-                result["horoscope_day"] = {"url": url, "excerpt": _strip_html(r.text)[:2600]}
+                result["horoscope_day"] = {"url": url, "excerpt": _strip_html(r.text)[:4000]}
         except Exception:  # noqa: BLE001
             pass
 
     return result
+
+
+async def scrape_all_daily(today: date) -> list[dict]:
+    """Cào theo LÔ cho cron: ngày tốt/xấu (1 trang) + tử vi theo tuổi cả 12 con giáp (1 bài,
+    cắt theo từng địa chi) + tử vi theo cung cả 12 cung (12 trang).
+
+    Trả list record {kind, key, url, excerpt} để lưu vào bảng daily_fortunes.
+    Best-effort — phần nào lỗi thì bỏ phần đó (trang ngoài đổi bất kỳ lúc nào).
+    """
+    import httpx
+
+    records: list[dict] = []
+    async with httpx.AsyncClient(timeout=20, follow_redirects=True, headers=_LNT_UA) as client:
+        # 1) Ngày tốt/xấu — chung mọi người (kind='day', key='')
+        try:
+            url = f"{LNT_BASE}/xem-ngay-tot-xau-{today.day:02d}-{today.month:02d}-{today.year}"
+            r = await client.get(url)
+            r.raise_for_status()
+            records.append(
+                {"kind": "day", "key": "", "url": url, "excerpt": _strip_html(r.text)[:6000]}
+            )
+        except Exception:  # noqa: BLE001
+            pass
+
+        # 2) Tử vi ngày theo tuổi — 1 bài chứa CẢ 12 con giáp, cắt theo từng địa chi
+        try:
+            hub = await client.get(f"{LNT_BASE}/tu-vi.html")
+            hub.raise_for_status()
+            m = re.search(
+                rf"(tu-vi-hang-ngay-{today.day}-{today.month}-{today.year}-[0-9-]+\.html)",
+                hub.text,
+            )
+            if m:
+                art_url = f"{LNT_BASE}/tu-vi/{m.group(1)}"
+                ra = await client.get(art_url)
+                ra.raise_for_status()
+                full = _strip_html(ra.text)
+                for chi in _DIA_CHI:
+                    seg = _extract_age_segment(full, chi)
+                    # chỉ lưu khi thực sự tìm thấy đoạn của con giáp này (tránh fallback nhầm)
+                    if f"tuổi {chi.lower()}" in seg.lower():
+                        records.append(
+                            {"kind": "zodiac_day", "key": chi, "url": art_url, "excerpt": seg}
+                        )
+        except Exception:  # noqa: BLE001
+            pass
+
+        # 3) Tử vi ngày theo cung — cả 12 cung hoàng đạo
+        for code, slug in CUNG_SLUG.items():
+            try:
+                url = f"{LNT_BASE}/cung-hoang-dao/{slug}.html"
+                r = await client.get(url)
+                r.raise_for_status()
+                records.append(
+                    {
+                        "kind": "horoscope_day",
+                        "key": code,
+                        "url": url,
+                        "excerpt": _strip_html(r.text)[:4000],
+                    }
+                )
+            except Exception:  # noqa: BLE001
+                continue
+
+    return records

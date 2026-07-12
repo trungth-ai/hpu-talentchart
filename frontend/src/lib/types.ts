@@ -220,9 +220,10 @@ export interface LichngaytotBlock {
   excerpt: string;
 }
 export interface LichngaytotResult {
+  date: string; // ngày (YYYY-MM-DD) của nội dung tử vi
   day: LichngaytotBlock | null; // ngày tốt/xấu, sao, giờ hoàng đạo
-  zodiac_day: LichngaytotBlock | null; // tử vi hôm nay theo tuổi
-  horoscope_day: LichngaytotBlock | null; // tử vi hôm nay theo cung
+  zodiac_day: LichngaytotBlock | null; // tử vi theo tuổi
+  horoscope_day: LichngaytotBlock | null; // tử vi theo cung
   disclaimer: string;
 }
 
@@ -291,11 +292,78 @@ export const TYPE_LABELS: Record<string, string> = {
   alumni: 'Cựu SV',
 };
 
-// Bước tiếp theo hợp lệ (tuần tự — khớp candidate_service backend)
+// Bước tiếp theo hợp lệ — khớp candidate_service backend (ADR-007):
+// đi tiến 1 bước kế, hoặc Từ chối (REJECTED) ở bất kỳ bước chưa kết thúc.
 export function nextStages(current: string): string[] {
   const seq = ['NEW', 'SCREENING', 'TEST_SENT', 'TEST_DONE', 'INTERVIEW', 'DECISION'];
   if (current === 'DECISION') return ['HIRED', 'REJECTED'];
   const idx = seq.indexOf(current);
-  if (idx < 0 || idx === seq.length - 1) return [];
-  return [seq[idx + 1]];
+  if (idx < 0) return []; // trạng thái kết thúc (HIRED/REJECTED) hoặc không xác định
+  return [seq[idx + 1], 'REJECTED'];
+}
+
+// ─── Trạng thái DISC suy ra từ pipeline_stage (dùng ở danh sách + trang Trắc nghiệm) ───
+// Không cần gọi thêm API: TEST_SENT = đã gửi link, từ TEST_DONE trở đi = đã có kết quả.
+export interface DiscStatus {
+  label: string; // nhãn trạng thái hiển thị
+  tone: string; // class màu cho badge
+  canSend: boolean; // có thể gửi / gửi lại link test
+  sendLabel: string; // nhãn nút gửi (rỗng khi không gửi được)
+  hasResult: boolean; // đã có kết quả DISC để xem
+}
+
+export function discStatusFromStage(stage: string): DiscStatus {
+  switch (stage) {
+    case 'NEW':
+      return {
+        label: 'Chưa test',
+        tone: 'bg-gray-100 text-gray-600',
+        canSend: true,
+        sendLabel: 'Sàng lọc & gửi test',
+        hasResult: false,
+      };
+    case 'SCREENING':
+      return {
+        label: 'Chưa gửi',
+        tone: 'bg-blue-100 text-blue-700',
+        canSend: true,
+        sendLabel: 'Gửi test',
+        hasResult: false,
+      };
+    case 'TEST_SENT':
+      return {
+        label: 'Đã gửi · chờ làm',
+        tone: 'bg-amber-100 text-amber-700',
+        canSend: true,
+        sendLabel: 'Gửi lại',
+        hasResult: false,
+      };
+    case 'TEST_DONE':
+    case 'INTERVIEW':
+    case 'DECISION':
+    case 'HIRED':
+      return {
+        label: 'Có kết quả',
+        tone: 'bg-green-100 text-green-700',
+        canSend: false,
+        sendLabel: '',
+        hasResult: true,
+      };
+    case 'REJECTED':
+      return {
+        label: 'Đã từ chối',
+        tone: 'bg-red-100 text-red-700',
+        canSend: false,
+        sendLabel: '',
+        hasResult: false,
+      };
+    default:
+      return {
+        label: '—',
+        tone: 'bg-gray-100 text-gray-500',
+        canSend: false,
+        sendLabel: '',
+        hasResult: false,
+      };
+  }
 }

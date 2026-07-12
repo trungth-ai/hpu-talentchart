@@ -1,8 +1,9 @@
-# Candidate service — state machine pipeline 7 trạng thái (Critical Business Rules)
+# Candidate service — state machine pipeline (Critical Business Rules, xem ADR-007)
 #
-# Quy tắc: CHỈ đi tuần tự NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION,
-# từ DECISION rẽ nhánh HIRED hoặc REJECTED. Không cho phép nhảy cóc, không đi lùi,
-# không rời khỏi trạng thái kết thúc (HIRED/REJECTED).
+# Quy tắc: đi TIẾN tuần tự NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION,
+# từ DECISION rẽ HIRED hoặc REJECTED. Riêng REJECTED được phép chuyển tới từ BẤT KỲ bước
+# chưa kết thúc (từ chối sớm). Không nhảy cóc bước tiến, không đi lùi, không rời khỏi
+# trạng thái kết thúc (HIRED/REJECTED).
 
 from app.exceptions import BusinessRuleError
 from app.models.candidate import PIPELINE_STAGES, TERMINAL_STAGES, Candidate
@@ -12,13 +13,16 @@ _SEQUENTIAL = ("NEW", "SCREENING", "TEST_SENT", "TEST_DONE", "INTERVIEW", "DECIS
 
 
 def get_allowed_next_stages(current_stage: str) -> tuple[str, ...]:
-    """Trả về các trạng thái được phép chuyển đến từ trạng thái hiện tại."""
+    """Trả về các trạng thái được phép chuyển đến từ trạng thái hiện tại.
+
+    Đi TIẾN đúng 1 bước kế; cho phép REJECTED (từ chối) từ mọi bước chưa kết thúc (ADR-007).
+    """
     if current_stage in TERMINAL_STAGES:
         return ()
     if current_stage == "DECISION":
         return TERMINAL_STAGES  # HIRED hoặc REJECTED
     idx = _SEQUENTIAL.index(current_stage)
-    return (_SEQUENTIAL[idx + 1],)
+    return (_SEQUENTIAL[idx + 1], "REJECTED")  # bước kế HOẶC từ chối sớm
 
 
 def transition_pipeline(candidate: Candidate, target_stage: str) -> None:
@@ -39,7 +43,7 @@ def transition_pipeline(candidate: Candidate, target_stage: str) -> None:
     if target_stage not in allowed:
         raise BusinessRuleError(
             f"Không thể chuyển từ '{current}' sang '{target_stage}' — "
-            f"pipeline chỉ đi tuần tự, bước tiếp theo hợp lệ: {' / '.join(allowed)}"
+            f"chỉ được đi tiến 1 bước hoặc Từ chối; hợp lệ: {' / '.join(allowed)}"
         )
 
     candidate.pipeline_stage = target_stage

@@ -6,6 +6,64 @@
 
 ---
 
+## ADR-007: Nới pipeline — cho phép Từ chối (REJECTED) ở bất kỳ bước
+
+**Status:** Accepted
+**Date:** 2026-07-11
+**Decided by:** Trung (quyết định) — Claude Code (đề xuất + triển khai)
+
+### Context
+
+Critical Business Rule gốc (ADR-001 / CLAUDE.md): pipeline ứng viên đi TUẦN TỰ nghiêm ngặt
+`NEW → SCREENING → TEST_SENT → TEST_DONE → INTERVIEW → DECISION → HIRED/REJECTED`, chỉ được rẽ
+REJECTED ở bước DECISION. Thực tế tuyển dụng: nhiều hồ sơ cần loại NGAY từ sớm (sai vị trí,
+trượt sàng lọc, ứng viên rút hồ sơ) mà không có lý do bắt đi qua đủ TEST/INTERVIEW rồi mới loại
+được. PLAN.md (standup 2026-07-03) đã ghi nhận điểm vướng này và hoãn chờ Trung quyết. Phản hồi
+Trung 2026-07-11 ("quy trình tuyển dụng cần gọn hơn") → chốt nới "Từ chối ở bất kỳ bước".
+
+### Decision
+
+1. `get_allowed_next_stages` bổ sung `REJECTED` vào tập cho phép của MỌI trạng thái chưa kết
+   thúc (NEW, SCREENING, TEST_SENT, TEST_DONE, INTERVIEW). DECISION giữ nguyên (HIRED/REJECTED).
+   → Từ mỗi bước: đi TIẾN đúng 1 bước kế, HOẶC chuyển thẳng REJECTED.
+2. GIỮ NGUYÊN các ràng buộc khác: không nhảy cóc TIẾN (vd NEW→INTERVIEW vẫn 422), không đi
+   LÙI, không rời trạng thái kết thúc (HIRED/REJECTED). Chỉ mở đúng nhánh REJECTED.
+3. Không nới HIRED sớm — chỉ vào HIRED từ DECISION (tuyển thật vẫn phải qua quyết định).
+4. Đồng bộ 2 nơi đang lặp logic: backend `candidate_service.get_allowed_next_stages` và
+   frontend `lib/types.ts nextStages()` (giữ nguyên PIPELINE_STAGES/TERMINAL_STAGES — không
+   đụng model/migration).
+
+### Rationale
+
+1. REJECTED là hành vi "kết thúc sớm" tự nhiên, không phá tính tuần tự của luồng TIẾN.
+2. Chỉ mở đúng 1 nhánh (REJECTED); HIRED vẫn bị canh qua DECISION → rủi ro nghiệp vụ thấp.
+3. Không sửa model/migration → thay đổi nhỏ; test cũ (không-nhảy-cóc, không-đi-lùi,
+   terminal-bất-động) vẫn xanh, chỉ thêm test cho nhánh REJECTED mới.
+
+### Consequences
+
+**Positive:**
+- HR loại hồ sơ 1 chạm từ bất kỳ bước — đúng nhu cầu "gọn hơn".
+- Thay đổi tối thiểu, giữ nguyên các bảo vệ tuần tự còn lại.
+
+**Negative:**
+- Logic pipeline vẫn bị lặp ở BE + FE (nợ kỹ thuật cũ); lần này sửa cả hai. Nếu còn nới thêm
+  nên gom về 1 nguồn (BE trả `allowed_next` cho FE dùng, bỏ hằng số lặp).
+- Chưa lưu "lý do từ chối" theo bước (chỉ đổi trạng thái) — cân nhắc bổ sung sau nếu cần thống kê.
+
+### Alternatives considered
+
+1. Gộp/bỏ bước TEST (TEST_SENT+TEST_DONE) hoặc cho nhảy bước tiến: Trung KHÔNG chọn (giữ luồng
+   test tuần tự) — chỉ lấy "Từ chối mọi bước".
+2. Pipeline tự do (any→any): quá lỏng, mất kiểm soát thứ tự — loại.
+
+### References
+
+- ADR-001, CLAUDE.md "Critical Business Rules" (dòng pipeline), PLAN.md standup 2026-07-03
+- `backend/app/services/candidate_service.py`, `frontend/src/lib/types.ts`, `tests/test_candidates.py`
+
+---
+
 ## ADR-006: Resolve tenant trên domain chính bằng "Mã tổ chức" (header X-Org-Slug)
 
 **Status:** Accepted

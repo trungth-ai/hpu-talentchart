@@ -44,7 +44,7 @@ async def _transition(client, candidate_id, stage, user):
 
 
 class TestPipelineStateMachine:
-    """Critical Business Rule: pipeline CHỈ đi tuần tự, không nhảy cóc."""
+    """Critical Business Rule (ADR-007): đi tiến tuần tự; Từ chối được ở bất kỳ bước."""
 
     async def test_full_sequential_flow_to_hired(
         self, async_client, hr_manager_org_a, candidate_org_a
@@ -79,6 +79,43 @@ class TestPipelineStateMachine:
         )
         assert response.status_code == 200
         assert response.json()["data"]["pipeline_stage"] == "REJECTED"
+
+    async def test_can_reject_from_any_stage(
+        self, async_client, hr_manager_org_a, candidate_org_a
+    ):
+        # ADR-007: Từ chối ngay từ NEW (không cần đi hết pipeline)
+        response = await _transition(
+            async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
+        )
+        assert response.status_code == 200
+        assert response.json()["data"]["pipeline_stage"] == "REJECTED"
+        # REJECTED là trạng thái kết thúc → không chuyển tiếp được nữa
+        after = await _transition(
+            async_client, candidate_org_a.id, "SCREENING", hr_manager_org_a
+        )
+        assert after.status_code == 422
+
+    async def test_can_reject_from_middle_stage(
+        self, async_client, hr_manager_org_a, candidate_org_a
+    ):
+        # Từ chối từ giữa pipeline (TEST_SENT) — bỏ qua TEST_DONE/INTERVIEW/DECISION
+        for stage in ("SCREENING", "TEST_SENT"):
+            await _transition(async_client, candidate_org_a.id, stage, hr_manager_org_a)
+        response = await _transition(
+            async_client, candidate_org_a.id, "REJECTED", hr_manager_org_a
+        )
+        assert response.status_code == 200
+        assert response.json()["data"]["pipeline_stage"] == "REJECTED"
+
+    async def test_still_cannot_hire_early(
+        self, async_client, hr_manager_org_a, candidate_org_a
+    ):
+        # HIRED vẫn CHỈ vào được từ DECISION — nới REJECTED KHÔNG mở HIRED sớm
+        await _transition(async_client, candidate_org_a.id, "SCREENING", hr_manager_org_a)
+        response = await _transition(
+            async_client, candidate_org_a.id, "HIRED", hr_manager_org_a
+        )
+        assert response.status_code == 422
 
     async def test_terminal_stage_cannot_move(
         self, async_client, hr_manager_org_a, candidate_org_a

@@ -5,6 +5,7 @@
 
 import {
   Briefcase,
+  ClipboardCheck,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -20,6 +21,7 @@ import { useAuthStore } from '@/stores/auth';
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
   { href: '/candidates', label: 'Ứng viên & Nhân sự', icon: Users },
+  { href: '/assessments', label: 'Trắc nghiệm DISC', icon: ClipboardCheck },
   { href: '/campaigns', label: 'Đợt tuyển dụng', icon: Megaphone },
   { href: '/job-posts', label: 'Tin tuyển dụng', icon: Briefcase },
 ];

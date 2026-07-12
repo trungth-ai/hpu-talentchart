@@ -242,3 +242,42 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   migration production thuộc nhóm việc không giao AI tự làm (HUONG-DAN §8).
 - Trạng thái Phase 1: Sprint 1-8 code xong toàn bộ. Chờ: review của Trung
   (RLS + archetype content), GOOGLE_CLIENT_ID/ANTHROPIC_API_KEY thật, và cutover.
+
+### 2026-07-11 (Claude Code — cải tiến Vận trình / DISC / Pipeline theo phản hồi Trung)
+- Phản hồi Trung (kèm ảnh màn chi tiết ứng viên): (1) cào tử vi cần cron + lưu DB + xem ngày
+  trước, giảm gọi AI; (2) cào bị lỗi entity / khó đọc / thiếu; (3) không thấy DISC + quy trình
+  tuyển dụng cần gọn hơn.
+- Quyết định (Trung chốt qua hỏi–đáp): pipeline CHỈ nới "cho Từ chối ở bất kỳ bước" (giữ tiến
+  tuần tự); DISC đưa ra CẢ menu + danh sách; làm quick-win trước.
+- **Done Phase 1 (quick wins):**
+  - Sửa cào `services/epa/fortune.py`: thêm `html.unescape()` (GỐC lỗi B&#237;→Bính), giữ ngắt
+    đoạn theo thẻ khối (frontend đã `whitespace-pre-wrap`), `_extract_age_segment` cắt trọn đoạn
+    1 con giáp (hết "cào chưa hết"), nới cap 3500→6000 / 2600→4000. Verify: chạy hàm với mẫu
+    entity+thẻ khối qua backend/.venv → decode đúng, giữ xuống dòng, cắt đúng biên; ruff sạch.
+  - DISC ra ngoài: component dùng chung `features/disc-quick-action.tsx` (trạng thái DISC suy từ
+    pipeline_stage + gửi/gửi lại/xem; NEW → "Sàng lọc & gửi test" chuỗi 2 bước); thêm cột DISC ở
+    danh sách ứng viên; trang mới `/assessments` + mục sidebar "Trắc nghiệm DISC". KHÔNG đụng
+    stage-gate gửi test (đúng quyết định). Verify: `tsc --noEmit` sạch + `next build` pass (route
+    /assessments compile). (`next lint` đã deprecated + hỏi tương tác vì dự án chưa cấu hình
+    ESLint — không phải lỗi do sửa, có thể tách task riêng.)
+- **Next (Phase 2):** ADR-007 nới pipeline (Từ chối mọi bước) + sửa CLAUDE.md dòng 153 +
+  `candidate_service.py`/`types.ts`/test; cron+DB tử vi (model `daily_fortune` + Celery task cào
+  theo lô 12 cung/12 tuổi + beat 1 lần/ngày + lazy fallback cào-bù + đọc từ DB + tham số `?date=`
+  xem ngày trước + cache narrative vào DB để giảm AI); frontend thêm điều hướng xem ngày trước.
+- Ràng buộc môi trường: máy dev không Docker/Redis → Celery beat chỉ chạy trên server; full e2e
+  (backend + PostgreSQL) chưa verify được tại chỗ (đúng ràng buộc đã ghi ở các sprint trước).
+- **Done Phase 2A (pipeline, ADR-007):** cho REJECTED từ mọi bước chưa kết thúc; giữ tiến tuần tự
+  (không nhảy cóc/đi lùi), HIRED vẫn CHỈ từ DECISION. Sửa `candidate_service.get_allowed_next_stages`
+  + `types.ts nextStages()` + footnote trang chi tiết + CLAUDE.md (Critical Business Rule). Test: +3
+  case (từ chối từ NEW / giữa pipeline; HIRED sớm vẫn 422) — toàn bộ test cũ vẫn xanh.
+- **Done Phase 2B (cron + DB tử vi):** model `DailyFortune` (bảng `daily_fortunes`, toàn cục như
+  astrology_reference) + migration `0008` (đổi số vì đã có 0007 add_candidate_gender — tránh 2 head);
+  `fortune.scrape_all_daily` cào lô 12 cung + 12 tuổi (1 bài) + ngày tốt/xấu; Celery task
+  `fortune.scrape_daily` + beat 00:15 giờ VN; `daily_fortune_store.get_daily_for` đọc DB + cào-bù-
+  hôm-nay khi thiếu (chạy được cả khi KHÔNG có Celery); route `/lichngaytot?date=` đọc DB + chặn ngày
+  tương lai; frontend thêm điều hướng xem ngày trước. Test: +6 case. Backend 496 test xanh, ruff sạch;
+  frontend typecheck + build pass; alembic 1 head (0008); celery task đăng ký + beat OK.
+- CHƯA verify tại chỗ (cần chạy trên SERVER): (1) `alembic upgrade head` áp migration 0008 trên
+  PostgreSQL; (2) worker + beat thật cào lichngaytot (cần Redis + mạng ra ngoài); (3) mảng cào
+  (lichngaytot) KHÔNG dùng AI → đã hết chi phí AI cho phần cào. Narrative "Vận trình" vẫn gọi Claude
+  như cũ; muốn giảm thêm AI có thể cache narrative theo (ngày + facts) vào DB — để đợt sau.

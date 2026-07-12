@@ -9,6 +9,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
 import { CandidateFormModal } from '@/components/features/candidate-form-modal';
+import { DiscQuickAction } from '@/components/features/disc-quick-action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api-client';
@@ -113,13 +114,14 @@ function CandidatesContent() {
               <th className="px-4 py-3">Loại</th>
               <th className="px-4 py-3">Bộ phận / Vị trí</th>
               <th className="px-4 py-3">Trạng thái</th>
+              <th className="px-4 py-3">DISC</th>
               <th className="px-4 py-3">Ngày tạo</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={6} className="px-4 py-10 text-center text-gray-400">
                   Đang tải…
                 </td>
               </tr>
@@ -149,12 +151,15 @@ function CandidatesContent() {
                       {STAGE_LABELS[c.pipeline_stage]}
                     </span>
                   </td>
+                  <td className="px-4 py-3">
+                    <DiscQuickAction candidate={c} />
+                  </td>
                   <td className="px-4 py-3 text-gray-500">{formatDate(c.created_at)}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={6} className="px-4 py-10 text-center text-gray-400">
                   Không có hồ sơ nào khớp bộ lọc
                 </td>
               </tr>

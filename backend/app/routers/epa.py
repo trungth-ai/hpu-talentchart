@@ -8,7 +8,7 @@
 
 import asyncio
 import random
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
@@ -34,6 +34,7 @@ from app.services.epa import (
     biorhythm,
     canchi,
     compatibility,
+    daily_fortune_store,
     fortune,
     narrative,
     team_suggest,
@@ -369,21 +370,31 @@ async def candidate_fortune(
 @router.get("/candidates/{candidate_id}/lichngaytot")
 async def candidate_lichngaytot(
     candidate_id: UUID,
+    on_date: date | None = Query(None, alias="date"),
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_hr_manager),
 ):
-    """Cào lichngaytot.com cho ứng viên — ngày tốt/xấu + tử vi ngày theo tuổi + theo cung.
+    """Tử vi theo NGÀY (ngày tốt/xấu + theo tuổi + theo cung) — ĐỌC TỪ DB (bảng daily_fortunes).
 
-    Best-effort, chỉ gọi khi người dùng bấm nút. Cần epa_consent + birth_date.
+    Dữ liệu được cào theo lô hằng ngày (Celery beat). Nếu là hôm nay mà DB còn thiếu thì tự
+    cào bù rồi lưu lại (để lần sau khỏi cào + giảm gọi AI). Xem ngày trước qua ?date=YYYY-MM-DD.
+    Cần epa_consent + birth_date.
     """
     candidate = await _get_candidate_with_birth(candidate_id, db)
     bd = candidate.birth_date
     z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
     sign = get_sign_by_date(bd)
     today = _today_vn()
-    data = await fortune.scrape_lichngaytot(z["dia_chi"], sign["code"], today)
-    if not any(data.values()):
-        raise BusinessRuleError("Không lấy được dữ liệu từ lichngaytot.com, thử lại sau")
+    target = on_date or today
+    if target > today:
+        raise BusinessRuleError("Chưa có tử vi cho ngày trong tương lai")
+    data = await daily_fortune_store.get_daily_for(
+        db, dia_chi=z["dia_chi"], sign_code=sign["code"], on_date=target, today=today
+    )
+    if not any(data[k] for k in ("day", "zodiac_day", "horoscope_day")):
+        raise BusinessRuleError(
+            "Chưa có dữ liệu tử vi cho ngày này (dữ liệu được cào tự động hằng ngày)"
+        )
     return success({**data, "disclaimer": DISCLAIMER})
 
 

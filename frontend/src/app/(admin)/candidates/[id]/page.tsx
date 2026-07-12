@@ -352,7 +352,7 @@ export default function CandidateDetailPage({
               )}
             </div>
             <p className="mt-3 text-xs text-gray-400">
-              Pipeline chỉ đi tuần tự theo quy trình — không thể nhảy cóc trạng thái.
+              Pipeline đi tiến tuần tự từng bước; có thể Từ chối ở bất kỳ bước.
             </p>
           </section>
         </div>
