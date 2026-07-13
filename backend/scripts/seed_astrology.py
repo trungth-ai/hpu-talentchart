@@ -15,6 +15,7 @@ from app.data.horoscope import HOROSCOPE_SIGNS  # noqa: E402
 from app.data.zodiac_animals import ZODIAC_ANIMALS  # noqa: E402
 from app.database import async_session_factory  # noqa: E402
 from app.models.astrology import AstrologyReference  # noqa: E402
+from app.services.epa.reference_clean import clean_content  # noqa: E402
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "app" / "data" / "astrology_full.json"
 
@@ -55,6 +56,7 @@ async def seed() -> None:
 
     async with async_session_factory() as session:
         for kind, key, title, content in rows:
+            content = clean_content(content)  # bỏ bảng OCR rác (Số TT/12 cung) trước khi lưu
             obj = await session.get(AstrologyReference, (kind, key))
             if obj is not None:
                 obj.title = title

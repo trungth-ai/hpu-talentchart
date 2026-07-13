@@ -466,6 +466,8 @@ async def astrology_reference(
     - kind=horoscope, key=code cung (ARIES, ...): toàn bộ nội dung cung hoàng đạo (2 nguồn).
     Dữ liệu nạp từ tài liệu nguồn qua scripts/seed_astrology.py (bảng astrology_reference).
     """
+    from app.services.epa.reference_clean import clean_content
+
     if kind not in ("zodiac", "horoscope"):
         raise BusinessRuleError("Loại tra cứu không hợp lệ")
     obj = await db.get(AstrologyReference, (kind, key))
@@ -476,7 +478,7 @@ async def astrology_reference(
             "kind": obj.kind,
             "key": obj.key,
             "title": obj.title,
-            "content": obj.content,
+            "content": clean_content(obj.content),
             "disclaimer": DISCLAIMER,
         }
     )
