@@ -3,6 +3,27 @@
 # Copy vào project SaaS mới (TalentChart), thay talentchart, 8003, talentchart.hpu.edu.vn
 
 services:
+  # ─── Migrate (one-shot) — TỰ ĐỘNG áp Alembic migration TRƯỚC khi app khởi động ───
+  # Chạy lại mỗi lần `up`; `alembic upgrade head` idempotent (đã ở head → no-op).
+  # backend/worker CHỜ service này exit 0 → không bao giờ chạy code mới trên schema cũ
+  # (chống đúng lỗi "quên chạy migration" gây 500 hàng loạt). Container này sẽ ở trạng
+  # thái Exited sau khi xong — đó là bình thường.
+  migrate:
+    image: talentchart-backend:latest
+    pull_policy: never
+    container_name: talentchart-migrate
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      # alembic/env.py đọc DATABASE_URL_SYNC (psycopg2). JWT_SECRET vì import app.* fail-fast.
+      - DATABASE_URL_SYNC=postgresql+psycopg2://talentchart:${DB_PASSWORD:?DB_PASSWORD bat buoc}@db:5432/talentchart
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET bat buoc}
+      - APP_ENV=${APP_ENV:-production}
+    depends_on:
+      db: { condition: service_healthy }
+    networks:
+      - talentchart-internal
+
   # ─── Backend FastAPI ───
   backend:
     build:
@@ -40,6 +61,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
 
     depends_on:
+      migrate: { condition: service_completed_successfully }
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
       minio: { condition: service_healthy }
@@ -111,6 +133,7 @@ services:
       - SMTP_PASS=${SMTP_PASS}
 
     depends_on:
+      migrate: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
       db: { condition: service_healthy }
 

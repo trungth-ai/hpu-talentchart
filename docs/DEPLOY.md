@@ -67,11 +67,14 @@ git clone https://github.com/trungth-ai/hpu-talentchart ~/hpu-dev/talentchart
 cd ~/hpu-dev/talentchart
 # Lần sau:
 git pull origin main   # ⚠️ phải có commit vá "bake BACKEND_INTERNAL_URL" (273b225 trở đi)
-
-# Khởi động db + redis trước để chạy migration
-docker compose --env-file .env.production up -d --build db redis
-docker compose --env-file .env.production run --rm backend alembic upgrade head
 ```
+
+> ✅ **Migration TỰ ĐỘNG (không cần chạy tay).** Service one-shot `migrate` trong
+> `docker-compose.yml` chạy `alembic upgrade head` sau khi `db` healthy và **TRƯỚC** khi
+> `backend`/`worker` khởi động (`condition: service_completed_successfully`). Vì vậy **luôn
+> nhớ backup TRƯỚC khi `up`** (bước 3). Nếu migrate lỗi → backend KHÔNG khởi động (fail-fast,
+> tránh chạy code mới trên schema cũ); xem log: `docker compose logs migrate`.
+> Chạy migration độc lập khi cần: `docker compose --env-file .env.production run --rm migrate`.
 
 > ⚠️ **BẪY THƯỜNG GẶP — proxy `/api` về `localhost:8003`.** Next.js **đóng băng rewrites lúc
 > BUILD**, nên `BACKEND_INTERNAL_URL` phải đúng ở thời điểm build image frontend (đã set qua
@@ -83,10 +86,12 @@ docker compose --env-file .env.production run --rm backend alembic upgrade head
 > docker compose --env-file .env.production up -d frontend
 > ```
 
-## 3. Backup TRƯỚC migration (bắt buộc mỗi lần deploy)
+## 3. Backup TRƯỚC khi `up` (bắt buộc mỗi lần deploy)
+
+Vì migration tự chạy trong bước 4, backup phải làm TRƯỚC đó (db vẫn đang chạy từ lần deploy trước):
 
 ```bash
-docker compose exec db pg_dump -U talentchart -F c talentchart > backups/pre-deploy-$(date +%Y%m%d).dump
+docker compose exec db pg_dump -U talentchart -F c talentchart > backups/pre-deploy-$(date +%Y%m%d-%H%M).dump
 # Container backup tự chạy hằng ngày (scripts/backup-postgres.sh, giữ 14 ngày)
 ```
 
@@ -94,8 +99,8 @@ docker compose exec db pg_dump -U talentchart -F c talentchart > backups/pre-dep
 
 ```bash
 docker compose --env-file .env.production up -d --build
-# (migration đã chạy ở bước 2; nếu deploy lại có migration mới thì chạy lại upgrade head)
-docker compose exec backend alembic current            # kỳ vọng: head (0005)
+# Migration TỰ ĐỘNG chạy trong lệnh trên (service `migrate` → alembic upgrade head)
+docker compose exec backend alembic current            # kỳ vọng: head hiện tại (0011)
 
 # Verify RLS đã bật (lớp bảo vệ số 3):
 docker compose exec db psql -U talentchart -c \
