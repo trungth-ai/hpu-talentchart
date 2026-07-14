@@ -311,12 +311,14 @@ async def candidate_personality(
 @router.get("/candidates/{candidate_id}/fortune")
 async def candidate_fortune(
     candidate_id: UUID,
+    ai: bool = Query(False),
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_hr_manager),
 ):
-    """Vận trình NGÀY + THÁNG — tính offline (Can Chi + cung) rồi Claude diễn giải chi tiết.
+    """Vận trình NGÀY + THÁNG — Can Chi tính offline (nhanh). CHỈ gọi Claude diễn giải khi ai=true.
 
-    Cần epa_consent + birth_date. Không có ANTHROPIC_API_KEY thì trả phần dữ kiện (template).
+    Mặc định ai=false: trả Can Chi + chỉ nam theo sách, KHÔNG gọi AI (tải nhanh, giảm chi phí).
+    Cần epa_consent + birth_date.
     """
     candidate = await _get_candidate_with_birth(candidate_id, db)
     bd = candidate.birth_date
@@ -344,11 +346,14 @@ async def candidate_fortune(
             f" Chỉ nam vận trình tháng {today.month} (theo sách) cho cung "
             f"{sign['name']}: {month_guidance}"
         )
-    # Gọi Claude cho ngày + tháng SONG SONG (mỗi lời gọi đã timeout 18s → không treo)
-    day_narr, month_narr = await asyncio.gather(
-        fortune.fortune_narrative("day", day_facts),
-        fortune.fortune_narrative("month", month_facts),
-    )
+    # Mặc định KHÔNG gọi AI (tải nhanh, giảm chi phí) — chỉ diễn giải khi ?ai=true (bấm nút).
+    if ai:
+        day_narr, month_narr = await asyncio.gather(
+            fortune.fortune_narrative("day", day_facts),
+            fortune.fortune_narrative("month", month_facts),
+        )
+    else:
+        day_narr, month_narr = None, None
     return success(
         {
             "candidate_id": str(candidate.id),
@@ -361,7 +366,7 @@ async def candidate_fortune(
                 "narrative": month_narr,
                 "book_guidance": month_guidance,
             },
-            "ai_generated": bool(fortune.settings.ANTHROPIC_API_KEY),
+            "ai_generated": ai and bool(fortune.settings.ANTHROPIC_API_KEY),
             "disclaimer": DISCLAIMER,
         }
     )

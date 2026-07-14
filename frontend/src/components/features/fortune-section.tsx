@@ -33,9 +33,16 @@ function shiftPeriod(iso: string, period: Period, dir: number): string {
 }
 
 export function FortuneSection({ candidateId }: { candidateId: string }) {
-  const { data: res, isLoading, isError } = useQuery({
-    queryKey: ['candidate', candidateId, 'fortune'],
-    queryFn: () => api.get<FortuneResult>(`/api/v1/epa/candidates/${candidateId}/fortune`),
+  const [aiMode, setAiMode] = useState(false);
+  const {
+    data: res,
+    isLoading,
+    isError,
+    isFetching: fortuneFetching,
+  } = useQuery({
+    queryKey: ['candidate', candidateId, 'fortune', aiMode],
+    queryFn: () =>
+      api.get<FortuneResult>(`/api/v1/epa/candidates/${candidateId}/fortune?ai=${aiMode}`),
     retry: false,
   });
   const f = res?.data;
@@ -90,9 +97,9 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
     <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold text-gray-900">Vận trình</h2>
-        {!f.ai_generated && (
+        {aiMode && !f.ai_generated && (
           <span className="text-xs text-amber-600">
-            Chưa cấu hình ANTHROPIC_API_KEY — đang hiển thị dữ kiện gốc
+            Chưa cấu hình ANTHROPIC_API_KEY — không tạo được diễn giải AI
           </span>
         )}
       </div>
@@ -104,13 +111,15 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
             Hôm nay · {f.day.canchi.solar_date} · ngày {f.day.canchi.day_canchi}, năm{' '}
             {f.day.canchi.year_canchi}
           </h3>
-          <p className="leading-relaxed text-gray-700">{f.day.narrative}</p>
+          {f.day.narrative && <p className="leading-relaxed text-gray-700">{f.day.narrative}</p>}
         </div>
         <div>
           <h3 className="mb-1 text-xs font-semibold uppercase text-primary-600">
             Tháng {f.month.month}/{f.month.year}
           </h3>
-          <p className="leading-relaxed text-gray-700">{f.month.narrative}</p>
+          {f.month.narrative && (
+            <p className="leading-relaxed text-gray-700">{f.month.narrative}</p>
+          )}
           {f.month.book_guidance && (
             <details className="mt-1 text-xs text-gray-500">
               <summary className="cursor-pointer hover:text-gray-700">
@@ -120,6 +129,13 @@ export function FortuneSection({ candidateId }: { candidateId: string }) {
             </details>
           )}
         </div>
+        {!aiMode ? (
+          <Button variant="secondary" size="sm" onClick={() => setAiMode(true)}>
+            🔮 Xem diễn giải AI (ngày &amp; tháng)
+          </Button>
+        ) : (
+          fortuneFetching && <p className="text-xs text-gray-400">Đang gọi AI diễn giải…</p>
+        )}
       </div>
 
       {/* Tử vi lichngaytot theo kỳ — đọc từ DB (cào tự động định kỳ) */}

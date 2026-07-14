@@ -214,9 +214,9 @@ export interface FortuneResult {
   birth: { day: number; month: number; year: number };
   day: {
     canchi: { solar_date: string; lunar_date: string; day_canchi: string; year_canchi: string };
-    narrative: string;
+    narrative: string | null; // null khi ai=false (chưa bấm "Xem diễn giải AI")
   };
-  month: { month: number; year: number; narrative: string; book_guidance: string | null };
+  month: { month: number; year: number; narrative: string | null; book_guidance: string | null };
   ai_generated: boolean;
   disclaimer: string;
 }
