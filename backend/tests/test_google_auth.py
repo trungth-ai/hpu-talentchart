@@ -225,6 +225,24 @@ class TestCandidateGoogleLogin:
         assert has_test.status_code == 200
         assert has_test.json()["data"]["token"]
 
+    async def test_candidate_self_start_test(self, async_client, org_a, monkeypatch):
+        _mock_google(monkeypatch, "tudanhgia@gmail.com")
+        login = await async_client.post(
+            f"{self.HOST}/api/v1/public/auth/google", json={"id_token": "fake"}
+        )
+        headers = {"Authorization": f"Bearer {login.json()['data']['candidate_token']}"}
+        # Tự bắt đầu bài test DISC (KHÔNG cần HR gửi link)
+        start = await async_client.post(
+            f"{self.HOST}/api/v1/public/candidates/me/test", headers=headers
+        )
+        assert start.status_code == 201
+        assert start.json()["data"]["token"]
+        # /me/test giờ thấy bài đang mở
+        active = await async_client.get(
+            f"{self.HOST}/api/v1/public/candidates/me/test", headers=headers
+        )
+        assert active.status_code == 200
+
     async def test_candidate_token_cannot_access_admin_api(
         self, async_client, org_a, monkeypatch
     ):

@@ -1,7 +1,8 @@
 # Candidate portal — ứng viên đăng nhập Google (bất kỳ domain) để theo dõi hồ sơ (ADR-004)
 # Token type=candidate tách biệt hoàn toàn khỏi token staff.
 
-from datetime import UTC, datetime
+import secrets
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Request
@@ -17,6 +18,7 @@ from app.middleware.rate_limit import limiter
 from app.models.candidate import Candidate
 from app.models.test_session import TestSession
 from app.schemas.auth import GoogleLoginRequest
+from app.schemas.test_session import PublicTestResult
 from app.services import google_auth
 
 router = APIRouter(prefix="/public", tags=["public"])
@@ -139,4 +141,66 @@ async def candidate_active_test(
         raise ResourceNotFound("bài test đang mở")
     return success(
         {"token": session.token, "expires_at": session.expires_at.isoformat()}
+    )
+
+
+@router.post("/candidates/me/test", status_code=201)
+async def candidate_start_test(
+    candidate: Candidate = Depends(get_current_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Ứng viên/nhân sự TỰ bắt đầu bài test DISC (không cần HR gửi link).
+
+    Đã có bài đang mở thì trả lại (không tạo trùng). KHÔNG đổi trạng thái pipeline.
+    """
+    existing = await db.execute(
+        select(TestSession)
+        .where(TestSession.candidate_id == candidate.id)
+        .where(TestSession.is_used.is_(False))
+        .where(TestSession.status == "active")
+        .where(TestSession.expires_at > datetime.now(UTC))
+        .order_by(TestSession.created_at.desc())
+        .limit(1)
+    )
+    session = existing.scalar_one_or_none()
+    if session is None:
+        session = TestSession(
+            organization_id=candidate.organization_id,
+            candidate_id=candidate.id,
+            token=secrets.token_urlsafe(48),
+            expires_at=datetime.now(UTC) + timedelta(hours=72),
+        )
+        db.add(session)
+        await db.flush()
+        await db.refresh(session)
+    return success(
+        {"token": session.token, "expires_at": session.expires_at.isoformat()},
+        message="Đã sẵn sàng bài test — bạn có thể làm ngay",
+    )
+
+
+@router.get("/candidates/me/result")
+async def candidate_my_result(
+    candidate: Candidate = Depends(get_current_candidate),
+    db: AsyncSession = Depends(get_db),
+):
+    """Kết quả DISC của chính mình (chỉ Behavioural — KHÔNG kèm phân tích/khuyến nghị nội bộ)."""
+    result = await db.execute(
+        select(TestSession)
+        .where(TestSession.candidate_id == candidate.id)
+        .where(TestSession.completed_at.isnot(None))
+        .order_by(TestSession.completed_at.desc())
+        .limit(1)
+    )
+    session = result.scalar_one_or_none()
+    if session is None:
+        raise ResourceNotFound("kết quả bài test")
+    return success(
+        PublicTestResult(
+            disc_scores=session.disc_scores,
+            disc_primary=session.disc_primary,
+            disc_secondary=session.disc_secondary,
+            disc_profile=session.disc_profile,
+            personality_scores=session.personality_scores,
+        ).model_dump(mode="json")
     )

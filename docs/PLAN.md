@@ -327,3 +327,24 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
   lichngaytot hiện tại → chờ site đăng bài, hoặc Trung cấp hub riêng cho 2 mục này.
 - Server: `alembic upgrade head` (áp 0010) + chạy lại `seed_astrology.py` (làm sạch bảng rác) +
   worker/beat để cron chạy. Máy dev không Docker/PG → chưa e2e tại chỗ (đúng ràng buộc cũ).
+
+### 2026-07-14 (Claude Code — đợt 4: tải AI vận trình + RBAC + cơ cấu tổ chức + portal DISC)
+- Phản hồi Trung: (1) Vận trình vẫn gọi AI khi tải → chậm; (2) chỗ cá nhân tự đánh giá DISC;
+  (3) phân quyền Admin/HR/Recruiter/Member + cơ cấu tổ chức.
+- Ma trận quyền (Trung chốt): Admin/Owner = toàn quyền (user/settings/cơ cấu); HR = tuyển dụng +
+  nhân sự + DISC + EPA; Recruiter = tuyển dụng (KHÔNG nhân sự/xóa/quản trị); Member = CHỈ XEM.
+- Done + push main:
+  - `#1` (a4f34d9): `candidate_fortune?ai=false` mặc định (không gọi Claude khi tải) + nút
+    "Xem diễn giải AI".
+  - `#3 Pha A` RBAC (05b21eb): `require_recruiter`/`require_staff` + `ensure_can_manage_employee`;
+    re-gate toàn bộ router; FE `lib/permissions` ẩn nút theo vai trò. `/security-review`: 0
+    Critical/High; lưu ý Member đọc rộng → khuyên tắt auto-provision khi chưa gán vai trò.
+  - `#3 Pha B` cơ cấu tổ chức (a5252e3): model `Department` (cây + trưởng đơn vị) + migration
+    0011 (RLS) + `candidates.department_id`; router CRUD (admin ghi); trang `/admin/departments`
+    + tab; picker phòng ban ở form.
+  - `#2 + #3 Pha C` portal (commit này): `POST /public/candidates/me/test` (tự làm DISC, idempotent)
+    + `GET /me/result`; trang `/portal` (đăng nhập Google → tự làm bài + xem kết quả của mình).
+  - Verify: backend **525 test** + ruff sạch; FE typecheck + build pass; alembic 1 head (0011).
+- Server: `alembic upgrade head` (áp 0011) + worker/beat. Portal: `{slug}.hr.hpu.edu.vn/portal`
+  (hoặc `/portal` + nhập Mã tổ chức). LƯU Ý: nhân sự import mang email `@import.hpu.edu.vn` (placeholder)
+  nên CHƯA tự đăng nhập Google được — cần cập nhật email thật thì mới dùng được portal.
