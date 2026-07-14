@@ -34,8 +34,8 @@ from app.services.epa import (
     biorhythm,
     canchi,
     compatibility,
-    daily_fortune_store,
     fortune,
+    fortune_content_store,
     narrative,
     team_suggest,
 )
@@ -371,15 +371,18 @@ async def candidate_fortune(
 async def candidate_lichngaytot(
     candidate_id: UUID,
     on_date: date | None = Query(None, alias="date"),
+    period: str = Query("day"),
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_hr_manager),
 ):
-    """Tử vi theo NGÀY (ngày tốt/xấu + theo tuổi + theo cung) — ĐỌC TỪ DB (bảng daily_fortunes).
+    """Tử vi theo KỲ (day/week/month/year) cho ứng viên — ĐỌC TỪ DB (bảng fortune_content).
 
-    Dữ liệu được cào theo lô hằng ngày (Celery beat). Nếu là hôm nay mà DB còn thiếu thì tự
-    cào bù rồi lưu lại (để lần sau khỏi cào + giảm gọi AI). Xem ngày trước qua ?date=YYYY-MM-DD.
+    Cào theo lô định kỳ (Celery beat). Kỳ hiện tại nếu DB còn thiếu thì tự cào bù rồi lưu
+    (lần sau khỏi cào + giảm gọi AI). Xem kỳ trước qua ?date=YYYY-MM-DD (lấy kỳ chứa ngày đó).
     Cần epa_consent + birth_date.
     """
+    if period not in fortune_content_store.PERIODS:
+        raise BusinessRuleError("Kỳ không hợp lệ (day | week | month | year)")
     candidate = await _get_candidate_with_birth(candidate_id, db)
     bd = candidate.birth_date
     z = canchi.get_canchi_from_birth(bd.day, bd.month, bd.year)
@@ -387,13 +390,18 @@ async def candidate_lichngaytot(
     today = _today_vn()
     target = on_date or today
     if target > today:
-        raise BusinessRuleError("Chưa có tử vi cho ngày trong tương lai")
-    data = await daily_fortune_store.get_daily_for(
-        db, dia_chi=z["dia_chi"], sign_code=sign["code"], on_date=target, today=today
+        raise BusinessRuleError("Chưa có tử vi cho kỳ trong tương lai")
+    data = await fortune_content_store.get_fortune(
+        db,
+        period_type=period,
+        dia_chi=z["dia_chi"],
+        sign_code=sign["code"],
+        on_date=target,
+        today=today,
     )
-    if not any(data[k] for k in ("day", "zodiac_day", "horoscope_day")):
+    if not any(data.get(k) for k in ("day", "zodiac", "horoscope")):
         raise BusinessRuleError(
-            "Chưa có dữ liệu tử vi cho ngày này (dữ liệu được cào tự động hằng ngày)"
+            "Chưa có dữ liệu tử vi cho kỳ này (dữ liệu được cào tự động định kỳ)"
         )
     return success({**data, "disclaimer": DISCLAIMER})
 

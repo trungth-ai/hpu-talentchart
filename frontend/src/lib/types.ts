@@ -226,10 +226,11 @@ export interface LichngaytotBlock {
   excerpt: string;
 }
 export interface LichngaytotResult {
-  date: string; // ngày (YYYY-MM-DD) của nội dung tử vi
-  day: LichngaytotBlock | null; // ngày tốt/xấu, sao, giờ hoàng đạo
-  zodiac_day: LichngaytotBlock | null; // tử vi theo tuổi
-  horoscope_day: LichngaytotBlock | null; // tử vi theo cung
+  period_type: string; // day | week | month | year
+  period_key: string; // vd 2026-07-13 | 2026-W29 | 2026-07 | 2026
+  day?: LichngaytotBlock | null; // ngày tốt/xấu (chỉ có ở kỳ Ngày)
+  zodiac: LichngaytotBlock | null; // tử vi theo tuổi
+  horoscope: LichngaytotBlock | null; // tử vi theo cung
   disclaimer: string;
 }
 

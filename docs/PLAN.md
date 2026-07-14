@@ -304,3 +304,26 @@ Dựng nền tảng multi-tenant an toàn: xác thực, phân quyền, cô lập
     alembic 1 head (0009). `/security-review`: KHÔNG có Critical/High (tenant/authz/mass-assignment
     đã chốt + có test; birth_year/Can Chi trả cho hr_manager+ chỉ với hồ sơ opt-in — chủ ý).
 - CHƯA verify tại chỗ (chạy trên SERVER): `alembic upgrade head` (áp 0009) + e2e trên PostgreSQL.
+
+### 2026-07-13 (Claude Code — đợt 3: sửa nội dung tử vi sai + vận trình đa kỳ)
+- Phản hồi Trung: (1) vận trình cần cron ngày/tuần/tháng/năm × tuổi/cung, lưu DB, đọc API;
+  (2) bỏ bảng OCR rác "Số TT ... Sơn Dương" trong nội dung tử vi; (3) reset nhân sự để test DISC.
+- Done (#2, #3 — đã push commit 520b82f):
+  - `reference_clean` cắt bảng OCR rác khỏi con giáp/tương hợp (GIỮ đoạn "sinh tháng"); áp ở
+    seed + endpoint `/epa/reference`. Script `reset_disc_test.py` (RLS-aware, `--hire` để trả HIRED).
+- Done (#1 — đợt vận trình đa kỳ):
+  - Bảng `fortune_content` (period_type × kind × key) THAY `daily_fortunes` — migration 0010
+    chuyển dữ liệu ngày cũ + drop bảng cũ.
+  - `fortune.scrape_period(week/month/year)`: dò link bài mới nhất từ hub lichngaytot
+    (`/tu-vi.html`, `/cung-hoang-dao.html`, `/van-trinh-nam.html`) rồi tách 12 tuổi / 12 cung
+    bằng `_split_by_headings` (bỏ "Mục lục", alias Tỵ/Tị + Hổ Cáp/Bọ Cạp/Thiên Yết).
+  - 4 cron beat: ngày 00:15 / tuần thứ 2 / tháng mùng 1 / năm 1-1 (giờ VN) + cào bù kỳ hiện tại
+    khi người dùng xem (ngày: cào 1 người; tuần/tháng/năm: cào lô nhẹ).
+  - API `/epa/.../lichngaytot?period=&date=` đọc từ DB; FE `fortune-section` thêm tab
+    Ngày/Tuần/Tháng/Năm + điều hướng kỳ trước/sau.
+  - Verify: backend 510 test (mock cào) + ruff sạch; LIVE-probe cào thật → tuần 12/12 (cả 2 chiều),
+    tháng 12/12 con giáp, năm 12/12 cung, nội dung thật (không dính mục lục). FE typecheck + build pass.
+- GAP đã biết (best-effort, tự rỗng nếu thiếu): **tháng·cung** + **năm·con giáp** KHÔNG có trên hub
+  lichngaytot hiện tại → chờ site đăng bài, hoặc Trung cấp hub riêng cho 2 mục này.
+- Server: `alembic upgrade head` (áp 0010) + chạy lại `seed_astrology.py` (làm sạch bảng rác) +
+  worker/beat để cron chạy. Máy dev không Docker/PG → chưa e2e tại chỗ (đúng ràng buộc cũ).

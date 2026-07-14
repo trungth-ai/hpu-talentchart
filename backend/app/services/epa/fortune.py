@@ -8,6 +8,7 @@ import re
 from datetime import date
 
 from app.config import get_settings
+from app.data.horoscope import HOROSCOPE_SIGNS
 
 settings = get_settings()
 
@@ -231,4 +232,121 @@ async def scrape_all_daily(today: date) -> list[dict]:
             except Exception:  # noqa: BLE001
                 continue
 
+    return records
+
+
+# ─── Vận trình theo KỲ (tuần / tháng / năm) — cào cả 12 con giáp + 12 cung ───
+# Mã bài trên lichngaytot đổi mỗi kỳ nên phải DÒ link bài mới nhất từ trang "hub".
+
+# Biến thể tiêu đề -> key, chịu được cách viết khác (Tỵ/Tị; Hổ Cáp/Bọ Cạp/Thiên Yết)
+_ZODIAC_HEADINGS: dict[str, str] = {f"tuổi {c}": c for c in _DIA_CHI}
+_ZODIAC_HEADINGS["tuổi Tị"] = "Tỵ"
+_SIGN_ALIASES: dict[str, list[str]] = {"SCORPIO": ["Hổ Cáp", "Bọ Cạp", "Thiên Yết", "Thiên Hạt"]}
+
+
+def _build_sign_headings() -> dict[str, str]:
+    out: dict[str, str] = {}
+    for s in HOROSCOPE_SIGNS:
+        out[s["name"]] = s["code"]
+        for alias in _SIGN_ALIASES.get(s["code"], []):
+            out[alias] = s["code"]
+    return out
+
+
+_SIGN_HEADINGS = _build_sign_headings()
+
+
+def _split_by_headings(full: str, heading_to_key: dict[str, str]) -> dict[str, str]:
+    """Tách bài dài thành các đoạn theo tiêu đề; mỗi key giữ đoạn DÀI NHẤT (bỏ mục lục ngắn).
+
+    heading_to_key: {biến thể tiêu đề: key} — nhiều biến thể có thể trỏ về cùng 1 key.
+    (Bài lichngaytot có "Mục lục" liệt kê 12 mục ở đầu — đoạn nội dung thật dài hơn nên thắng.)
+    """
+    lower = full.lower()
+    occ: list[tuple[int, str]] = []
+    for heading, key in heading_to_key.items():
+        hl = heading.lower()
+        i = lower.find(hl)
+        while i != -1:
+            occ.append((i, key))
+            i = lower.find(hl, i + 1)
+    occ.sort()
+    out: dict[str, str] = {}
+    for idx, (pos, key) in enumerate(occ):
+        end = occ[idx + 1][0] if idx + 1 < len(occ) else len(full)
+        seg = full[pos:end].strip()[:4000]
+        if len(seg) > len(out.get(key, "")):
+            out[key] = seg
+    return out
+
+
+# (period, dim) -> danh sách (hub_path, regex slug bài) thử lần lượt. Bài con giáp nằm ở
+# /tu-vi/{slug}, bài cung ở /cung-hoang-dao/{slug} (xem _ART_DIR).
+_PERIOD_DISCOVERY: dict[tuple[str, str], list[tuple[str, str]]] = {
+    ("week", "zodiac"): [
+        ("/tu-vi.html", r"tu-vi-tuan-moi-[a-z0-9-]*?cua-12-con-giap-304-\d+\.html")
+    ],
+    ("week", "horoscope"): [
+        ("/cung-hoang-dao.html", r"tu-vi-tuan-moi-cua-12-cung-hoang-dao-374-\d+\.html")
+    ],
+    ("month", "zodiac"): [
+        ("/tu-vi.html", r"tu-vi-thang-[a-z0-9-]*?cua-12-con-giap-am-lich-304-\d+\.html")
+    ],
+    ("month", "horoscope"): [
+        ("/cung-hoang-dao.html", r"tu-vi-thang-[a-z0-9-]*?cua-12-cung-hoang-dao-374-\d+\.html"),
+        ("/tu-vi.html", r"tu-vi-thang-[a-z0-9-]*?cua-12-cung-hoang-dao-374-\d+\.html"),
+    ],
+    ("year", "zodiac"): [
+        ("/van-trinh-nam.html", r"tu-vi-nam-[a-z0-9-]*?con-giap[a-z0-9-]*?-304-\d+\.html"),
+        ("/tu-vi.html", r"tu-vi-nam-[a-z0-9-]*?con-giap[a-z0-9-]*?-304-\d+\.html"),
+    ],
+    ("year", "horoscope"): [
+        ("/cung-hoang-dao.html", r"tu-vi-12-cung-hoang-dao-nam-\d+-374-\d+\.html"),
+        ("/van-trinh-nam.html", r"tu-vi-12-cung-hoang-dao-nam-\d+-374-\d+\.html"),
+    ],
+}
+_ART_DIR = {"zodiac": "/tu-vi/", "horoscope": "/cung-hoang-dao/"}
+
+
+async def _discover_article(client, candidates: list[tuple[str, str]]) -> str | None:
+    """Dò slug bài mới nhất từ danh sách (hub, regex) — trả slug hoặc None."""
+    for hub_path, slug_re in candidates:
+        try:
+            hub = await client.get(f"{LNT_BASE}{hub_path}")
+            hub.raise_for_status()
+            m = re.search(slug_re, hub.text)
+            if m:
+                return m.group(0)
+        except Exception:  # noqa: BLE001
+            continue
+    return None
+
+
+async def scrape_period(period_type: str) -> list[dict]:
+    """Cào tử vi 1 KỲ ('week'|'month'|'year') cho cả 12 con giáp + 12 cung (best-effort).
+
+    Trả list record {kind: 'zodiac'|'horoscope', key: địa chi/code cung, url, excerpt}.
+    """
+    import httpx
+
+    records: list[dict] = []
+    async with httpx.AsyncClient(timeout=25, follow_redirects=True, headers=_LNT_UA) as client:
+        for dim in ("zodiac", "horoscope"):
+            candidates = _PERIOD_DISCOVERY.get((period_type, dim))
+            if not candidates:
+                continue
+            try:
+                slug = await _discover_article(client, candidates)
+                if not slug:
+                    continue
+                art_url = f"{LNT_BASE}{_ART_DIR[dim]}{slug}"
+                ra = await client.get(art_url)
+                ra.raise_for_status()
+                full = _strip_html(ra.text)
+                headings = _ZODIAC_HEADINGS if dim == "zodiac" else _SIGN_HEADINGS
+                kind = "zodiac" if dim == "zodiac" else "horoscope"
+                for key, seg in _split_by_headings(full, headings).items():
+                    records.append({"kind": kind, "key": key, "url": art_url, "excerpt": seg})
+            except Exception:  # noqa: BLE001
+                continue
     return records
