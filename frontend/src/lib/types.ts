@@ -11,6 +11,7 @@ export interface Candidate {
   source: string | null;
   notes: string | null;
   campaign_id: string | null;
+  department_id?: string | null;
   employee_code: string | null;
   department: string | null;
   gender: 'male' | 'female' | null;
@@ -302,6 +303,16 @@ export interface OrganizationInfo {
   name: string;
   slug: string;
   settings: Record<string, unknown>;
+}
+
+export interface Department {
+  id: string;
+  name: string;
+  parent_id: string | null;
+  manager_user_id: string | null;
+  status: string;
+  created_at: string;
+  member_count?: number;
 }
 
 export const ORG_ROLE_LABELS: Record<string, string> = {

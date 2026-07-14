@@ -19,6 +19,7 @@ class CandidateBase(BaseModel):
     source: str | None = None
     notes: str | None = None
     campaign_id: UUID | None = None
+    department_id: UUID | None = None  # gán vào phòng ban (cơ cấu tổ chức)
 
     # Dành cho candidate_type=employee (hợp nhất nhân sự)
     employee_code: str | None = None
@@ -129,6 +130,7 @@ class CandidateResponse(BaseModel):
     source: str | None
     notes: str | None
     campaign_id: UUID | None
+    department_id: UUID | None
     employee_code: str | None
     department: str | None
     gender: str | None

@@ -63,6 +63,13 @@ class Candidate(TenantScopedBase):
         nullable=True,
         index=True,
     )
+    # Phòng ban (cơ cấu tổ chức) — gán nhân sự vào đơn vị
+    department_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("departments.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     # ─── Dữ liệu nhạy cảm cho EPA (NĐ 13/2023) — chỉ lưu khi opt-in ───
     epa_consent: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

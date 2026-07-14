@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 
 const TABS = [
   { href: '/admin/users', label: 'Người dùng' },
+  { href: '/admin/departments', label: 'Cơ cấu tổ chức' },
   { href: '/admin/settings', label: 'Cài đặt tổ chức' },
 ];
 

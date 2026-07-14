@@ -20,6 +20,7 @@ from app.data.horoscope import get_sign_by_date
 from app.database import get_db
 from app.exceptions import ResourceNotFound
 from app.models.candidate import PIPELINE_STAGES, Candidate
+from app.models.department import Department
 from app.models.user import User
 from app.routers.campaigns import get_campaign_or_404
 from app.schemas.candidate import (
@@ -49,6 +50,14 @@ async def _verify_campaign_same_tenant(campaign_id: UUID | None, db: AsyncSessio
     """
     if campaign_id is not None:
         await get_campaign_or_404(campaign_id, db)
+
+
+async def _verify_department_same_tenant(department_id: UUID | None, db: AsyncSession) -> None:
+    """Chặn gán candidate vào phòng ban của tenant khác (IDOR qua foreign key)."""
+    if department_id is not None:
+        r = await db.execute(select(Department.id).where(Department.id == department_id))
+        if r.scalar_one_or_none() is None:
+            raise ResourceNotFound("phòng ban")
 
 
 def _serialize_candidate(c: Candidate) -> dict:
@@ -149,6 +158,7 @@ async def create_candidate(
     if data.candidate_type == "employee":
         ensure_can_manage_employee(actor)  # Recruiter không tạo hồ sơ Nhân sự
     await _verify_campaign_same_tenant(data.campaign_id, db)
+    await _verify_department_same_tenant(data.department_id, db)
 
     payload = data.model_dump()
     if payload.pop("epa_consent"):
@@ -180,6 +190,8 @@ async def update_candidate(
     payload = data.model_dump(exclude_unset=True)
     if "campaign_id" in payload:
         await _verify_campaign_same_tenant(payload["campaign_id"], db)
+    if "department_id" in payload:
+        await _verify_department_same_tenant(payload["department_id"], db)
     if "email" in payload and payload["email"]:
         payload["email"] = payload["email"].lower()
     if payload.get("epa_consent") is True and not candidate.epa_consent:

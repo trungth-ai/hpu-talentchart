@@ -5,13 +5,13 @@
 // LƯU Ý: API không trả birth_date/time/place (dữ liệu nhạy cảm) nên khi SỬA, các ô
 // ngày sinh để trống = giữ nguyên; chỉ nhập khi muốn ghi đè.
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api, ApiError } from '@/lib/api-client';
-import { TYPE_LABELS, type Candidate } from '@/lib/types';
+import { TYPE_LABELS, type Candidate, type Department } from '@/lib/types';
 
 interface Props {
   mode: 'create' | 'edit';
@@ -30,6 +30,10 @@ export function CandidateFormModal({
 }: Props) {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const { data: depsRes } = useQuery({
+    queryKey: ['departments'],
+    queryFn: () => api.get<Department[]>('/api/v1/departments'),
+  });
 
   const [form, setForm] = useState({
     full_name: initial?.full_name ?? '',
@@ -38,6 +42,7 @@ export function CandidateFormModal({
       initial?.candidate_type ?? defaultType ?? (mode === 'create' ? 'employee' : 'applicant'),
     employee_code: initial?.employee_code ?? '',
     department: initial?.department ?? '',
+    department_id: initial?.department_id ?? '',
     gender: (initial?.gender ?? '') as string,
     position: initial?.position ?? '',
     phone: initial?.phone ?? '',
@@ -60,6 +65,7 @@ export function CandidateFormModal({
         candidate_type: form.candidate_type,
         employee_code: form.employee_code.trim() || null,
         department: form.department.trim() || null,
+        department_id: form.department_id || null,
         gender: form.gender || null,
         position: form.position.trim() || null,
         phone: form.phone.trim() || null,
@@ -170,11 +176,25 @@ export function CandidateFormModal({
                 onChange={(e) => set('employee_code', e.target.value)}
               />
             </Field>
-            <Field label="Bộ phận">
+            <Field label="Bộ phận (mô tả)">
               <Input
                 value={form.department}
                 onChange={(e) => set('department', e.target.value)}
               />
+            </Field>
+            <Field label="Phòng ban (cơ cấu)">
+              <select
+                value={form.department_id}
+                onChange={(e) => set('department_id', e.target.value)}
+                className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm"
+              >
+                <option value="">— Chưa gán —</option>
+                {(depsRes?.data ?? []).map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Field label="Vị trí">
               <Input value={form.position} onChange={(e) => set('position', e.target.value)} />
