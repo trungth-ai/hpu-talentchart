@@ -17,7 +17,7 @@ from pydantic import BaseModel, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permissions import require_hr_manager
+from app.core.permissions import require_staff
 from app.core.responses import success
 from app.core.tenant_context import get_current_org_id
 from app.data.horoscope import get_sign_by_date
@@ -94,7 +94,7 @@ def _zodiac_of(candidate: Candidate) -> dict:
 @router.get("/today")
 async def epa_today(
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Can Chi hôm nay (dashboard) — port getTodayCanChi từ Fortune HR."""
     await _require_eastern_layer(db)
@@ -105,7 +105,7 @@ async def epa_today(
 async def candidate_zodiac(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Can Chi/Nạp Âm/Mệnh của 1 ứng viên/nhân sự (cần epa_consent + birth_date)."""
     await _require_eastern_layer(db)
@@ -125,7 +125,7 @@ async def epa_compatibility(
     candidate1_id: UUID = Query(...),
     candidate2_id: UUID = Query(...),
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Độ tương hợp giữa 2 người — công thức gốc Fortune HR (tam hợp +25, xung −30)."""
     await _require_eastern_layer(db)
@@ -213,7 +213,7 @@ async def _is_eastern_layer_enabled(db: AsyncSession) -> bool:
 async def candidate_archetype(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """12 Personality Archetype — fusion DISC + Mệnh + Tam hợp (ADR-005, Sprint 6).
 
@@ -276,7 +276,7 @@ async def candidate_archetype(
 async def candidate_personality(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Tính cách đặc trưng theo NGÀY SINH: cung hoàng đạo (chiêm tinh phương Tây) + con giáp.
 
@@ -313,7 +313,7 @@ async def candidate_fortune(
     candidate_id: UUID,
     ai: bool = Query(False),
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Vận trình NGÀY + THÁNG — Can Chi tính offline (nhanh). CHỈ gọi Claude diễn giải khi ai=true.
 
@@ -378,7 +378,7 @@ async def candidate_lichngaytot(
     on_date: date | None = Query(None, alias="date"),
     period: str = Query("day"),
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Tử vi theo KỲ (day/week/month/year) cho ứng viên — ĐỌC TỪ DB (bảng fortune_content).
 
@@ -415,7 +415,7 @@ async def candidate_lichngaytot(
 async def candidate_biorhythm(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Nhịp sinh học (Biorhythm) quanh hôm nay — cần epa_consent + birth_date.
 
@@ -440,7 +440,7 @@ async def candidate_biorhythm(
 @router.get("/stats/zodiac")
 async def zodiac_stats(
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Thống kê số nhân sự theo 12 CON GIÁP trong đơn vị (dashboard).
 
@@ -471,7 +471,7 @@ async def astrology_reference(
     kind: str,
     key: str,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Nội dung tử vi ĐẦY ĐỦ (toàn diện) — dùng cho nút "Xem thêm".
 
@@ -514,7 +514,7 @@ class TeamSuggestRequest(BaseModel):
 async def epa_team_suggest(
     data: TeamSuggestRequest,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Gợi ý đội nhóm theo tam hợp (thuật toán gốc: 3 phương án ngẫu nhiên, xếp hạng)."""
     await _require_eastern_layer(db)

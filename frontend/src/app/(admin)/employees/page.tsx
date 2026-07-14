@@ -12,9 +12,11 @@ import { DiscQuickAction } from '@/components/features/disc-quick-action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api-client';
+import { usePerms } from '@/lib/permissions';
 import type { Candidate } from '@/lib/types';
 
 export default function EmployeesPage() {
+  const perms = usePerms();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -40,7 +42,9 @@ export default function EmployeesPage() {
           <h1 className="text-2xl font-bold text-gray-900">Nhân sự</h1>
           <p className="text-sm text-gray-500">{data?.meta?.total ?? 0} nhân sự</p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</Button>
+        {perms.canManageEmployees && (
+          <Button onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</Button>
+        )}
       </header>
 
       <form

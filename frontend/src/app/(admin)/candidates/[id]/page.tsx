@@ -16,6 +16,7 @@ import { CandidateFormModal } from '@/components/features/candidate-form-modal';
 import { FortuneSection } from '@/components/features/fortune-section';
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
+import { usePerms } from '@/lib/permissions';
 import {
   STAGE_COLORS,
   STAGE_LABELS,
@@ -48,6 +49,7 @@ export default function CandidateDetailPage({
   const { id } = use(params);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const perms = usePerms();
   const [actionError, setActionError] = useState<string | null>(null);
   const [testUrl, setTestUrl] = useState<string | null>(null);
   const [otherId, setOtherId] = useState('');
@@ -167,6 +169,9 @@ export default function CandidateDetailPage({
   }
 
   const allowedNext = nextStages(candidate.pipeline_stage);
+  // Recruiter thao tác được ứng viên; hồ sơ Nhân sự cần HR+ (khớp chốt quyền backend)
+  const canManage =
+    candidate.candidate_type === 'employee' ? perms.canManageEmployees : perms.canRecruit;
 
   return (
     <div className="space-y-6">
@@ -188,19 +193,23 @@ export default function CandidateDetailPage({
             {STAGE_LABELS[candidate.pipeline_stage]}
           </span>
           <div className="flex gap-2">
-            <Button size="sm" variant="secondary" onClick={() => setShowEdit(true)}>
-              Sửa
-            </Button>
-            <Button
-              size="sm"
-              variant="danger"
-              disabled={del.isPending}
-              onClick={() => {
-                if (window.confirm(`Ẩn (xóa mềm) hồ sơ ${candidate.full_name}?`)) del.mutate();
-              }}
-            >
-              Xóa
-            </Button>
+            {canManage && (
+              <Button size="sm" variant="secondary" onClick={() => setShowEdit(true)}>
+                Sửa
+              </Button>
+            )}
+            {perms.canDelete && (
+              <Button
+                size="sm"
+                variant="danger"
+                disabled={del.isPending}
+                onClick={() => {
+                  if (window.confirm(`Ẩn (xóa mềm) hồ sơ ${candidate.full_name}?`)) del.mutate();
+                }}
+              >
+                Xóa
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -322,33 +331,41 @@ export default function CandidateDetailPage({
           <section className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-100">
             <h2 className="mb-3 font-semibold text-gray-900">Hành động</h2>
             <div className="space-y-2">
-              {allowedNext.map((stage) => (
-                <Button
-                  key={stage}
-                  className="w-full"
-                  variant={stage === 'REJECTED' ? 'danger' : 'primary'}
-                  disabled={transition.isPending}
-                  onClick={() => transition.mutate(stage)}
-                >
-                  Chuyển sang: {STAGE_LABELS[stage]}
-                </Button>
-              ))}
-              {['RECEIVED', 'ASSESSMENT'].includes(candidate.pipeline_stage) && (
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  disabled={sendTest.isPending}
-                  onClick={() => sendTest.mutate()}
-                >
-                  {candidate.pipeline_stage === 'ASSESSMENT'
-                    ? 'Gửi lại link bài test'
-                    : 'Gửi bài test DISC'}
-                </Button>
-              )}
-              {allowedNext.length === 0 && (
+              {!canManage ? (
                 <p className="text-center text-sm text-gray-400">
-                  Hồ sơ đã ở trạng thái kết thúc
+                  Bạn không có quyền thao tác hồ sơ này.
                 </p>
+              ) : (
+                <>
+                  {allowedNext.map((stage) => (
+                    <Button
+                      key={stage}
+                      className="w-full"
+                      variant={stage === 'REJECTED' ? 'danger' : 'primary'}
+                      disabled={transition.isPending}
+                      onClick={() => transition.mutate(stage)}
+                    >
+                      Chuyển sang: {STAGE_LABELS[stage]}
+                    </Button>
+                  ))}
+                  {['RECEIVED', 'ASSESSMENT'].includes(candidate.pipeline_stage) && (
+                    <Button
+                      variant="secondary"
+                      className="w-full"
+                      disabled={sendTest.isPending}
+                      onClick={() => sendTest.mutate()}
+                    >
+                      {candidate.pipeline_stage === 'ASSESSMENT'
+                        ? 'Gửi lại link bài test'
+                        : 'Gửi bài test DISC'}
+                    </Button>
+                  )}
+                  {allowedNext.length === 0 && (
+                    <p className="text-center text-sm text-gray-400">
+                      Hồ sơ đã ở trạng thái kết thúc
+                    </p>
+                  )}
+                </>
               )}
             </div>
             <p className="mt-3 text-xs text-gray-400">

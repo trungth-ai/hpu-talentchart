@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permissions import require_hr_manager
+from app.core.permissions import require_hr_manager, require_recruiter, require_staff
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
 from app.database import get_db
@@ -52,7 +52,7 @@ async def list_job_posts(
     campaign_id: UUID | None = None,
     include_inactive: bool = False,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     org_id = get_current_org_id()
     query = select(JobPost).where(JobPost.organization_id == org_id)
@@ -90,7 +90,7 @@ async def list_job_posts(
 async def get_job_post(
     job_post_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     job_post = await _get_job_post_or_404(job_post_id, db)
     return success(JobPostResponse.model_validate(job_post).model_dump(mode="json"))
@@ -100,7 +100,7 @@ async def get_job_post(
 async def create_job_post(
     data: JobPostCreate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     if data.campaign_id:
         # Chặn gán campaign của tenant khác (cross-tenant → 404)
@@ -122,7 +122,7 @@ async def update_job_post(
     job_post_id: UUID,
     data: JobPostUpdate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     job_post = await _get_job_post_or_404(job_post_id, db)
     payload = data.model_dump(exclude_unset=True)
@@ -145,7 +145,7 @@ async def update_job_post(
 async def publish_job_post(
     job_post_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     job_post = await _get_job_post_or_404(job_post_id, db)
     job_post.is_published = True
@@ -157,7 +157,7 @@ async def publish_job_post(
 async def unpublish_job_post(
     job_post_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     job_post = await _get_job_post_or_404(job_post_id, db)
     job_post.is_published = False

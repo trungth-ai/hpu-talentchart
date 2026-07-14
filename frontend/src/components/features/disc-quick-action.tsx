@@ -10,9 +10,11 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { api, ApiError } from '@/lib/api-client';
+import { usePerms } from '@/lib/permissions';
 import { discStatusFromStage, type Candidate, type TestLink } from '@/lib/types';
 
 export function DiscQuickAction({ candidate }: { candidate: Candidate }) {
+  const perms = usePerms();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
   const [testUrl, setTestUrl] = useState<string | null>(null);
@@ -57,7 +59,7 @@ export function DiscQuickAction({ candidate }: { candidate: Candidate }) {
             Xem →
           </Link>
         )}
-        {status.canSend && (
+        {status.canSend && perms.canRecruit && (
           <Button
             size="sm"
             variant="secondary"

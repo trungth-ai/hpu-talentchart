@@ -11,7 +11,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
-from app.core.permissions import require_hr_manager
+from app.core.permissions import require_recruiter, require_staff
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
 from app.database import get_db
@@ -41,7 +41,7 @@ async def _build_test_url(db: AsyncSession, token: str) -> str:
 async def create_test_link(
     data: TestLinkCreate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     result = await db.execute(select(Candidate).where(Candidate.id == data.candidate_id))
     candidate = result.scalar_one_or_none()
@@ -96,7 +96,7 @@ async def list_test_links(
     per_page: int = Query(10, ge=1, le=100),
     candidate_id: UUID | None = None,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     org_id = get_current_org_id()
     query = (
@@ -142,7 +142,7 @@ async def list_test_links(
 async def get_candidate_test_result(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Kết quả test đầy đủ của ứng viên (bản HR — kèm phân tích + gợi ý phỏng vấn)."""
     # Xác nhận candidate thuộc tenant (cross-tenant → 404)

@@ -78,3 +78,11 @@ def require_org_role(minimum_role: OrgRole):
 # Singleton dependencies dùng chung cho router (tránh gọi factory trong default argument)
 require_hr_manager = require_org_role(OrgRole.HR_MANAGER)
 require_admin = require_org_role(OrgRole.ADMIN)
+require_recruiter = require_org_role(OrgRole.RECRUITER)  # >=20: thao tác tuyển dụng
+require_staff = require_org_role(OrgRole.MEMBER)  # >=10: mọi nhân viên đăng nhập (chỉ xem)
+
+
+def ensure_can_manage_employee(actor: User) -> None:
+    """Recruiter KHÔNG quản lý Nhân sự (candidate_type=employee) — chỉ HR Manager trở lên."""
+    if ROLE_LEVEL.get(actor.org_role, 0) < ROLE_LEVEL[OrgRole.HR_MANAGER]:
+        raise ForbiddenError("Chỉ HR Manager trở lên mới quản lý được hồ sơ Nhân sự")

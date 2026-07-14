@@ -13,6 +13,7 @@ import { DiscQuickAction } from '@/components/features/disc-quick-action';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api-client';
+import { usePerms } from '@/lib/permissions';
 import {
   PIPELINE_STAGES,
   STAGE_COLORS,
@@ -23,6 +24,7 @@ import {
 import { formatDate } from '@/lib/utils';
 
 function CandidatesContent() {
+  const perms = usePerms();
   const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -50,7 +52,9 @@ function CandidatesContent() {
           <h1 className="text-2xl font-bold text-gray-900">Ứng viên & Nhân sự</h1>
           <p className="text-sm text-gray-500">{data?.meta?.total ?? 0} hồ sơ</p>
         </div>
-        <Button onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</Button>
+        {perms.canManageEmployees && (
+          <Button onClick={() => setShowCreate(true)}>＋ Thêm nhân sự</Button>
+        )}
       </header>
 
       {/* Bộ lọc */}

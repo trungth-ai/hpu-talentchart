@@ -107,11 +107,18 @@ class TestCampaignCRUD:
         await db_session.refresh(campaign_org_a)
         assert campaign_org_a.status == "inactive"
 
-    async def test_member_cannot_manage_campaigns(self, async_client, member_org_a):
-        response = await async_client.get(
+    async def test_member_can_view_but_not_manage_campaigns(self, async_client, member_org_a):
+        # Member = CHỈ XEM: GET được, nhưng tạo/sửa/xóa bị chặn (cần Recruiter+ / HR)
+        listing = await async_client.get(
             "/api/v1/campaigns", headers=auth_headers(member_org_a)
         )
-        assert response.status_code == 403
+        assert listing.status_code == 200
+        create = await async_client.post(
+            "/api/v1/campaigns",
+            json={"name": "X", "position": "Y"},
+            headers=auth_headers(member_org_a),
+        )
+        assert create.status_code == 403
 
 
 class TestCampaignIsolation:

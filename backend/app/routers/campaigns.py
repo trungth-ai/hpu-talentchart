@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permissions import require_hr_manager
+from app.core.permissions import require_hr_manager, require_recruiter, require_staff
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
 from app.database import get_db
@@ -36,7 +36,7 @@ async def list_campaigns(
     status: str | None = None,
     include_inactive: bool = False,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     org_id = get_current_org_id()
     query = select(Campaign).where(Campaign.organization_id == org_id)
@@ -73,7 +73,7 @@ async def list_campaigns(
 async def get_campaign(
     campaign_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     campaign = await get_campaign_or_404(campaign_id, db)
     return success(CampaignResponse.model_validate(campaign).model_dump(mode="json"))
@@ -83,7 +83,7 @@ async def get_campaign(
 async def create_campaign(
     data: CampaignCreate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     # organization_id KHÔNG lấy từ client — before_flush listener tự gán từ context
     campaign = Campaign(**data.model_dump(), status="draft")
@@ -101,7 +101,7 @@ async def update_campaign(
     campaign_id: UUID,
     data: CampaignUpdate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_recruiter),
 ):
     campaign = await get_campaign_or_404(campaign_id, db)
     for field, value in data.model_dump(exclude_unset=True).items():

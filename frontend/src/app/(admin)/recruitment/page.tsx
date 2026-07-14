@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { api, ApiError } from '@/lib/api-client';
+import { usePerms } from '@/lib/permissions';
 import type { Campaign } from '@/lib/types';
 import { formatDate, formatVND } from '@/lib/utils';
 
@@ -32,6 +33,7 @@ const EMPTY_FORM = {
 };
 
 export default function RecruitmentPage() {
+  const perms = usePerms();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -77,9 +79,11 @@ export default function RecruitmentPage() {
             {data?.meta?.total ?? 0} đợt tuyển · mở 1 đợt để quản lý tin &amp; ứng viên
           </p>
         </div>
-        <Button onClick={() => setShowForm((v) => !v)}>
-          {showForm ? 'Đóng form' : '+ Tạo đợt tuyển'}
-        </Button>
+        {perms.canRecruit && (
+          <Button onClick={() => setShowForm((v) => !v)}>
+            {showForm ? 'Đóng form' : '+ Tạo đợt tuyển'}
+          </Button>
+        )}
       </header>
 
       {showForm && (

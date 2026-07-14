@@ -8,7 +8,12 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permissions import require_hr_manager
+from app.core.permissions import (
+    ensure_can_manage_employee,
+    require_hr_manager,
+    require_recruiter,
+    require_staff,
+)
 from app.core.responses import paginated, success
 from app.core.tenant_context import get_current_org_id
 from app.data.horoscope import get_sign_by_date
@@ -70,7 +75,7 @@ async def list_candidates(
     campaign_id: UUID | None = None,
     include_inactive: bool = False,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     org_id = get_current_org_id()
     query = select(Candidate).where(Candidate.organization_id == org_id)
@@ -111,7 +116,7 @@ async def list_candidates(
 @router.get("/stats")
 async def candidate_stats(
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     """Thống kê số ứng viên theo từng trạng thái pipeline (cho dashboard)."""
     org_id = get_current_org_id()
@@ -129,7 +134,7 @@ async def candidate_stats(
 async def get_candidate(
     candidate_id: UUID,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    _: User = Depends(require_staff),
 ):
     candidate = await _get_candidate_or_404(candidate_id, db)
     return success(CandidateResponse.model_validate(candidate).model_dump(mode="json"))
@@ -139,8 +144,10 @@ async def get_candidate(
 async def create_candidate(
     data: CandidateCreate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    actor: User = Depends(require_recruiter),
 ):
+    if data.candidate_type == "employee":
+        ensure_can_manage_employee(actor)  # Recruiter không tạo hồ sơ Nhân sự
     await _verify_campaign_same_tenant(data.campaign_id, db)
 
     payload = data.model_dump()
@@ -164,9 +171,11 @@ async def update_candidate(
     candidate_id: UUID,
     data: CandidateUpdate,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    actor: User = Depends(require_recruiter),
 ):
     candidate = await _get_candidate_or_404(candidate_id, db)
+    if candidate.candidate_type == "employee" or data.candidate_type == "employee":
+        ensure_can_manage_employee(actor)  # Recruiter không sửa / không biến thành Nhân sự
 
     payload = data.model_dump(exclude_unset=True)
     if "campaign_id" in payload:
@@ -195,10 +204,12 @@ async def transition_candidate(
     candidate_id: UUID,
     data: PipelineTransition,
     db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_hr_manager),
+    actor: User = Depends(require_recruiter),
 ):
     """Chuyển trạng thái pipeline — CHỈ tuần tự, vi phạm trả 422 BUSINESS_RULE_ERROR."""
     candidate = await _get_candidate_or_404(candidate_id, db)
+    if candidate.candidate_type == "employee":
+        ensure_can_manage_employee(actor)  # Recruiter không thao tác hồ sơ Nhân sự
     candidate_service.transition_pipeline(candidate, data.target_stage)
     await db.flush()
     await db.refresh(candidate)
